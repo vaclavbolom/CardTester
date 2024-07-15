@@ -28,7 +28,7 @@ namespace CardTester
 		{
 			myport = new SerialPort();
 			myport.BaudRate = 9600;
-			myport.PortName = "COM5";
+			myport.PortName = "COM4";
 			myport.Open();
 			myport.WriteLine("O");
 			myport.Close();
@@ -38,9 +38,9 @@ namespace CardTester
 		{
 			myport = new SerialPort();
 			myport.BaudRate = 9600;
-			myport.PortName = "COM5";
+			myport.PortName = "COM4";
 			myport.Open();
-			myport.WriteLine("O");
+			myport.WriteLine("F");
 			myport.Close();
 		}
 	}
