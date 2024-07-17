@@ -9,7 +9,8 @@ const char COMMAND_STOP = 'S';
 const char COMMAND_EMPTY = ' ';
 const char STATE_UP = 'U';
 const char STATE_DOWN = 'D';
-char command = ' ';
+char command = COMMAND_EMPTY;
+char  output_message[100];
 
 void setup() {
   // put your setup code here, to run once:
@@ -30,54 +31,72 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
+  Serial.println("-------");
   char data = ' ';
   int state_up = digitalRead(PIN_UP);
   int state_down = digitalRead(PIN_DOWN);
   if (Serial.available())
   {    
+
     data = Serial.read();
-    // Serial.println(data);
+
+    Serial.print("data: ");
+    Serial.println(data);    
     
     switch(data){
       case COMMAND_FORWARD:
         command = data;
+        Serial.println("set FORWARD");
         break;       
       case COMMAND_BACKWARD:
         command = data;
+        Serial.println("set BACKWARD");
         break;        
       case COMMAND_STOP:
         command = data;
+        Serial.println("set STOP");
         break;
       default:
         command = COMMAND_EMPTY;
+        Serial.println("set EMPTY");
         break;
+    }
+  }   
 
-    }    
-  }
+  Serial.print("command: ");
+  Serial.println(command);
+  Serial.print("state up: ");
+  Serial.println(state_up);
+  Serial.print("state down: ");
+  Serial.println(state_down);
   
   if (command == COMMAND_FORWARD){
+    Serial.println("FORWARD");
     if (state_down == HIGH)
       digitalWrite(PIN_FORWARD, HIGH); 
     if (state_up == HIGH){
       digitalWrite(PIN_FORWARD, LOW);
-      Serial.println(STATE_UP);
+      Serial.println(state_up);
       command = COMMAND_EMPTY;
     }
   }
 
   if (command == COMMAND_BACKWARD){
+    Serial.println("BACKWARD");
     if (state_up == HIGH)
       digitalWrite(PIN_BACKWARD, HIGH);
     if (state_down == HIGH){
       digitalWrite(PIN_BACKWARD, LOW);
-      Serial.println(STATE_DOWN);
+      Serial.println(state_down);
       command = COMMAND_EMPTY;
     }
   }
 
-  if (command = COMMAND_STOP)
+  if (command == COMMAND_STOP)
   {
-    Serial.println("I");
+    Serial.println("STOP");
+    digitalWrite(PIN_FORWARD, LOW);
+    digitalWrite(PIN_BACKWARD, LOW);
   }
 
   // if (state_up == HIGH)
@@ -89,4 +108,5 @@ void loop() {
   //   digitalWrite(PIN_BACKWARD, HIGH);
   // else
   //   digitalWrite(PIN_BACKWARD, LOW);
+  delay(1000);
 }
