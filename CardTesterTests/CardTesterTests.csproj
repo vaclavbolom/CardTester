@@ -37,6 +37,9 @@
   <PropertyGroup>
     <StartupObject />
   </PropertyGroup>
+  <PropertyGroup>
+    <AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -65,17 +68,17 @@
     <Compile Include="SerialPortOperatorTests.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\CardTesterLibrary\CardTesterLibrary.csproj">
+      <Project>{5e2b91b4-692b-410d-91d5-f05a5176a1f6}</Project>
+      <Name>CardTesterLibrary</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\packages\xunit.analyzers.1.15.0\analyzers\dotnet\cs\xunit.analyzers.dll" />
     <Analyzer Include="..\packages\xunit.analyzers.1.15.0\analyzers\dotnet\cs\xunit.analyzers.fixes.dll" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\CardTester\CardTester.csproj">
-      <Project>{31e322a1-ef6e-4824-818a-73af074c40a8}</Project>
-      <Name>CardTester</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
