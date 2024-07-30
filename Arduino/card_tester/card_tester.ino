@@ -108,5 +108,5 @@ void loop() {
   //   digitalWrite(PIN_BACKWARD, HIGH);
   // else
   //   digitalWrite(PIN_BACKWARD, LOW);
-  delay(1000);
+  delay(100);
 }
