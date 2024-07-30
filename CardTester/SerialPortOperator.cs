@@ -40,8 +40,11 @@ namespace CardTester
           var port = OpenPort();
 
           //read state
-          var response = await port.ReadAsync(5);
-          _LastState = System.Text.Encoding.UTF8.GetString(response);
+          //var response = await port.ReadAsync(5);
+          //_LastState = System.Text.Encoding.UTF8.GetString(response);
+
+          var response = port.ReadLine();
+        _LastState = response;
 
           // write command if there is command to write
           if (_Command != string.Empty)
@@ -78,6 +81,8 @@ namespace CardTester
 				BaudRate = 9600,
 				ReadTimeout = 10
 			};
+
+      port.Open();
 
       return port;
 		}
