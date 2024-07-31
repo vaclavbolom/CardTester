@@ -27,9 +27,10 @@ namespace CardTester
     
     private string _PortName = string.Empty;
 
-    private string _LastState = string.Empty;
-
     private string _Command = string.Empty;
+    private string _PreviousCommand = string.Empty;
+    private string _State = string.Empty;
+    private string _PreviousState = string.Empty;
     public SerialPortOperator(string portName, ILogger logger)
     {
       _Logger = logger ?? throw new ArgumentNullException(nameof( logger));
@@ -47,18 +48,18 @@ namespace CardTester
           port.Open();
 
           //read state
-          var response = await port.ReadAsync(20);
-          _LastState = System.Text.Encoding.UTF8.GetString(response);
-          _Logger.Debug($"Read state: {_LastState}");
+          var response = await port.ReadAsync(1);
+          _PreviousState = _State;
+          _State = System.Text.Encoding.UTF8.GetString(response);
+          _Logger.Debug($"Read state: {_State} (previous state: {_PreviousState})");
 
-          //var response = port.ReadLine();
-          
-          //_LastState = response;
 
           // write command if there is command to write
           if (_Command != string.Empty)
           {
             port.WriteLine(_Command);
+            _Logger.Debug($"Sent command: {_Command}, (previous command: {_PreviousCommand})");
+            _PreviousCommand = _Command;
             _Command = string.Empty;
           }
         }
@@ -67,6 +68,14 @@ namespace CardTester
           var message = ex.Message;
           _Logger.Error("Open port: TimeoutException");
         }
+        catch (UnauthorizedAccessException ex)
+        {
+          _Logger.Error($"{ex.Message} ({ex.GetType().Name})");
+        }
+        catch (Exception ex)
+        {
+          _Logger.Error(ex.Message, ex);
+        }
         finally
         {
           if (port.IsOpen)
@@ -74,7 +83,7 @@ namespace CardTester
             port.Close();
           }
         }
-        //await Task.Delay(10);
+        await Task.Delay(10);
       }
       return 1;
     }
