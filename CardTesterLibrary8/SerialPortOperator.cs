@@ -65,6 +65,7 @@ namespace CardTester
         catch(TimeoutException ex)
         {
           var message = ex.Message;
+          _Logger.Error("Open port: TimeoutException");
         }
         finally
         {
