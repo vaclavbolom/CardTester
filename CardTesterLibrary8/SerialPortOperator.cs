@@ -21,6 +21,7 @@ namespace CardTester
     private const string MOVE_FORWARD = "1";
     private const string MOVE_BACKWARD = "2";
     private const string STOP = "0";
+    private const string RESET = "3";
 
     private readonly ILogger _Logger;
     private bool _CancelOperation = false;
