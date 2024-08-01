@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.IO.Ports;
 using Serilog;
 using System.Runtime.CompilerServices;
+using System.Text.Unicode;
 
 namespace CardTester
 {
@@ -24,7 +25,7 @@ namespace CardTester
         private const string RESET = "3";
 
         private readonly ILogger _Logger;
-        private readonly int _WriteDelay = 1000;
+        private readonly int _WriteDelay = 10;
 
         private bool _CancelOperation = false;
 
@@ -35,6 +36,10 @@ namespace CardTester
         private string _State = string.Empty;
         private string _PreviousState = string.Empty;
 
+        
+
+        private ProcessDataDelegate? _ProcessDataMethod;
+
         public SerialPortOperator(string portName, ILogger logger)
         {
             _Logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -43,18 +48,18 @@ namespace CardTester
 
 
 
-        public async Task Run()
+        public async Task Run(ProcessDataDelegate processDataMethod)
         {
+            _ProcessDataMethod = processDataMethod ?? throw new ArgumentNullException(nameof(processDataMethod));
             using (var port = CreatePort())
             {
                 try
                 {
                     port.Open();
                     var readTask = ReadFromSerialPort(port);
-                    var writeTast = WriteToSerialPort(port);
+                    var writeTask = WriteToSerialPort(port);
 
-                    await Task.WhenAll(readTask, writeTast);
-
+                    await Task.WhenAll(readTask, writeTask);
                 }
                 catch (TimeoutException ex)
                 {
@@ -95,7 +100,7 @@ namespace CardTester
             {
                 PortName = _PortName,
                 BaudRate = 9600,
-                ReadTimeout = 10
+                ReadTimeout = 10000
             };
 
             return port;
@@ -109,14 +114,14 @@ namespace CardTester
                 {
                     if (serialPort.IsOpen)
                     {
-                        string message = await serialPort.ReadLineAsync();
-                        if (message != string.Empty)
-                        {
-                            _PreviousState = _State;
-                            _State = message;
-                            _Logger.Debug($"State changed: {_PreviousState} -> {_State}");
-                        }
-                    }
+                        var message = await serialPort.ReadLineAsync();
+                        
+                        _PreviousState = _State;
+                        //_State = System.Text.Encoding.UTF8.GetString( message);
+                        _State = message.Trim();
+                        _Logger.Debug($"State changed: {_PreviousState} -> {_State}");  
+                        _ProcessDataMethod(message);
+                    }                    
                 }
                 catch (Exception ex)
                 {
@@ -129,7 +134,7 @@ namespace CardTester
         {
             while (!_CancelOperation)
             {
-                if (!serialPort.IsOpen)
+                if (serialPort.IsOpen)
                 {
                     try
                     {

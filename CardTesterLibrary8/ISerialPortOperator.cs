@@ -6,16 +6,18 @@ using System.Threading.Tasks;
 
 namespace CardTester
 {
-	/// <summary>
-	/// Sending and receiving commands to/from serial port.
-	/// </summary>
-	public interface ISerialPortOperator
+
+    public delegate void ProcessDataDelegate(string message);
+    /// <summary>
+    /// Sending and receiving commands to/from serial port.
+    /// </summary>
+    public interface ISerialPortOperator
 	{
 		/// <summary>
 		/// Run loop for reading/writting from/to serial port
 		/// </summary>
 		/// <returns></returns>
-		Task Run();
+		Task Run(ProcessDataDelegate processData);
 
 		/// <summary>
 		/// Stops loop
