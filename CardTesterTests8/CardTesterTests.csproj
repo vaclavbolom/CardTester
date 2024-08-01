@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CardTesterLibrary8\CardTesterLibrary8.csproj" />
+    <ProjectReference Include="..\CardTesterLibrary8\CardTesterLibrary.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -112,11 +112,5 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\CardTesterLibrary\CardTesterLibrary.csproj">
-      <Project>{5e2b91b4-692b-410d-91d5-f05a5176a1f6}</Project>
-      <Name>CardTesterLibrary</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
