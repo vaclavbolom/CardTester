@@ -15,7 +15,7 @@ namespace CardTester
 		/// Run loop for reading/writting from/to serial port
 		/// </summary>
 		/// <returns></returns>
-		Task<int> Run();
+		Task Run();
 
 		/// <summary>
 		/// Stops loop

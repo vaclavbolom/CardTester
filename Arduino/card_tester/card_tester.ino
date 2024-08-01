@@ -14,7 +14,7 @@ const char STATE_MOVING_FORWARD = 'f';
 const char STATE_MOVING_BACKWARD = 'b';
 const char STATE_STOPPED = 's';
 const char STATE_UNKNOWN = 'x';
-const bool DEBUG = true;
+const bool DEBUG = false;
 const bool DEBUG_ALL = false;
 const int DELAY = 100;
 

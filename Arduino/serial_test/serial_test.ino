@@ -1,6 +1,6 @@
 
 const int N = 3;
-const int DELAY = 100;
+const int DELAY = 1000;
 String commands[N] = {"A", "B", "C"};
 int i = 0;
 

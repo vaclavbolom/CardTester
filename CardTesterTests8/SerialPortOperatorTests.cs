@@ -34,7 +34,7 @@ namespace CardTesterTests
 
 			var task = portOperator.Run();
 			Assert.NotNull(portOperator);
-			await Task.Delay(10000);
+			await Task.Delay(20000);
 			portOperator.Stop();
 
 			//TODO: test operator states
