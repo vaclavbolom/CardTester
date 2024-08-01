@@ -1,6 +1,6 @@
 
 const int N = 3;
-const int DELAY = 1000;
+const int DELAY = 100;
 String commands[N] = {"A", "B", "C"};
 int i = 0;
 
@@ -11,7 +11,7 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
-  Serial.print(commands[i]);
+  Serial.println(commands[i]);
 
   if (i == (N - 1))
     i = 0;
