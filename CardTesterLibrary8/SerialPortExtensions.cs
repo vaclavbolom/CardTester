@@ -9,7 +9,17 @@ namespace CardTester
 {
 	public static class SerialPortExtensions
 	{
-		public async static Task ReadAsync(this SerialPort serialPort, byte[] buffer, int offset, int count)
+        public static Task<string> ReadLineAsync(this SerialPort serialPort)
+        {
+            return Task.Run(() => serialPort.ReadLine());
+        }
+
+        public static Task WriteLineAsync(this SerialPort serialPort, string text)
+        {
+            return Task.Run(() => serialPort.WriteLine(text));
+        }
+
+        public async static Task ReadAsync(this SerialPort serialPort, byte[] buffer, int offset, int count)
 		{
 			var bytesToRead = count;
 			var temp = new byte[count];
