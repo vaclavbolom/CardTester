@@ -14,7 +14,8 @@ const char STATE_MOVING_FORWARD = 'f';
 const char STATE_MOVING_BACKWARD = 'b';
 const char STATE_STOPPED = 's';
 const char STATE_UNKNOWN = 'x';
-const bool DEBUG = false;
+const bool DEBUG = true;
+const bool DEBUG_ALL = false;
 const int DELAY = 100;
 
 char command = COMMAND_EMPTY;
@@ -42,8 +43,6 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
-  if (DEBUG)
-    Serial.println("-------");
   char data = ' ';
   int switch_up = digitalRead(PIN_UP);
   int switch_down = digitalRead(PIN_DOWN);
@@ -51,7 +50,7 @@ void loop() {
   {    
     data = Serial.read();
 
-    if (DEBUG){
+    if (DEBUG && DEBUG_ALL){
       Serial.print("data: ");
       Serial.println(data);    
     }
@@ -60,28 +59,21 @@ void loop() {
     switch(data){
       case COMMAND_FORWARD:
         command = data;
-        if (DEBUG)
-          Serial.println("set FORWARD");
         break;       
       case COMMAND_BACKWARD:
         command = data;
-        if (DEBUG)
-          Serial.println("set BACKWARD");
         break;        
       case COMMAND_STOP:
         command = data;
-        if (DEBUG)
-          Serial.println("set STOP");
+        break;
+      case COMMAND_RESET:
+        command = data;
         break;
       default:
         command = COMMAND_EMPTY;
-        if (DEBUG)
-          Serial.println("set EMPTY");
         break;
     }
-  }   
-
-  
+  }     
   
   //initial state
   if (state == STATE_UNKNOWN)
@@ -89,9 +81,9 @@ void loop() {
     if (switch_down == HIGH)
       state = STATE_DOWN;
     else if (switch_up == HIGH)
-      state == STATE_UP;
+      state = STATE_UP;
     else
-      state == STATE_STOPPED;
+      state = STATE_STOPPED;
 
     state_changed = true;
   }
@@ -103,7 +95,7 @@ void loop() {
     state_changed = true;
   }
 
-  if ((switch_up == HIGH) && (command == COMMAND_FORWARD))
+  if ((switch_up == HIGH) && (state == STATE_MOVING_FORWARD))
   {
     digitalWrite(PIN_FORWARD, LOW);
     digitalWrite(PIN_BACKWARD, LOW);
@@ -120,8 +112,8 @@ void loop() {
 
   if ((switch_down == HIGH) && (state == STATE_MOVING_BACKWARD))
   {
-    digitalWrite(PIN_DOWN, LOW);
-    digitalWrite(PIN_UP, LOW);
+    digitalWrite(PIN_FORWARD, LOW);
+    digitalWrite(PIN_BACKWARD, LOW);
     state = STATE_DOWN;
     state_changed = true;
   }
@@ -134,8 +126,32 @@ void loop() {
     state_changed = true;
   }
 
-  if (DEBUG){
-    Serial.print("command: ");
+  if ((state == STATE_STOPPED) && (command == COMMAND_RESET))
+  {
+    digitalWrite(PIN_FORWARD, LOW);
+    digitalWrite(PIN_BACKWARD, HIGH);
+    state = STATE_MOVING_BACKWARD;
+    state_changed = true;
+  }
+
+  
+
+  if (state_changed)
+  {
+    if (DEBUG)
+    {
+      Serial.print("\n------\ncommand:");
+      Serial.println(command);
+      Serial.print("\nstate changed: ");
+    }
+    Serial.print(state);
+    state_changed = false;    
+  }
+
+  if (DEBUG && DEBUG_ALL){
+    Serial.print("\ndata: ");
+    Serial.println(data);
+    Serial.print("\ncommand: ");
     Serial.println(command);
     Serial.print("switch up: ");
     Serial.println(switch_up);
@@ -143,14 +159,6 @@ void loop() {
     Serial.println(switch_down);
     Serial.print("state: ");
     Serial.println(state);
-  }
-
-  if (state_changed)
-  {
-    if (DEBUG)
-      Serial.print("\nstate changed: ");
-    Serial.print(state);
-    state_changed = false;    
   }
 
   command = COMMAND_EMPTY;
