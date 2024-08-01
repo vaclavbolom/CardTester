@@ -13,10 +13,18 @@ namespace CardTesterTests
 {
 	public class SerialPortOperatorTests
 	{
-        
+		private readonly ILogger _Logger;
+        public SerialPortOperatorTests()
+        {
+            Log.Logger = new LoggerConfiguration()
+                .WriteTo.File("test.log", LogEventLevel.Debug)
+                .MinimumLevel.Debug()
+                .CreateLogger();
+			_Logger = Log.Logger;
+        }
 
 
-    [Fact]
+        [Fact]
 		public void Test()
 		{
 			Assert.True(true);
@@ -30,14 +38,21 @@ namespace CardTesterTests
 				.WriteTo.File("test.log", LogEventLevel.Debug)
 				.MinimumLevel.Debug()
 				.CreateLogger();
-			var portOperator = new SerialPortOperator("COM4", Log.Logger);
+			var portOperator = new SerialPortOperator("COM4", _Logger);
 
-			var task = portOperator.Run();
+			var task =  portOperator.Run(ProcessMessage);
 			Assert.NotNull(portOperator);
-			await Task.Delay(20000);
+			await Task.Delay(500);
+			portOperator.RunCommand("1");
+			await Task.Delay(1000);
 			portOperator.Stop();
 
 			//TODO: test operator states
+		}
+
+		private void ProcessMessage(string message)
+		{
+			_Logger.Debug($"Processed message: {message}");
 		}
 	}
 }
