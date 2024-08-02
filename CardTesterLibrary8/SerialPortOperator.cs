@@ -13,16 +13,7 @@ namespace CardTester
     public class SerialPortOperator : ISerialPortOperator
     {
 
-        private const string FORWARD_STATE = "f";
-        private const string BACKWARD_STATE = "b";
-        private const string UP_STATE = "u";
-        private const string DOWN_STATE = "d";
-        private const string STOPPED_STATE = "s";
-
-        private const string MOVE_FORWARD = "1";
-        private const string MOVE_BACKWARD = "2";
-        private const string STOP = "0";
-        private const string RESET = "3";
+        
 
         private readonly ILogger _Logger;
         private readonly int _WriteDelay = 10;
