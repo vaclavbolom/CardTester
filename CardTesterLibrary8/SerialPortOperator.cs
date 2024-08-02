@@ -111,7 +111,8 @@ namespace CardTester
                         //_State = System.Text.Encoding.UTF8.GetString( message);
                         _State = message.Trim();
                         _Logger.Debug($"State changed: {_PreviousState} -> {_State}");  
-                        _ProcessDataMethod(message);
+                        if (_ProcessDataMethod != null)
+                            _ProcessDataMethod(message);
                     }                    
                 }
                 catch (Exception ex)
