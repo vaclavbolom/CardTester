@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CardTester;
-using Microsoft.Extensions.Logging;
+using Serilog;
 
 namespace CardTesterLibrary
 {
@@ -17,10 +17,10 @@ namespace CardTesterLibrary
         private const string STATE_STOPPED = "s";
         private const string STATE_UNKNOWN = "x";
 
-        private const string MOVE_FORWARD = "1";
-        private const string MOVE_BACKWARD = "2";
-        private const string STOP = "0";
-        private const string RESET = "3";
+        private const string COMMAND_MOVE_FORWARD = "1";
+        private const string COMMAND_MOVE_BACKWARD = "2";
+        private const string COMMAND_STOP = "0";
+        private const string COMMAND_RESET = "3";
 
 
         private readonly ILogger _Logger;
@@ -35,36 +35,108 @@ namespace CardTesterLibrary
             _Logger = logger;
             _serialPortOperator = serialPortOperator;
             _State = STATE_UNKNOWN;
+
+            Task.Run(() => _serialPortOperator.Run(ProcessStateChanged));
         }
 
-        public Task MoveDownAsync()
-        {
-            throw new NotImplementedException();
+        public async Task MoveDownAsync()
+        {            
+            if (StateEquals(STATE_STOPPED))
+            {
+                _serialPortOperator.RunCommand(COMMAND_RESET);
+                while (StateEquals(STATE_BACKWARD))
+                {
+                    await Task.Delay(0);
+                }
+            }
+            else
+            {
+                _Logger.Information($"Cannot return to lower position, state = {_State}");
+            }
+            return;
         }
 
-        public Task RunTestAsync(int numberOfCycles, int delayUp, int delayDown)
+        public async Task RunTestAsync(int numberOfCycles, int delayUp, int delayDown)
         {
-            throw new NotImplementedException();
+            if (StateEquals(STATE_DOWN))
+            {
+                //TODO: create buffer for test results
+                await MeasureAsync();
+                for (int i = 0; i < numberOfCycles; i++)
+                {
+                    await RunMeasurementCycleAsync(delayUp, delayDown);
+                }
+                //TODO: write test results
+            }
+            else
+            {
+                _Logger.Information($"Cannot start measurement, state = {_State}");
+            }
+
         }
 
         public Task StopAsync()
         {
-            throw new NotImplementedException();
+            return Task.Run(_serialPortOperator.Stop);
         }
 
-        private Task MoveForwardAsync()
-        {
-            throw new NotImplementedException();
+        private async Task RunMeasurementCycleAsync(int delayUp, int delayDown)
+        { 
+            await MoveForwardAsync();
+            await Task.Delay(delayUp);
+            await MeasureAsync();
+            await MoveBackwardAsync();
+            await Task.Delay(delayDown);
+            await MeasureAsync();
         }
 
-        private Task MoveBackwardAsync()
+        private async Task MoveForwardAsync()
         {
-            throw new NotImplementedException();
+            var movingStates = new string[] { STATE_FORWARD, STATE_STOPPED };
+
+            //read state
+            if (StateEquals(STATE_DOWN))
+            {
+                _serialPortOperator.RunCommand(COMMAND_MOVE_FORWARD);
+                while( StateEquals(STATE_FORWARD))
+                {
+                    await Task.Delay(0);
+                }
+            }
+            else
+            {
+                _Logger.Information($"Cannot move forward, state = {_State}");
+            }
+            return;
         }
 
-        private Task MeasureAsync()
+        private async Task MoveBackwardAsync()
         {
-            throw new NotImplementedException();
+            if (StateEquals(STATE_DOWN))
+            {
+                _serialPortOperator.RunCommand(COMMAND_MOVE_BACKWARD);
+                while( StateEquals(STATE_BACKWARD))
+                {
+                    await Task.Delay(0);
+                }
+            }
+            else
+            {
+                _Logger.Information($"Cannot move backward, state = {_State}");
+            }
+            return;
         }
+
+        private async Task MeasureAsync()
+        {
+
+            _Logger.Information("Measurement...");
+            await Task.Delay(10);
+
+        }
+
+        private bool StateEquals(string expectedState) => _State.Equals(expectedState);
+
+        private void ProcessStateChanged(string message) => _State = message;
     }
 }
