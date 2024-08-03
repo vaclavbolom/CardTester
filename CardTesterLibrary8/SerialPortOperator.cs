@@ -8,7 +8,7 @@ using Serilog;
 using System.Runtime.CompilerServices;
 using System.Text.Unicode;
 
-namespace CardTester
+namespace CardTesterLibrary
 {
     public class SerialPortOperator : ISerialPortOperator
     {
@@ -16,7 +16,7 @@ namespace CardTester
         
 
         private readonly ILogger _Logger;
-        private readonly int _WriteDelay = 10;
+        private readonly int _WriteDelay = 1;
 
         private bool _CancelOperation = false;
 
@@ -60,6 +60,7 @@ namespace CardTester
                 catch (UnauthorizedAccessException ex)
                 {
                     _Logger.Error($"{ex.Message} ({ex.GetType().Name})");
+                    throw;
                 }
                 catch (Exception ex)
                 {
@@ -77,21 +78,21 @@ namespace CardTester
         public void RunCommand(string command)
         {
             _Command = command;
+            _Logger.Debug($"Command set: {command}");
         }
 
-        public string ReadState()
+        public string GetState()
         {
-            return string.Empty;
+            _Logger.Debug($"Get state: {_State}");
+            return _State;
         }
 
         private SerialPort CreatePort()
         {
-
             var port = new SerialPort
             {
                 PortName = _PortName,
-                BaudRate = 9600,
-                ReadTimeout = 10000
+                BaudRate = 9600
             };
 
             return port;
@@ -112,7 +113,7 @@ namespace CardTester
                         _State = message.Trim();
                         _Logger.Debug($"State changed: {_PreviousState} -> {_State}");  
                         if (_ProcessDataMethod != null)
-                            _ProcessDataMethod(message);
+                            Task.Run(() => _ProcessDataMethod(message));
                     }                    
                 }
                 catch (Exception ex)
@@ -132,17 +133,23 @@ namespace CardTester
                     {
                         if (_Command != string.Empty)
                         {
+                            _Logger.Debug($"Try to write command: {_Command}");
                             await serialPort.WriteLineAsync(_Command);
                             _Logger.Debug($"Written to serial port: {_Command}");
                             _PreviousCommand = _Command;
                             _Command = string.Empty;
                         }
-                        await Task.Delay(_WriteDelay);
+                        else
+                            await Task.Delay(_WriteDelay);
                     }
                     catch (Exception ex)
                     {
                         _Logger.Error(ex.Message, ex);
                     }
+                }
+                else
+                {
+                    _Logger.Warning("Port is NOT opened.");
                 }
             }
 

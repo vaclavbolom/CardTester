@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using CardTester;
+using CardTesterLibrary;
 using Serilog;
 using Serilog.Events;
 using Xunit;
@@ -30,27 +30,41 @@ namespace CardTesterTests
 			Assert.True(true);
 		}
 
+		
 		[Fact]
 		public async Task Run_Default_Expected()
-		{
-
-			Log.Logger = new LoggerConfiguration()
-				.WriteTo.File("test.log", LogEventLevel.Debug)
-				.MinimumLevel.Debug()
-				.CreateLogger();
+		{			
 			var portOperator = new SerialPortOperator("COM4", _Logger);
 
 			var task =  portOperator.Run(ProcessMessage);
 			Assert.NotNull(portOperator);
-			await Task.Delay(500);
-			portOperator.RunCommand("1");
-			await Task.Delay(1000);
-			portOperator.Stop();
-
+			await Task.Delay(100);
+			await Task.Delay(100);
+			
+			var state = portOperator.GetState();
+			Assert.Equal("s", state);
 			//TODO: test operator states
 		}
 
-		private void ProcessMessage(string message)
+
+        /// <summary>
+        /// Tests write to Arduino
+        ///   use test_write.ino
+        /// </summary>
+        /// <returns></returns>
+        [Fact]
+		public async Task RunCommand_Default_Expected()
+		{
+            var portOperator = new SerialPortOperator("COM4", _Logger);
+
+            var task = portOperator.Run(ProcessMessage);			
+            portOperator.RunCommand("3");
+			await Task.Delay(100);
+			var state = portOperator.GetState();
+			Assert.NotEqual(string.Empty, state);
+        }
+
+        private void ProcessMessage(string message)
 		{
 			_Logger.Debug($"Processed message: {message}");
 		}
