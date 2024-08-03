@@ -80,6 +80,12 @@ namespace CardTesterLibrary
             _Command = command;
             _Logger.Debug($"Command set: {command}");
         }
+        public async Task RunCommandAsync(string command)
+        {
+            _Command = command;            
+            await Task.Delay(1);
+            _Logger.Debug($"Run Command Async: {command}");
+        }
 
         public string GetState()
         {
@@ -105,15 +111,16 @@ namespace CardTesterLibrary
                 try
                 {
                     if (serialPort.IsOpen)
-                    {
-                        var message = await serialPort.ReadLineAsync();
+                    {                        
+                        //_State = await serialPort.ReadLineAsync();
+                        var message = await serialPort.ReadAsync(3);
                         
                         _PreviousState = _State;
-                        //_State = System.Text.Encoding.UTF8.GetString( message);
-                        _State = message.Trim();
-                        _Logger.Debug($"State changed: {_PreviousState} -> {_State}");  
+                        _State = System.Text.Encoding.UTF8.GetString(message);
+                        _State = _State.Trim();
+                        _Logger.Debug($"State changed: {_PreviousState} -> {_State}");
                         if (_ProcessDataMethod != null)
-                            Task.Run(() => _ProcessDataMethod(message));
+                            Task.Run(() => _ProcessDataMethod(_State));
                     }                    
                 }
                 catch (Exception ex)
@@ -130,12 +137,10 @@ namespace CardTesterLibrary
                 if (serialPort.IsOpen)
                 {
                     try
-                    {
+                    {                        
                         if (_Command != string.Empty)
-                        {
-                            _Logger.Debug($"Try to write command: {_Command}");
-                            await serialPort.WriteLineAsync(_Command);
-                            _Logger.Debug($"Written to serial port: {_Command}");
+                        {                            
+                            await serialPort.WriteLineAsync(_Command);                            
                             _PreviousCommand = _Command;
                             _Command = string.Empty;
                         }

@@ -27,7 +27,7 @@ namespace CardTesterLibrary
 		/// <summary>
 		/// Send command to serial port
 		/// </summary>
-		void RunCommand(string command);
+		Task RunCommandAsync(string command);
 
 
 		/// <summary>

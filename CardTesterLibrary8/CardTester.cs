@@ -42,7 +42,7 @@ namespace CardTesterLibrary
         {            
             if (StateEquals(STATE_STOPPED))
             {
-                _serialPortOperator.RunCommand(COMMAND_RESET);
+                await _serialPortOperator.RunCommandAsync(COMMAND_RESET);
                 while (StateEquals(STATE_BACKWARD))
                 {
                     await Task.Delay(0);
@@ -96,7 +96,7 @@ namespace CardTesterLibrary
             //read state
             if (StateEquals(STATE_DOWN))
             {
-                _serialPortOperator.RunCommand(COMMAND_MOVE_FORWARD);
+                await _serialPortOperator.RunCommandAsync(COMMAND_MOVE_FORWARD);
                 while( StateEquals(STATE_FORWARD))
                 {
                     await Task.Delay(0);
@@ -113,7 +113,7 @@ namespace CardTesterLibrary
         {
             if (StateEquals(STATE_DOWN))
             {
-                _serialPortOperator.RunCommand(COMMAND_MOVE_BACKWARD);
+                await _serialPortOperator.RunCommandAsync(COMMAND_MOVE_BACKWARD);
                 while( StateEquals(STATE_BACKWARD))
                 {
                     await Task.Delay(0);
