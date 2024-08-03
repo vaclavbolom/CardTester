@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CardTester
+namespace CardTesterLibrary
 {
 
     public delegate void ProcessDataDelegate(string message);
@@ -34,7 +34,7 @@ namespace CardTester
 		/// Gets the last state received from serial port
 		/// </summary>
 		/// <returns></returns>
-		string ReadState();
+		string GetState();
 
 		
 	}
