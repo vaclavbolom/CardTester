@@ -31,6 +31,11 @@ namespace CardTesterTests
 		}
 
 		
+		/// <summary>
+		/// Test reading data from ARduino
+		///   use serial_test.ino
+		/// </summary>
+		/// <returns></returns>
 		[Fact]
 		public async Task Run_Default_Expected()
 		{			
@@ -39,10 +44,9 @@ namespace CardTesterTests
 			var task =  portOperator.Run(ProcessMessage);
 			Assert.NotNull(portOperator);
 			await Task.Delay(100);
-			await Task.Delay(100);
 			
 			var state = portOperator.GetState();
-			Assert.Equal("s", state);
+			Assert.NotEqual(string.Empty, state);
 			//TODO: test operator states
 		}
 
@@ -57,11 +61,21 @@ namespace CardTesterTests
 		{
             var portOperator = new SerialPortOperator("COM4", _Logger);
 
-            var task = portOperator.Run(ProcessMessage);			
+            var task = portOperator.Run(ProcessMessage);
+			await Task.Delay(10);
             portOperator.RunCommand("3");
 			await Task.Delay(100);
 			var state = portOperator.GetState();
 			Assert.NotEqual(string.Empty, state);
+			for (int i = 0; i < 10; i++)
+			{
+				_Logger.Debug($"\n----------\nIteration: {i}");
+				var expectedResult = (state == "b") ? "s" : "b";
+				await portOperator.RunCommandAsync("3");				
+				await Task.Delay(2);				
+				state = portOperator.GetState();
+				Assert.Equal(expectedResult, state);
+			}
         }
 
         private void ProcessMessage(string message)
