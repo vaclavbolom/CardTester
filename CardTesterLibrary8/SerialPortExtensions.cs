@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO.Ports;
 
-namespace CardTester
+namespace CardTesterLibrary
 {
 	public static class SerialPortExtensions
 	{
