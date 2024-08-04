@@ -57,12 +57,12 @@ namespace CardTesterTests
         /// </summary>
         /// <returns></returns>
         [Fact]
-		public async Task RunCommand_Default_Expected()
+		public async Task RunCommand_Reset_Default_Expected()
 		{
             var portOperator = new SerialPortOperator("COM4", _Logger);
 
             var task = portOperator.Run(ProcessMessage);
-			await Task.Delay(10);
+			await Task.Delay(10);			
             portOperator.RunCommand("3");
 			await Task.Delay(100);
 			var state = portOperator.GetState();
@@ -76,6 +76,64 @@ namespace CardTesterTests
 				state = portOperator.GetState();
 				Assert.Equal(expectedResult, state);
 			}
+        }
+
+		/// <summary>
+		/// Tests command MOVE FORWAWRD
+		///   use card_tester.ino
+		///   
+		/// scenario:
+		///   - reset Arduino
+		///   - run test
+		///   - wait for red LED
+		///   - press DOWN button
+		///   - keep DOWN button pressed until green LED shines
+		///   - pres UP button
+		///   - keep UP button pressed until red LED shines
+		/// </summary>
+		/// <returns></returns>
+		[Fact]
+		public async Task RunCommand_Forward_Expected()
+		{
+			var portOperator = new SerialPortOperator("COM4", _Logger);
+			var task = portOperator.Run(ProcessMessage);
+			
+			await Task.Delay(100);
+
+			var state = portOperator.GetState();
+			//while(state == string.Empty) {
+			//	await Task.Delay(10);
+			//	state = portOperator.GetState();
+			//}
+			//Assert.NotEqual(string.Empty, state);
+            portOperator.RunCommand("3");
+            await Task.Delay(100);
+			state = portOperator.GetState();
+			Assert.Equal("b", state);
+
+			while(state == "b")
+			{
+				await Task.Delay(10);
+				state = portOperator.GetState() ;
+			}
+			Assert.Equal("d", state);
+			portOperator.RunCommand("1");
+			await Task.Delay(100);
+			state = portOperator.GetState();
+			await Task.Delay(100);
+			Assert.Equal("f", state);
+			while (state == "f")
+			{
+				await Task.Delay(10);
+				state = portOperator.GetState();
+			}
+			Assert.Equal("u", state);
+			portOperator.RunCommand("2");
+			await Task.Delay(100);
+			state = portOperator.GetState();
+			await Task.Delay(10);
+			Assert.Equal("b", state);
+
         }
 
         private void ProcessMessage(string message)
