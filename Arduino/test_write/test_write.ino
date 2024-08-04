@@ -20,9 +20,11 @@ bool state_changed = false;
 
 
 void setup() {
+  String portContent;
+
   // put your setup code here, to run once:
   Serial.begin(9600);    
-  
+  portContent = Serial.readString();
 }
 
 void loop() {

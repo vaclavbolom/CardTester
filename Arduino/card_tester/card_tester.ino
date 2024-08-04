@@ -25,20 +25,25 @@ bool state_changed = false;
 
 
 void setup() {
-  // put your setup code here, to run once:
+  String portContent = "";
   Serial.begin(9600);    
+  portContent = Serial.readString();
+
   pinMode(PIN_UP, INPUT); 
   pinMode(PIN_DOWN, INPUT);
   pinMode(PIN_AVAILABLE, OUTPUT);
   pinMode(PIN_FORWARD, OUTPUT);
   pinMode(PIN_BACKWARD, OUTPUT);
 
-  digitalWrite(PIN_FORWARD, HIGH);
-  digitalWrite(PIN_BACKWARD, HIGH);
-  delay(1000);
-  digitalWrite(PIN_FORWARD, LOW);
-  digitalWrite(PIN_BACKWARD, LOW);
-  digitalWrite(PIN_AVAILABLE, LOW);
+  if (DEBUG)
+  {
+    digitalWrite(PIN_FORWARD, HIGH);
+    digitalWrite(PIN_BACKWARD, HIGH);
+    delay(1000);
+    digitalWrite(PIN_FORWARD, LOW);
+    digitalWrite(PIN_BACKWARD, LOW);
+    digitalWrite(PIN_AVAILABLE, LOW);
+  }
 }
 
 void loop() {
@@ -144,7 +149,7 @@ void loop() {
       Serial.println(command);
       Serial.print("\nstate changed: ");
     }
-    Serial.print(state);
+    Serial.println(state);
     state_changed = false;    
   }
 
