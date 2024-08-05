@@ -7,6 +7,7 @@ using Xunit;
 using Serilog;
 using Serilog.Events;
 using CardTesterLibrary;
+using System.Reflection;
 
 namespace CardTesterTests
 {
@@ -22,12 +23,32 @@ namespace CardTesterTests
             _Logger = Log.Logger;
         }
 
+        /// <summary>
+        /// Tests Preparation of measuremet
+        /// use script card_tester.ino
+        /// instructions:
+        ///   - run test
+        ///   - after red LED is ON press DOWN switch
+        /// </summary>
+        /// <returns></returns>
         [Fact]
-        public async Task Run_Defaut_Expected()
+        public async Task PrepareMeasurement_Defaut_Expected()
         {
             var portOperator = new SerialPortOperator("COM4", _Logger);
             var tester = new CardTesterLibrary.CardTester(_Logger, portOperator);
 
+            var method = tester.GetType().GetMethod("PrepareMeasurement", BindingFlags.Instance | BindingFlags.NonPublic);
+
+            var task = (Task) method.Invoke(tester, null);
+            await task;
+            await Task.Delay(100);
+
+            Assert.NotNull(task);
+
+            var stateField = tester.GetType().GetField("_State", BindingFlags.Instance | BindingFlags.NonPublic);
+            var state = stateField.GetValue(tester);
+
+            Assert.Equal("d", state);
             
         }
     }

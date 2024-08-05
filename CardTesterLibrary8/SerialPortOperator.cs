@@ -50,6 +50,7 @@ namespace CardTesterLibrary
                     var readTask = ReadFromSerialPort(port);
                     var writeTask = WriteToSerialPort(port);
 
+
                     await Task.WhenAll(readTask, writeTask);
                 }
                 catch (TimeoutException ex)

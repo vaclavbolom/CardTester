@@ -75,7 +75,11 @@ namespace CardTesterTests
 				await Task.Delay(2);				
 				state = portOperator.GetState();
 				Assert.Equal(expectedResult, state);
-			}
+				await portOperator.RunCommandAsync("4");
+				await Task.Delay(2);
+                state = portOperator.GetState();
+                Assert.Equal(expectedResult, state);
+            }
         }
 
 		/// <summary>
