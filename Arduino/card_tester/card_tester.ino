@@ -17,7 +17,7 @@ const char STATE_STOPPED = 's';
 const char STATE_UNKNOWN = 'x';
 const bool DEBUG = false;
 const bool DEBUG_ALL = false;
-const int DELAY = 1;
+const int DELAY = 0;
 
 char command = COMMAND_EMPTY;
 char state = STATE_UNKNOWN;
