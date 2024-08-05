@@ -20,6 +20,7 @@ namespace CardTesterLibrary
         private const string COMMAND_MOVE_BACKWARD = "2";
         private const string COMMAND_STOP = "0";
         private const string COMMAND_RESET = "3";
+        private const int DELAY_COMMAND = 10;
 
 
         private readonly ILogger _Logger;
@@ -43,6 +44,7 @@ namespace CardTesterLibrary
             if (StateEquals(STATE_STOPPED))
             {
                 await _serialPortOperator.RunCommandAsync(COMMAND_RESET);
+                await Task.Delay(DELAY_COMMAND);
                 while (StateEquals(STATE_BACKWARD))
                 {
                     await Task.Delay(0);
@@ -97,6 +99,7 @@ namespace CardTesterLibrary
             if (StateEquals(STATE_DOWN))
             {
                 await _serialPortOperator.RunCommandAsync(COMMAND_MOVE_FORWARD);
+                await Task.Delay(DELAY_COMMAND);
                 while( StateEquals(STATE_FORWARD))
                 {
                     await Task.Delay(0);
@@ -114,6 +117,7 @@ namespace CardTesterLibrary
             if (StateEquals(STATE_DOWN))
             {
                 await _serialPortOperator.RunCommandAsync(COMMAND_MOVE_BACKWARD);
+                await Task.Delay(DELAY_COMMAND);
                 while( StateEquals(STATE_BACKWARD))
                 {
                     await Task.Delay(0);
