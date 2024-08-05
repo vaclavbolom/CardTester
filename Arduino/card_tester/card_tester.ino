@@ -2,11 +2,12 @@ const int PIN_UP = 12;
 const int PIN_DOWN = 2;
 const int PIN_FORWARD = 7;
 const int PIN_BACKWARD = 4;
-const int PIN_AVAILABLE = 13;
+const int PIN_CLOSED = 3;
 const char COMMAND_FORWARD = '1';
 const char COMMAND_BACKWARD = '2';
 const char COMMAND_STOP = '0';
 const char COMMAND_RESET = '3';
+const char COMMAND_GET_STATE = '4';
 const char COMMAND_EMPTY = ' ';
 const char STATE_UP = 'u';
 const char STATE_DOWN = 'd';
@@ -16,7 +17,7 @@ const char STATE_STOPPED = 's';
 const char STATE_UNKNOWN = 'x';
 const bool DEBUG = false;
 const bool DEBUG_ALL = false;
-const int DELAY = 100;
+const int DELAY = 1;
 
 char command = COMMAND_EMPTY;
 char state = STATE_UNKNOWN;
@@ -31,7 +32,7 @@ void setup() {
 
   pinMode(PIN_UP, INPUT); 
   pinMode(PIN_DOWN, INPUT);
-  pinMode(PIN_AVAILABLE, OUTPUT);
+  pinMode(PIN_CLOSED, INPUT);
   pinMode(PIN_FORWARD, OUTPUT);
   pinMode(PIN_BACKWARD, OUTPUT);
 
@@ -42,7 +43,6 @@ void setup() {
     delay(1000);
     digitalWrite(PIN_FORWARD, LOW);
     digitalWrite(PIN_BACKWARD, LOW);
-    digitalWrite(PIN_AVAILABLE, LOW);
   }
 }
 
@@ -51,34 +51,43 @@ void loop() {
   char data = ' ';
   int switch_up = digitalRead(PIN_UP);
   int switch_down = digitalRead(PIN_DOWN);
+  int switch_closed = digitalRead(PIN_CLOSED);
+
+  if (DEBUG){      
+      Serial.println("---- LOOP ----");
+  }
   if (Serial.available())
   {    
     data = Serial.read();
 
-    if (DEBUG && DEBUG_ALL){
+    if (DEBUG && DEBUG_ALL){      
       Serial.print("data: ");
       Serial.println(data);    
     }
     
     //read command from serial port
+    
     switch(data){
       case COMMAND_FORWARD:
-        command = data;
-        break;       
-      case COMMAND_BACKWARD:
-        command = data;
-        break;        
-      case COMMAND_STOP:
-        command = data;
-        break;
-      case COMMAND_RESET:
+      case COMMAND_BACKWARD:        
+      case COMMAND_STOP:       
+      case COMMAND_RESET:      
+      case COMMAND_GET_STATE:
         command = data;
         break;
       default:
         command = COMMAND_EMPTY;
         break;
     }
-  }     
+   
+  }    
+  
+  if (!switch_closed)
+  {
+    if (command != COMMAND_GET_STATE)
+      command = COMMAND_STOP;
+    Serial.println("--force closed");
+  }
   
   //initial state
   if (state == STATE_UNKNOWN)
@@ -90,6 +99,11 @@ void loop() {
     else
       state = STATE_STOPPED;
 
+    state_changed = true;
+  }
+
+  if (command == COMMAND_GET_STATE)
+  {
     state_changed = true;
   }
 
@@ -123,7 +137,7 @@ void loop() {
     state_changed = true;
   }
 
-  if (command == COMMAND_STOP)
+  if ((command == COMMAND_STOP) && (state != STATE_STOPPED))
   {    
     digitalWrite(PIN_FORWARD, LOW);
     digitalWrite(PIN_BACKWARD, LOW);
@@ -145,7 +159,7 @@ void loop() {
   {
     if (DEBUG)
     {
-      Serial.print("\n------\ncommand:");
+      Serial.print("\n---\ncommand:");
       Serial.println(command);
       Serial.print("\nstate changed: ");
     }
@@ -162,6 +176,8 @@ void loop() {
     Serial.println(switch_up);
     Serial.print("switch down: ");
     Serial.println(switch_down);
+    Serial.print("switch closed: ");
+    Serial.println(switch_closed);
     Serial.print("state: ");
     Serial.println(state);
   }
