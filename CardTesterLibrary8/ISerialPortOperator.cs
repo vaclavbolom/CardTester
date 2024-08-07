@@ -36,6 +36,13 @@ namespace CardTesterLibrary
 		/// <returns></returns>
 		string GetState();
 
-		
-	}
+		/// <summary>
+		/// Register method for processing of changed state
+		/// </summary>
+		/// <param name="method"></param>
+		public void RegisterStateChangeMethod(ProcessDataDelegate method);
+
+
+
+    }
 }

@@ -12,9 +12,6 @@ namespace CardTesterLibrary
 {
     public class SerialPortOperator : ISerialPortOperator
     {
-
-        
-
         private readonly ILogger _Logger;
         private readonly int _WriteDelay = 1;
 
@@ -26,8 +23,6 @@ namespace CardTesterLibrary
         private string _PreviousCommand = string.Empty;
         private string _State = string.Empty;
         private string _PreviousState = string.Empty;
-
-        
 
         private ProcessDataDelegate? _ProcessDataMethod;
 
@@ -41,7 +36,7 @@ namespace CardTesterLibrary
 
         public async Task Run(ProcessDataDelegate processDataMethod)
         {
-            _ProcessDataMethod = processDataMethod ?? throw new ArgumentNullException(nameof(processDataMethod));
+            _ProcessDataMethod += processDataMethod ?? throw new ArgumentNullException(nameof(processDataMethod));
             using (var port = CreatePort())
             {
                 try
@@ -69,6 +64,9 @@ namespace CardTesterLibrary
                 }
             }
         }
+
+        public void RegisterStateChangeMethod(ProcessDataDelegate method) 
+            => _ProcessDataMethod += method;
 
         public void Stop()
         {
