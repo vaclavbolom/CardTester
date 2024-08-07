@@ -32,7 +32,7 @@ namespace CardTesterApp
         }
 
         private string Message { get; set; }
-        private string State { get; set; }
+        private string CardTesterState { get; set; }
 
 
         public Form1()
@@ -65,6 +65,23 @@ namespace CardTesterApp
             _cardTester = new CardTester(_logger, serialPortOperator);
         }
 
+        public void CardTesterStateChanged(string message)
+        {
+            _logger.Debug($"state changed to {message}");
+
+            var labelMessage = message switch
+            {
+                CardTesterConstants.STATE_FORWARD => "Moving FORWARD",
+                CardTesterConstants.STATE_BACKWARD => "Moving BACKWARD",
+                CardTesterConstants.STATE_STOPPED => "Stopped",
+                CardTesterConstants.STATE_DOWN => "Position DOWN",
+                CardTesterConstants.STATE_UP => "Position UP",
+                _ => "Unknown"
+            };
+                
+            label_State.Text = labelMessage;
+        }
+
         private void SetWidgetsState()
         {
             if (_disabledDuringRunWidgets != null)
@@ -93,9 +110,9 @@ namespace CardTesterApp
 
                 }
             }
-            if (!string.IsNullOrEmpty(Message)) {
-                label_State.Text = Message;
-            }
+            //if (!string.IsNullOrEmpty(Message)) {
+            //    label_State.Text = Message;
+            //}
         }
 
         private async void btn_Forward_Click(object sender, EventArgs e)
@@ -104,23 +121,69 @@ namespace CardTesterApp
             Message = "Moving forward";
             SetWidgetsState();
 
-            await Task.Delay(5000);
+            await MoveForwardAsync();
+            while (Running && CardTesterState != CardTesterConstants.STATE_UP)
+            {
+                await Task.Delay(10);
+            }
 
             Running = false;
-            Message = "Position UP";
+            CardTesterStateChanged(CardTesterState);
             SetWidgetsState();
+        }
+
+        private async Task MoveForwardAsync()
+        {
+            CardTesterState = CardTesterConstants.STATE_FORWARD;
+            CardTesterStateChanged(CardTesterState);
+            await Task.Delay(5000);
+            CardTesterState = CardTesterConstants.STATE_UP;            
+        }
+
+        private async Task MoveBackward()
+        {
+            CardTesterState = CardTesterConstants.STATE_BACKWARD;
+            CardTesterStateChanged(CardTesterState);
+            await Task.Delay(5000);
+            CardTesterState = CardTesterConstants.STATE_DOWN;
+        }
+
+        private async Task DoReset()
+        {
+            CardTesterState = CardTesterConstants.STATE_BACKWARD;
+            CardTesterStateChanged(CardTesterState);
+            await Task.Delay(5000);
+            CardTesterState = CardTesterConstants.STATE_DOWN;
+        }
+
+        private async Task DoTest()
+        {
+            CardTesterState = CardTesterConstants.STATE_FORWARD;
+            CardTesterStateChanged(CardTesterState);
+            await Task.Delay(1000);
+            CardTesterState = CardTesterConstants.STATE_UP;
+            CardTesterStateChanged(CardTesterState);
+            await Task.Delay(1000);
+            CardTesterState = CardTesterConstants.COMMAND_MOVE_BACKWARD;
+            CardTesterStateChanged(CardTesterState);
+            await Task.Delay(1000);
+            CardTesterState = CardTesterConstants.STATE_DOWN;            
         }
 
         private async void btn_Backward_Click(object sender, EventArgs e)
         {
             Running = true;
-            Message = "Moving backward";
             SetWidgetsState();
 
-            await Task.Delay(5000);
+            await MoveBackward();
+
+            while (Running && CardTesterState != CardTesterConstants.STATE_DOWN)
+            {
+                await Task.Delay(10);
+            }
 
             Running = false;
-            Message = "Position Down";
+            CardTesterStateChanged(CardTesterState);
             SetWidgetsState();
         }
 
@@ -129,11 +192,15 @@ namespace CardTesterApp
             Running = true;
             Message = "Test running";
             SetWidgetsState();
+            await DoTest();
 
-            await Task.Delay(5000);
+            while (Running && CardTesterState != CardTesterConstants.STATE_DOWN)
+            {
+                await Task.Delay(10);
+            }
 
             Running = false;
-            Message = "Position DOWN";
+            CardTesterStateChanged(CardTesterState);
             SetWidgetsState();
         }
 
@@ -142,7 +209,8 @@ namespace CardTesterApp
             Running = false;
             Message = "Stopped";
             SetWidgetsState();
-
+            CardTesterState = CardTesterConstants.STATE_STOPPED;
+            CardTesterStateChanged(CardTesterState);
             await Task.Delay(100);
         }
 
@@ -152,10 +220,15 @@ namespace CardTesterApp
             Message = "Returning backward - resetting";
             SetWidgetsState();
 
-            await Task.Delay(5000);
+            await DoReset();
+
+            while (Running && CardTesterState != CardTesterConstants.STATE_DOWN)
+            {
+                await Task.Delay(10);
+            }
 
             Running = false;
-            Message = "Position DOWN";
+            CardTesterStateChanged(CardTesterState);
             SetWidgetsState();
         }
 
