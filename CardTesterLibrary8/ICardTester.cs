@@ -24,7 +24,7 @@ namespace CardTesterLibrary
         /// Moves piston to lower position in case it is stopped.
         /// </summary>
         /// <returns></returns>
-        public Task MoveDownAsync();
+        public Task ResetDownAsync();
 
         /// <summary>
         /// Stops piston movement.
