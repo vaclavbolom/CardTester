@@ -35,7 +35,7 @@ namespace CardTesterTests
         public async Task PrepareMeasurement_Defaut_Expected()
         {
             var portOperator = new SerialPortOperator("COM4", _Logger);
-            var tester = new CardTesterLibrary.CardTester(_Logger, portOperator);
+            var tester = new CardTester(_Logger, portOperator);
 
             var method = tester.GetType().GetMethod("PrepareMeasurement", BindingFlags.Instance | BindingFlags.NonPublic);
 
