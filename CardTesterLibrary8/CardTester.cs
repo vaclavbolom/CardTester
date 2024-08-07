@@ -18,6 +18,8 @@ namespace CardTesterLibrary
 
         private string _State;
 
+        public string PortOperatorState { get; private set; }
+
         public CardTester(ILogger logger, ISerialPortOperator serialPortOperator)
         {
             ArgumentNullException.ThrowIfNull(logger, nameof(logger));
@@ -25,6 +27,7 @@ namespace CardTesterLibrary
             _Logger = logger;
             _SerialPortOperator = serialPortOperator;
             _State = CardTesterConstants.STATE_UNKNOWN;
+            _SerialPortOperator.RegisterStateChangeMethod(ProcessPortOperatorState);
 
             Task.Run(() => _SerialPortOperator.Run(ProcessStateChanged));            
         }
@@ -144,5 +147,7 @@ namespace CardTesterLibrary
         private bool StateEquals(string expectedState) => _State.Equals(expectedState);
 
         private void ProcessStateChanged(string message) => _State = message;
+
+        private void ProcessPortOperatorState(string message) => PortOperatorState = message;
     }
 }
