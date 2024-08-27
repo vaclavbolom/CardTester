@@ -1,6 +1,6 @@
 ﻿namespace CardTesterApp
 {
-	partial class Form1
+	partial class TestingApp
 	{
 		/// <summary>
 		///  Required designer variable.

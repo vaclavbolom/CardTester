@@ -5,7 +5,7 @@ using Serilog.Events;
 
 namespace CardTesterApp
 {
-    public partial class Form1 : Form
+    public partial class TestingApp : Form
     {
         private readonly ILogger _logger;
         private readonly ICardTester _cardTester;
@@ -35,7 +35,7 @@ namespace CardTesterApp
         private string CardTesterState { get; set; }
 
 
-        public Form1()
+        public TestingApp()
         {
             InitializeComponent();
             Running = false;
@@ -62,7 +62,7 @@ namespace CardTesterApp
             _logger = Log.Logger;
 
             var serialPortOperator = new SerialPortOperator("COM4", _logger);
-            _cardTester = new CardTester(_logger, serialPortOperator);
+            _cardTester = new CardTesterLibrary.CardTester(_logger, serialPortOperator);
         }
 
         public void CardTesterStateChanged(string message)
