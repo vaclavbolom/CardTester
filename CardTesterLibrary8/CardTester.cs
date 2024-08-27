@@ -29,12 +29,14 @@ namespace CardTesterLibrary
             _State = CardTesterConstants.STATE_UNKNOWN;
             _SerialPortOperator.RegisterStateChangeMethod(ProcessPortOperatorState);
 
+            _SerialPortOperator.GetState();
+
             Task.Run(() => _SerialPortOperator.Run(ProcessStateChanged));            
         }
 
         public async Task ResetDownAsync()
         {            
-            if (StateEquals(CardTesterConstants.STATE_STOPPED))
+            if (StateEquals(CardTesterConstants.STATE_STOPPED) || StateEquals(CardTesterConstants.STATE_UNKNOWN))
             {
                 await _SerialPortOperator.RunCommandAsync(CardTesterConstants.COMMAND_RESET);
                 await Task.Delay(DELAY_COMMAND);
@@ -74,6 +76,12 @@ namespace CardTesterLibrary
             return Task.Run(_SerialPortOperator.Stop);
         }
 
+        /// <summary>
+        /// Runs one measurement cysle
+        /// </summary>
+        /// <param name="delayUp">delay in bend state [milliseconds]</param>
+        /// <param name="delayDown">delay in basic state [milliseconds]</param>
+        /// <returns></returns>
         private async Task RunMeasurementCycleAsync(int delayUp, int delayDown)
         { 
             await MoveForwardAsync();

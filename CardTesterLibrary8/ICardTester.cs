@@ -15,8 +15,8 @@ namespace CardTesterLibrary
         /// Runs smart card test
         /// </summary>
         /// <param name="numberOfCycles">Number of bending cycles</param>
-        /// <param name="delayUp">Delay in upper position before card test</param>
-        /// <param name="delayDown">delay in lower position before card test</param>
+        /// <param name="delayUp">Delay in upper position before card test [millisecoinds]</param>
+        /// <param name="delayDown">delay in lower position before card test [milliseconds]</param>
         /// <returns></returns>
         public Task RunTestAsync(int numberOfCycles, int delayUp, int delayDown);
 
