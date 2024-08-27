@@ -5,7 +5,7 @@ using Serilog.Events;
 
 namespace CardTesterApp
 {
-    public partial class TestingApp : Form
+    public partial class TestingAppForm : Form
     {
         private readonly ILogger _logger;
         private readonly ICardTester _cardTester;
@@ -35,8 +35,14 @@ namespace CardTesterApp
         private string CardTesterState { get; set; }
 
 
-        public TestingApp()
+        public TestingAppForm(ICardTester cardTester, ILogger logger)
         {
+            _cardTester = cardTester ?? throw new ArgumentNullException(nameof(cardTester));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _logger.Debug("Form created");
+            Message = "Started";
+            CardTesterState = CardTesterConstants.STATE_UNKNOWN;
+
             InitializeComponent();
             Running = false;
 
@@ -54,12 +60,6 @@ namespace CardTesterApp
             {
                 btn_Stop
             };
-
-            Log.Logger = new LoggerConfiguration()
-               .WriteTo.File("CardTesterApp.log", LogEventLevel.Debug)
-               .MinimumLevel.Debug()
-               .CreateLogger();
-            _logger = Log.Logger;
 
             var serialPortOperator = new SerialPortOperator("COM4", _logger);
             _cardTester = new CardTesterLibrary.CardTester(_logger, serialPortOperator);
@@ -150,24 +150,31 @@ namespace CardTesterApp
 
         private async Task DoReset()
         {
+            _logger.Debug("DoReset started");
             CardTesterState = CardTesterConstants.STATE_BACKWARD;
             CardTesterStateChanged(CardTesterState);
-            await Task.Delay(5000);
+            //await Task.Delay(5000);
+            await _cardTester.ResetDownAsync();
             CardTesterState = CardTesterConstants.STATE_DOWN;
+            _logger.Debug("DoReset finished");
         }
 
         private async Task DoTest()
         {
-            CardTesterState = CardTesterConstants.STATE_FORWARD;
-            CardTesterStateChanged(CardTesterState);
-            await Task.Delay(1000);
-            CardTesterState = CardTesterConstants.STATE_UP;
-            CardTesterStateChanged(CardTesterState);
-            await Task.Delay(1000);
-            CardTesterState = CardTesterConstants.COMMAND_MOVE_BACKWARD;
-            CardTesterStateChanged(CardTesterState);
-            await Task.Delay(1000);
-            CardTesterState = CardTesterConstants.STATE_DOWN;            
+            //CardTesterState = CardTesterConstants.STATE_FORWARD;
+            //CardTesterStateChanged(CardTesterState);
+            //await Task.Delay(1000);
+            //CardTesterState = CardTesterConstants.STATE_UP;
+            //CardTesterStateChanged(CardTesterState);
+            //await Task.Delay(1000);
+            //CardTesterState = CardTesterConstants.COMMAND_MOVE_BACKWARD;
+            //CardTesterStateChanged(CardTesterState);
+            //await Task.Delay(1000);
+            //CardTesterState = CardTesterConstants.STATE_DOWN;
+            //
+            var delayBendInMilliseconds = (int)(1000 * DelayBend);
+            var delayBasicInMilliseconds = (int)(1000 * DelayBasic);
+            await _cardTester.RunTestAsync(NumberOfCycles, delayBendInMilliseconds, delayBasicInMilliseconds);
         }
 
         private async void btn_Backward_Click(object sender, EventArgs e)
@@ -189,6 +196,7 @@ namespace CardTesterApp
 
         private async void btn_Run_Click(object sender, EventArgs e)
         {
+            _logger.Debug("Run clicked");
             Running = true;
             Message = "Test running";
             SetWidgetsState();

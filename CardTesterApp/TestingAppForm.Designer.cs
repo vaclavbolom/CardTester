@@ -1,6 +1,8 @@
-﻿namespace CardTesterApp
+﻿using Serilog;
+
+namespace CardTesterApp
 {
-	partial class TestingApp
+	partial class TestingAppForm
 	{
 		/// <summary>
 		///  Required designer variable.
