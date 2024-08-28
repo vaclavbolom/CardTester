@@ -29,6 +29,12 @@ namespace CardTesterLibrary
 		/// </summary>
 		Task RunCommandAsync(string command);
 
+		/// <summary>
+		/// Send comand to serial port
+		/// </summary>
+		/// <param name="command"></param>
+		void RunCommand(string command);
+
 
 		/// <summary>
 		/// Gets the last state received from serial port
