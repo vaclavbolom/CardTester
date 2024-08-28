@@ -233,6 +233,7 @@ namespace CardTesterApp
             Controls.Add(gb_Parameters);
             Name = "TestingAppForm";
             Text = "Form1";
+
             Load += TestingAppForm_Load;
             gb_Parameters.ResumeLayout(false);
             gb_Parameters.PerformLayout();
