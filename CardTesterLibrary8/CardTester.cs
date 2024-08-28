@@ -105,7 +105,7 @@ namespace CardTesterLibrary
 
                 while ( StateEquals(CardTesterConstants.STATE_FORWARD))
                 {
-                    await Task.Delay(0);
+                    await Task.Delay(DELAY_COMMAND);
                 }
             }
             else
@@ -117,7 +117,7 @@ namespace CardTesterLibrary
 
         private async Task MoveBackwardAsync()
         {
-            if (StateEquals(CardTesterConstants.STATE_DOWN))
+            if (StateEquals(CardTesterConstants.STATE_UP))
             {
                 await _SerialPortOperator.RunCommandAsync(CardTesterConstants.COMMAND_MOVE_BACKWARD);
                 await Task.Delay(DELAY_COMMAND);
