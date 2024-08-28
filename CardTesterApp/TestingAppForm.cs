@@ -17,6 +17,8 @@ namespace CardTesterApp
         private object[]? _disabledDuringRunWidgets;
         private object[]? _disabledDuringStopWidgets;
 
+        private System.Windows.Forms.Timer _timer;
+
 
         private bool Running { get; set; }
 
@@ -38,12 +40,19 @@ namespace CardTesterApp
         private string Message { get; set; }
         private string CardTesterState { get; set; }
 
+        private string CardTesterPreviousState {  get; set; }
+
 
         public TestingAppForm(ISerialPortOperator serialPortOperator, ICardTester cardTester, ILogger logger)
         {
             _serialPortOperator = serialPortOperator ?? throw new ArgumentNullException(nameof(serialPortOperator));
             _cardTester = cardTester ?? throw new ArgumentNullException(nameof(cardTester));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+
+            _timer = new System.Windows.Forms.Timer();
+            _timer.Interval = 100;
+            _timer.Tick += new EventHandler(StateEventProcessor);
+            _timer.Start();
 
             _logger.Debug("Form created");
             Message = "Started";
@@ -68,8 +77,19 @@ namespace CardTesterApp
             _serialPortOperator.RegisterStateChangeMethod(CardTesterStateChanged);
         }
 
-        public void UpdateMessage()
+        /// <summary>
+        /// Updates message every _timer tick
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void StateEventProcessor(object? sender, EventArgs e)
         {
+            UpdateMessage();
+            label_Cycle.Text = _cardTester.TestCycleIndex.ToString();
+        }
+
+        public void UpdateMessage()
+        {           
             var labelMessage = CardTesterState switch
             {
                 CardTesterConstants.STATE_FORWARD => "Moving FORWARD",
@@ -80,12 +100,18 @@ namespace CardTesterApp
                 _ => "Unknown"
             };
 
+            if (label_State.Text.Equals(labelMessage.ToString()))
+            {
+                return;
+            }
+
             label_State.Text = labelMessage;
             _logger.Debug($"Message changed, state:{CardTesterState}, message:{labelMessage}");
         }
 
         public void CardTesterStateChanged(string message)
         {
+            CardTesterPreviousState = CardTesterState;
             CardTesterState = message;
 
             _logger.Debug($"Card Tester App state changed to {message}");
@@ -128,9 +154,11 @@ namespace CardTesterApp
         private async Task DoReset()
         {
             _logger.Debug("DoReset started");
+            UpdateMessage();
 
             await _cardTester.ResetDownAsync();
             await Task.Delay(10);
+            UpdateMessage();
             _logger.Debug("DoReset finished");
         }
 
@@ -148,7 +176,7 @@ namespace CardTesterApp
 
             await _cardTester.StopAsync();
             await Task.Delay(DELAY_COMMAND);
-
+            UpdateMessage();
 
             _logger.Debug("DoStop finished");
         }
@@ -221,6 +249,7 @@ namespace CardTesterApp
             task.Wait(100);
             UpdateMessage(); 
             SetWidgetsState();
+            CardTesterPreviousState = CardTesterState;
         }
 
         
