@@ -104,6 +104,9 @@ namespace CardTesterTests
 			
 			await Task.Delay(100);
 
+			portOperator.RunCommand(CardTesterConstants.COMMAND_GET_STATE);
+			await Task.Delay(100);
+
 			var state = portOperator.GetState();
 			//while(state == string.Empty) {
 			//	await Task.Delay(10);
@@ -139,6 +142,33 @@ namespace CardTesterTests
 			Assert.Equal("b", state);
 
         }
+
+
+		[Theory]
+		[InlineData(CardTesterConstants.COMMAND_GET_STATE)]
+		[InlineData(CardTesterConstants.COMMAND_MOVE_FORWARD)]
+		[InlineData(CardTesterConstants.COMMAND_MOVE_BACKWARD)]
+		[InlineData(CardTesterConstants.COMMAND_STOP)]
+		[InlineData(CardTesterConstants.COMMAND_RESET)]
+		public async Task RunCommand_Expected(string command)
+		{
+			var portOperator = new SerialPortOperator("COM4", _Logger);
+			var task = portOperator.Run(ProcessMessage);
+
+			await Task.Delay(100);
+			portOperator.RunCommand(CardTesterConstants.COMMAND_GET_STATE);
+			await Task.Delay(100);
+			var state = portOperator.GetState();
+			Assert.NotEqual("", state);
+
+			portOperator.RunCommand(command);
+			await Task.Delay(100);
+
+			state = portOperator.GetState();
+
+			Assert.NotEqual("", state);
+		}
+
 
         private void ProcessMessage(string message)
 		{
