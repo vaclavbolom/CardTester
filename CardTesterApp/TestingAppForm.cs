@@ -45,7 +45,7 @@ namespace CardTesterApp
 
             _logger.Debug("Form created");
             Message = "Started";
-            CardTesterState = CardTesterConstants.STATE_UNKNOWN;
+            CardTesterState = _serialPortOperator.GetState();
 
             InitializeComponent();
             Running = false;
@@ -54,9 +54,7 @@ namespace CardTesterApp
             {
                 tb_NubmerOfCycles,
                 tb_DelayBasic,
-                tb_DelayBend,
-                btn_Forward,
-                btn_Backward,
+                tb_DelayBend,                
                 btn_Reset,
                 btn_Run
             };
@@ -88,7 +86,7 @@ namespace CardTesterApp
         {
             CardTesterState = message;
 
-            _logger.Debug($"state changed to {message}");            
+            _logger.Debug($"Card Tester App state changed to {message}");            
         }
 
         private void SetWidgetsState()
@@ -127,12 +125,7 @@ namespace CardTesterApp
 
         private async Task DoReset()
         {
-            _logger.Debug("DoReset started");
-
-            //CardTesterState = CardTesterConstants.STATE_BACKWARD;            
-            //CardTesterStateChanged(CardTesterState);
-            //await Task.Delay(5000);
-            //CardTesterState = CardTesterConstants.STATE_DOWN;
+            _logger.Debug("DoReset started");           
 
             await _cardTester.ResetDownAsync();
             await Task.Delay(10);
@@ -140,21 +133,21 @@ namespace CardTesterApp
         }
 
         private async Task DoTest()
-        {
-            //CardTesterState = CardTesterConstants.STATE_FORWARD;
-            //CardTesterStateChanged(CardTesterState);
-            //await Task.Delay(1000);
-            //CardTesterState = CardTesterConstants.STATE_UP;
-            //CardTesterStateChanged(CardTesterState);
-            //await Task.Delay(1000);
-            //CardTesterState = CardTesterConstants.COMMAND_MOVE_BACKWARD;
-            //CardTesterStateChanged(CardTesterState);
-            //await Task.Delay(1000);
-            //CardTesterState = CardTesterConstants.STATE_DOWN;
-            //
+        {            
             var delayBendInMilliseconds = (int)(1000 * DelayBend);
             var delayBasicInMilliseconds = (int)(1000 * DelayBasic);
             await _cardTester.RunTestAsync(NumberOfCycles, delayBendInMilliseconds, delayBasicInMilliseconds);
+            await Task.Delay(10);
+        }
+
+        private async Task DoStop()
+        {
+            _logger.Debug("DoStop started");
+
+            await _cardTester.StopAsync();
+
+
+            _logger.Debug("DoStop finished");
         }
 
         
@@ -173,7 +166,7 @@ namespace CardTesterApp
             }
 
             Running = false;
-            CardTesterStateChanged(CardTesterState);
+            UpdateMessage();
             SetWidgetsState();
         }
 
@@ -183,8 +176,15 @@ namespace CardTesterApp
             Running = false;
             Message = "Stopped";
             SetWidgetsState();
-            CardTesterState = CardTesterConstants.STATE_STOPPED;
-            CardTesterStateChanged(CardTesterState);
+            await DoStop();
+
+            while(CardTesterState != CardTesterConstants.STATE_STOPPED)
+            {
+                await Task.Delay(10);
+            }
+
+            UpdateMessage();
+            SetWidgetsState();
             await Task.Delay(100);
             _logger.Debug($"Stop finished, state:{CardTesterState}");
         }
