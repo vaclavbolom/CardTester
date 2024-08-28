@@ -9,7 +9,7 @@ namespace CardTesterLibrary
 {
     public class CardTester : ICardTester
     {
-        
+
         private const int DELAY_COMMAND = 20;
 
 
@@ -19,6 +19,8 @@ namespace CardTesterLibrary
         private string _State;
 
         public string PortOperatorState { get; private set; }
+
+        public int TestCycleIndex { get; private set; }
 
         public CardTester(ILogger logger, ISerialPortOperator serialPortOperator)
         {
@@ -61,6 +63,7 @@ namespace CardTesterLibrary
                 await MeasureAsync();
                 for (int i = 0; i < numberOfCycles; i++)
                 {
+                    TestCycleIndex = i + 1;
                     await RunMeasurementCycleAsync(delayUp, delayDown);
                 }
                 //TODO: write test results

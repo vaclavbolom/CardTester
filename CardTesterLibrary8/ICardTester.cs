@@ -40,5 +40,11 @@ namespace CardTesterLibrary
         /// </summary>
         /// <returns></returns>
         public Task PrepareMeasurement();
+
+
+        /// <summary>
+        /// Counter of test cycles
+        /// </summary>
+        public int TestCycleIndex { get; }
     }
 }
