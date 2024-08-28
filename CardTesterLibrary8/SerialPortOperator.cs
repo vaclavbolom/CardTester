@@ -13,7 +13,7 @@ namespace CardTesterLibrary
     public class SerialPortOperator : ISerialPortOperator
     {
         private readonly ILogger _Logger;
-        private readonly int _WriteDelay = 1;
+        private readonly int _WriteDelay = 10;
 
         private bool _CancelOperation = false;
 
