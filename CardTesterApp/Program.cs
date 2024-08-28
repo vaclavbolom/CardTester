@@ -25,7 +25,7 @@ namespace CardTesterApp
             // To customize application configuration such as set high DPI settings or default font,
             // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
-			Application.Run(new TestingAppForm(cardTester, logger));
+			Application.Run(new TestingAppForm(serialPortOperator, cardTester, logger));
 		}
 	}
 }
