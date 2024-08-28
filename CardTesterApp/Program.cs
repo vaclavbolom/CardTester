@@ -17,7 +17,7 @@ namespace CardTesterApp
               .MinimumLevel.Debug()
               .CreateLogger();
             var logger = Log.Logger;
-			logger.Debug("Application started");
+			logger.Debug("\n-----------------\nApplication started");
 
 			var serialPortOperator = new SerialPortOperator("COM4", logger);
 			var cardTester = new CardTester(logger, serialPortOperator);
