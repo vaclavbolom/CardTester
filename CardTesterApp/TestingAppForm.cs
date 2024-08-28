@@ -124,38 +124,6 @@ namespace CardTesterApp
             //}
         }
 
-        private async void btn_Forward_Click(object sender, EventArgs e)
-        {
-            Running = true;
-            Message = "Moving forward";
-            SetWidgetsState();
-
-            await MoveForwardAsync();
-            while (Running && CardTesterState != CardTesterConstants.STATE_UP)
-            {
-                await Task.Delay(10);
-            }
-
-            Running = false;
-            CardTesterStateChanged(CardTesterState);
-            SetWidgetsState();
-        }
-
-        private async Task MoveForwardAsync()
-        {
-            CardTesterState = CardTesterConstants.STATE_FORWARD;
-            CardTesterStateChanged(CardTesterState);
-            await Task.Delay(5000);
-            CardTesterState = CardTesterConstants.STATE_UP;            
-        }
-
-        private async Task MoveBackward()
-        {
-            CardTesterState = CardTesterConstants.STATE_BACKWARD;
-            CardTesterStateChanged(CardTesterState);
-            await Task.Delay(5000);
-            CardTesterState = CardTesterConstants.STATE_DOWN;
-        }
 
         private async Task DoReset()
         {
@@ -189,22 +157,7 @@ namespace CardTesterApp
             await _cardTester.RunTestAsync(NumberOfCycles, delayBendInMilliseconds, delayBasicInMilliseconds);
         }
 
-        private async void btn_Backward_Click(object sender, EventArgs e)
-        {
-            Running = true;
-            SetWidgetsState();
-
-            await MoveBackward();
-
-            while (Running && CardTesterState != CardTesterConstants.STATE_DOWN)
-            {
-                await Task.Delay(10);
-            }
-
-            Running = false;
-            CardTesterStateChanged(CardTesterState);
-            SetWidgetsState();
-        }
+        
 
         private async void btn_Run_Click(object sender, EventArgs e)
         {

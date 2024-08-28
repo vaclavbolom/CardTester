@@ -34,7 +34,6 @@ namespace CardTesterApp
             tb_DelayBend = new NumericUpDown();
             tb_DelayBasic = new NumericUpDown();
             tb_NubmerOfCycles = new NumericUpDown();
-            btn_SetParameters = new Button();
             label_DelayBend = new Label();
             label_DelayBasic = new Label();
             label_NumberOfCycles = new Label();
@@ -47,8 +46,7 @@ namespace CardTesterApp
             btn_Stop = new Button();
             btn_Run = new Button();
             btn_Reset = new Button();
-            btn_Backward = new Button();
-            btn_Forward = new Button();
+            btn_SetParameters = new Button();
             gb_Parameters.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)tb_DelayBend).BeginInit();
             ((System.ComponentModel.ISupportInitialize)tb_DelayBasic).BeginInit();
@@ -100,15 +98,6 @@ namespace CardTesterApp
             tb_NubmerOfCycles.Name = "tb_NubmerOfCycles";
             tb_NubmerOfCycles.Size = new Size(97, 27);
             tb_NubmerOfCycles.TabIndex = 7;
-            // 
-            // btn_SetParameters
-            // 
-            btn_SetParameters.Location = new Point(458, 42);
-            btn_SetParameters.Name = "btn_SetParameters";
-            btn_SetParameters.Size = new Size(160, 90);
-            btn_SetParameters.TabIndex = 6;
-            btn_SetParameters.Text = "Set parameters";
-            btn_SetParameters.UseVisualStyleBackColor = true;
             // 
             // label_DelayBend
             // 
@@ -189,8 +178,6 @@ namespace CardTesterApp
             gb_Buttons.Controls.Add(btn_Stop);
             gb_Buttons.Controls.Add(btn_Run);
             gb_Buttons.Controls.Add(btn_Reset);
-            gb_Buttons.Controls.Add(btn_Backward);
-            gb_Buttons.Controls.Add(btn_Forward);
             gb_Buttons.Location = new Point(12, 338);
             gb_Buttons.Name = "gb_Buttons";
             gb_Buttons.Size = new Size(776, 100);
@@ -227,27 +214,16 @@ namespace CardTesterApp
             btn_Reset.UseVisualStyleBackColor = true;
             btn_Reset.Click += btn_Reset_Click;
             // 
-            // btn_Backward
+            // btn_SetParameters
             // 
-            btn_Backward.Location = new Point(129, 55);
-            btn_Backward.Name = "btn_Backward";
-            btn_Backward.Size = new Size(94, 29);
-            btn_Backward.TabIndex = 1;
-            btn_Backward.Text = "Backward";
-            btn_Backward.UseVisualStyleBackColor = true;
-            btn_Backward.Click += btn_Backward_Click;
+            btn_SetParameters.Location = new Point(458, 42);
+            btn_SetParameters.Name = "btn_SetParameters";
+            btn_SetParameters.Size = new Size(160, 90);
+            btn_SetParameters.TabIndex = 6;
+            btn_SetParameters.Text = "Set parameters";
+            btn_SetParameters.UseVisualStyleBackColor = true;
             // 
-            // btn_Forward
-            // 
-            btn_Forward.Location = new Point(18, 55);
-            btn_Forward.Name = "btn_Forward";
-            btn_Forward.Size = new Size(94, 29);
-            btn_Forward.TabIndex = 0;
-            btn_Forward.Text = "Forward";
-            btn_Forward.UseVisualStyleBackColor = true;
-            btn_Forward.Click += btn_Forward_Click;
-            // 
-            // Form1
+            // TestingAppForm
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
@@ -255,7 +231,7 @@ namespace CardTesterApp
             Controls.Add(gb_Buttons);
             Controls.Add(gb_Test);
             Controls.Add(gb_Parameters);
-            Name = "Form1";
+            Name = "TestingAppForm";
             Text = "Form1";
             gb_Parameters.ResumeLayout(false);
             gb_Parameters.PerformLayout();
@@ -274,7 +250,6 @@ namespace CardTesterApp
 		private Label label_DelayBend;
 		private Label label_DelayBasic;
 		private Label label_NumberOfCycles;
-		private Button btn_SetParameters;
 		private NumericUpDown tb_NubmerOfCycles;
 		private NumericUpDown tb_DelayBend;
 		private NumericUpDown tb_DelayBasic;
@@ -283,11 +258,10 @@ namespace CardTesterApp
 		private Button btn_Stop;
 		private Button btn_Run;
 		private Button btn_Reset;
-		private Button btn_Backward;
-		private Button btn_Forward;
 		private Label lablel_CycleLabel;
 		private Label label_Cycle;
 		private Label label_StateLabel;
 		private Label label_State;
-	}
+        private Button btn_SetParameters;
+    }
 }
