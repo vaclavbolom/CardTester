@@ -12,6 +12,8 @@ namespace CardTesterApp
         private readonly ICardTester _cardTester;
         private readonly ISerialPortOperator _serialPortOperator;
 
+        private const int DELAY_COMMAND = 50;
+
         private object[]? _disabledDuringRunWidgets;
         private object[]? _disabledDuringStopWidgets;
 
@@ -54,7 +56,7 @@ namespace CardTesterApp
             {
                 tb_NubmerOfCycles,
                 tb_DelayBasic,
-                tb_DelayBend,                
+                tb_DelayBend,
                 btn_Reset,
                 btn_Run
             };
@@ -86,7 +88,7 @@ namespace CardTesterApp
         {
             CardTesterState = message;
 
-            _logger.Debug($"Card Tester App state changed to {message}");            
+            _logger.Debug($"Card Tester App state changed to {message}");
         }
 
         private void SetWidgetsState()
@@ -125,7 +127,7 @@ namespace CardTesterApp
 
         private async Task DoReset()
         {
-            _logger.Debug("DoReset started");           
+            _logger.Debug("DoReset started");
 
             await _cardTester.ResetDownAsync();
             await Task.Delay(10);
@@ -133,11 +135,11 @@ namespace CardTesterApp
         }
 
         private async Task DoTest()
-        {            
+        {
             var delayBendInMilliseconds = (int)(1000 * DelayBend);
             var delayBasicInMilliseconds = (int)(1000 * DelayBasic);
             await _cardTester.RunTestAsync(NumberOfCycles, delayBendInMilliseconds, delayBasicInMilliseconds);
-            await Task.Delay(10);
+            await Task.Delay(DELAY_COMMAND);
         }
 
         private async Task DoStop()
@@ -145,12 +147,13 @@ namespace CardTesterApp
             _logger.Debug("DoStop started");
 
             await _cardTester.StopAsync();
+            await Task.Delay(DELAY_COMMAND);
 
 
             _logger.Debug("DoStop finished");
         }
 
-        
+
 
         private async void btn_Run_Click(object sender, EventArgs e)
         {
@@ -162,7 +165,7 @@ namespace CardTesterApp
 
             while (Running && CardTesterState != CardTesterConstants.STATE_DOWN)
             {
-                await Task.Delay(10);
+                await Task.Delay(DELAY_COMMAND);
             }
 
             Running = false;
@@ -178,14 +181,14 @@ namespace CardTesterApp
             SetWidgetsState();
             await DoStop();
 
-            while(CardTesterState != CardTesterConstants.STATE_STOPPED)
+            while (CardTesterState != CardTesterConstants.STATE_STOPPED)
             {
-                await Task.Delay(10);
+                await Task.Delay(DELAY_COMMAND);
             }
 
             UpdateMessage();
             SetWidgetsState();
-            await Task.Delay(100);
+            await Task.Delay(DELAY_COMMAND);
             _logger.Debug($"Stop finished, state:{CardTesterState}");
         }
 
@@ -199,7 +202,7 @@ namespace CardTesterApp
 
             while (Running && CardTesterState != CardTesterConstants.STATE_DOWN)
             {
-                await Task.Delay(10);
+                await Task.Delay(DELAY_COMMAND);
             }
 
             Running = false;
@@ -211,5 +214,15 @@ namespace CardTesterApp
         {
 
         }
+
+        private void TestingAppForm_Load(object sender, EventArgs e)
+        {
+            var task =  _cardTester.PrepareMeasurement();
+            task.Wait(100);
+            UpdateMessage(); 
+            SetWidgetsState();
+        }
+
+        
     }
 }

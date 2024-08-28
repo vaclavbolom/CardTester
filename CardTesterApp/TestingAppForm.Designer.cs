@@ -34,6 +34,7 @@ namespace CardTesterApp
             tb_DelayBend = new NumericUpDown();
             tb_DelayBasic = new NumericUpDown();
             tb_NubmerOfCycles = new NumericUpDown();
+            btn_SetParameters = new Button();
             label_DelayBend = new Label();
             label_DelayBasic = new Label();
             label_NumberOfCycles = new Label();
@@ -46,7 +47,6 @@ namespace CardTesterApp
             btn_Stop = new Button();
             btn_Run = new Button();
             btn_Reset = new Button();
-            btn_SetParameters = new Button();
             gb_Parameters.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)tb_DelayBend).BeginInit();
             ((System.ComponentModel.ISupportInitialize)tb_DelayBasic).BeginInit();
@@ -98,6 +98,15 @@ namespace CardTesterApp
             tb_NubmerOfCycles.Name = "tb_NubmerOfCycles";
             tb_NubmerOfCycles.Size = new Size(97, 27);
             tb_NubmerOfCycles.TabIndex = 7;
+            // 
+            // btn_SetParameters
+            // 
+            btn_SetParameters.Location = new Point(458, 42);
+            btn_SetParameters.Name = "btn_SetParameters";
+            btn_SetParameters.Size = new Size(160, 90);
+            btn_SetParameters.TabIndex = 6;
+            btn_SetParameters.Text = "Set parameters";
+            btn_SetParameters.UseVisualStyleBackColor = true;
             // 
             // label_DelayBend
             // 
@@ -214,15 +223,6 @@ namespace CardTesterApp
             btn_Reset.UseVisualStyleBackColor = true;
             btn_Reset.Click += btn_Reset_Click;
             // 
-            // btn_SetParameters
-            // 
-            btn_SetParameters.Location = new Point(458, 42);
-            btn_SetParameters.Name = "btn_SetParameters";
-            btn_SetParameters.Size = new Size(160, 90);
-            btn_SetParameters.TabIndex = 6;
-            btn_SetParameters.Text = "Set parameters";
-            btn_SetParameters.UseVisualStyleBackColor = true;
-            // 
             // TestingAppForm
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -233,6 +233,7 @@ namespace CardTesterApp
             Controls.Add(gb_Parameters);
             Name = "TestingAppForm";
             Text = "Form1";
+            Load += TestingAppForm_Load;
             gb_Parameters.ResumeLayout(false);
             gb_Parameters.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)tb_DelayBend).EndInit();
