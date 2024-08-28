@@ -10,7 +10,7 @@ namespace CardTesterLibrary
     public class CardTester : ICardTester
     {
         
-        private const int DELAY_COMMAND = 10;
+        private const int DELAY_COMMAND = 20;
 
 
         private readonly ILogger _Logger;
@@ -43,7 +43,7 @@ namespace CardTesterLibrary
                 await Task.Delay(DELAY_COMMAND);
                 while (StateEquals(CardTesterConstants.STATE_BACKWARD))
                 {
-                    await Task.Delay(0);
+                    await Task.Delay(DELAY_COMMAND);
                 }
             }
             else
@@ -141,7 +141,7 @@ namespace CardTesterLibrary
 
         }
 
-        private async Task PrepareMeasurement()
+        public async Task PrepareMeasurement()
         {
             _Logger.Debug("Prepare measurement");
 

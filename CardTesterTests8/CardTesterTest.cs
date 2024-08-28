@@ -34,18 +34,16 @@ namespace CardTesterTests
         [Fact]
         public async Task PrepareMeasurement_Defaut_Expected()
         {
+            _Logger.Debug("\n---------------\nPrepareMeasurement test");
             var portOperator = new SerialPortOperator("COM4", _Logger);
             var tester = new CardTester(_Logger, portOperator);
 
-            var method = tester.GetType().GetMethod("PrepareMeasurement", BindingFlags.Instance | BindingFlags.NonPublic);
-
-            var task = (Task) method.Invoke(tester, null);
-            await task;
+            await tester.PrepareMeasurement(); ;
             await Task.Delay(100);
 
-            Assert.NotNull(task);
-
             var stateField = tester.GetType().GetField("_State", BindingFlags.Instance | BindingFlags.NonPublic);
+            Assert.NotNull(stateField);
+
             var state = stateField.GetValue(tester);
 
             Assert.Equal("d", state);
