@@ -1,4 +1,5 @@
 using System.Security.Policy;
+using System.Windows.Forms;
 using CardTesterLibrary;
 using Serilog;
 using Serilog.Events;
@@ -9,6 +10,7 @@ namespace CardTesterApp
     {
         private readonly ILogger _logger;
         private readonly ICardTester _cardTester;
+        private readonly ISerialPortOperator _serialPortOperator;
 
         private object[]? _disabledDuringRunWidgets;
         private object[]? _disabledDuringStopWidgets;
@@ -35,10 +37,12 @@ namespace CardTesterApp
         private string CardTesterState { get; set; }
 
 
-        public TestingAppForm(ICardTester cardTester, ILogger logger)
+        public TestingAppForm(ISerialPortOperator serialPortOperator, ICardTester cardTester, ILogger logger)
         {
+            _serialPortOperator = serialPortOperator ?? throw new ArgumentNullException(nameof(serialPortOperator));
             _cardTester = cardTester ?? throw new ArgumentNullException(nameof(cardTester));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+
             _logger.Debug("Form created");
             Message = "Started";
             CardTesterState = CardTesterConstants.STATE_UNKNOWN;
@@ -61,15 +65,12 @@ namespace CardTesterApp
                 btn_Stop
             };
 
-            var serialPortOperator = new SerialPortOperator("COM4", _logger);
-            _cardTester = new CardTesterLibrary.CardTester(_logger, serialPortOperator);
+            _serialPortOperator.RegisterStateChangeMethod(CardTesterStateChanged);
         }
 
-        public void CardTesterStateChanged(string message)
+        public void UpdateMessage()
         {
-            _logger.Debug($"state changed to {message}");
-
-            var labelMessage = message switch
+            var labelMessage = CardTesterState switch
             {
                 CardTesterConstants.STATE_FORWARD => "Moving FORWARD",
                 CardTesterConstants.STATE_BACKWARD => "Moving BACKWARD",
@@ -78,8 +79,16 @@ namespace CardTesterApp
                 CardTesterConstants.STATE_UP => "Position UP",
                 _ => "Unknown"
             };
-                
+
             label_State.Text = labelMessage;
+            _logger.Debug($"Message changed, state:{CardTesterState}, message:{labelMessage}");
+        }
+
+        public void CardTesterStateChanged(string message)
+        {
+            CardTesterState = message;
+
+            _logger.Debug($"state changed to {message}");            
         }
 
         private void SetWidgetsState()
@@ -151,11 +160,14 @@ namespace CardTesterApp
         private async Task DoReset()
         {
             _logger.Debug("DoReset started");
-            CardTesterState = CardTesterConstants.STATE_BACKWARD;
-            CardTesterStateChanged(CardTesterState);
+
+            //CardTesterState = CardTesterConstants.STATE_BACKWARD;            
+            //CardTesterStateChanged(CardTesterState);
             //await Task.Delay(5000);
+            //CardTesterState = CardTesterConstants.STATE_DOWN;
+
             await _cardTester.ResetDownAsync();
-            CardTesterState = CardTesterConstants.STATE_DOWN;
+            await Task.Delay(10);
             _logger.Debug("DoReset finished");
         }
 
@@ -214,12 +226,14 @@ namespace CardTesterApp
 
         private async void btn_Stop_Click(object sender, EventArgs e)
         {
+            _logger.Debug("Stop clicked");
             Running = false;
             Message = "Stopped";
             SetWidgetsState();
             CardTesterState = CardTesterConstants.STATE_STOPPED;
             CardTesterStateChanged(CardTesterState);
             await Task.Delay(100);
+            _logger.Debug($"Stop finished, state:{CardTesterState}");
         }
 
         private async void btn_Reset_Click(object sender, EventArgs e)
@@ -236,7 +250,7 @@ namespace CardTesterApp
             }
 
             Running = false;
-            CardTesterStateChanged(CardTesterState);
+            UpdateMessage();
             SetWidgetsState();
         }
 
