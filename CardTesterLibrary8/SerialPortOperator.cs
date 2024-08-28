@@ -88,7 +88,6 @@ namespace CardTesterLibrary
 
         public string GetState()
         {
-            _Logger.Debug($"Get state: {_State}");
             return _State;
         }
 
@@ -110,10 +109,10 @@ namespace CardTesterLibrary
                 try
                 {
                     if (serialPort.IsOpen)
-                    {                        
-                        //_State = await serialPort.ReadLineAsync();
+                    {
+                        //var message = await serialPort.ReadLineAsync();
                         var message = await serialPort.ReadAsync(3);
-                        
+
                         _PreviousState = _State;
                         _State = System.Text.Encoding.UTF8.GetString(message);
                         _State = _State.Trim();
