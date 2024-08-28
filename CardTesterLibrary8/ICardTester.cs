@@ -31,5 +31,14 @@ namespace CardTesterLibrary
         /// </summary>
         /// <returns></returns>
         public Task StopAsync();
+
+
+        /// <summary>
+        /// Prepares measurement:
+        /// - reads state of machine
+        /// - resets to lower position
+        /// </summary>
+        /// <returns></returns>
+        public Task PrepareMeasurement();
     }
 }
