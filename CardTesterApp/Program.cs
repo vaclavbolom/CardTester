@@ -20,7 +20,9 @@ namespace CardTesterApp
 			logger.Debug("\n-----------------\nApplication started");
 
 			var serialPortOperator = new SerialPortOperator("COM4", logger);
-			var cardTester = new CardTester(logger, serialPortOperator);
+			var measurementService = new MeasurementServiceMock(logger);
+			var measurementRecorder = new MeasurementRecorder(logger);
+			var cardTester = new CardTester(logger, serialPortOperator, measurementService, measurementRecorder);
 
             // To customize application configuration such as set high DPI settings or default font,
             // see https://aka.ms/applicationconfiguration.

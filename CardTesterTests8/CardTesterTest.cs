@@ -13,14 +13,14 @@ namespace CardTesterTests
 {
     public class CardTesterTest
     {
-        private readonly ILogger _Logger;
+        private readonly ILogger _logger;
         public CardTesterTest()
         {
             Log.Logger = new LoggerConfiguration()
                 .WriteTo.File("test.log", LogEventLevel.Debug)
                 .MinimumLevel.Debug()
                 .CreateLogger();
-            _Logger = Log.Logger;
+            _logger = Log.Logger;
         }
 
         /// <summary>
@@ -34,9 +34,11 @@ namespace CardTesterTests
         [Fact]
         public async Task PrepareMeasurement_Defaut_Expected()
         {
-            _Logger.Debug("\n---------------\nPrepareMeasurement test");
-            var portOperator = new SerialPortOperator("COM4", _Logger);
-            var tester = new CardTester(_Logger, portOperator);
+            _logger.Debug("\n---------------\nPrepareMeasurement test");
+            var portOperator = new SerialPortOperator("COM4", _logger);
+            var measurementService = new MeasurementServiceMock(_logger);
+            var measurementRecorder = new MeasurementRecorder(_logger);
+            var tester = new CardTester(_logger, portOperator, measurementService, measurementRecorder);
 
             await tester.PrepareMeasurement(); ;
             await Task.Delay(100);
