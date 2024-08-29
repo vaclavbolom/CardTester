@@ -199,6 +199,7 @@ namespace CardTesterApp
             }
 
             Running = false;
+            Message = "Test finished";
             UpdateMessage();
             SetWidgetsState();
         }
