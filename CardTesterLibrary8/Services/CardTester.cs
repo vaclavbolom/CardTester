@@ -13,8 +13,10 @@ namespace CardTesterLibrary
         private const int DELAY_COMMAND = 20;
 
 
-        private readonly ILogger _Logger;
-        private readonly ISerialPortOperator _SerialPortOperator;
+        private readonly ILogger _logger;
+        private readonly ISerialPortOperator _serialPortOperator;
+        private readonly IMeasurementService _measurementService;
+        private readonly IMeasurementRecorder _measurementRecorder;
 
         private string _State;
 
@@ -22,17 +24,22 @@ namespace CardTesterLibrary
 
         public int TestCycleIndex { get; private set; }
 
-        public CardTester(ILogger logger, ISerialPortOperator serialPortOperator)
+        public CardTester(ILogger logger, ISerialPortOperator serialPortOperator, IMeasurementService measurementService, IMeasurementRecorder measuremntRecorder)
         {
             ArgumentNullException.ThrowIfNull(logger, nameof(logger));
             ArgumentNullException.ThrowIfNull(serialPortOperator, nameof(serialPortOperator));
-            _Logger = logger;
-            _SerialPortOperator = serialPortOperator;
-            _SerialPortOperator.RegisterStateChangeMethod(ProcessPortOperatorState);
+            ArgumentNullException.ThrowIfNull(measurementService, nameof(measurementService));
+            ArgumentNullException.ThrowIfNull(measuremntRecorder, nameof(measuremntRecorder));
+
+            _logger = logger;
+            _serialPortOperator = serialPortOperator;
+            _serialPortOperator.RegisterStateChangeMethod(ProcessPortOperatorState);
+            _measurementService = measurementService;
+            _measurementRecorder = measuremntRecorder;
             _State = CardTesterConstants.STATE_UNKNOWN;
 
             //Task.Run(() => _SerialPortOperator.Run(ProcessStateChanged));
-            var task = _SerialPortOperator.Run(ProcessStateChanged);
+            var task = _serialPortOperator.Run(ProcessStateChanged);
             Task.Delay(100);
 
         }
@@ -41,7 +48,7 @@ namespace CardTesterLibrary
         {            
             if (StateEquals(CardTesterConstants.STATE_STOPPED) || StateEquals(CardTesterConstants.STATE_UNKNOWN))
             {
-                await _SerialPortOperator.RunCommandAsync(CardTesterConstants.COMMAND_RESET);
+                await _serialPortOperator.RunCommandAsync(CardTesterConstants.COMMAND_RESET);
                 await Task.Delay(DELAY_COMMAND);
                 while (StateEquals(CardTesterConstants.STATE_BACKWARD))
                 {
@@ -50,7 +57,7 @@ namespace CardTesterLibrary
             }
             else
             {
-                _Logger.Information($"Cannot return to lower position, state = {_State}");
+                _logger.Information($"Cannot return to lower position, state = {_State}");
             }
             return;
         }
@@ -59,8 +66,9 @@ namespace CardTesterLibrary
         {
             if (StateEquals(CardTesterConstants.STATE_DOWN))
             {
-                //TODO: create buffer for test results
-                await MeasureAsync();
+                var testResult = _measurementService.MeasureCards();
+                _measurementRecorder.AddMeasurement(testResult);
+
                 for (int i = 0; i < numberOfCycles; i++)
                 {
                     TestCycleIndex = i + 1;
@@ -70,14 +78,14 @@ namespace CardTesterLibrary
             }
             else
             {
-                _Logger.Information($"Cannot start measurement, state = {_State}");
+                _logger.Information($"Cannot start measurement, state = {_State}");
             }
 
         }
 
         public Task StopAsync()
         {
-            return Task.Run(_SerialPortOperator.Stop);
+            return Task.Run(_serialPortOperator.Stop);
         }
 
         /// <summary>
@@ -90,10 +98,12 @@ namespace CardTesterLibrary
         { 
             await MoveForwardAsync();
             await Task.Delay(delayUp);
-            await MeasureAsync();
+            var measurementResult = _measurementService.MeasureCards();
+            _measurementRecorder.AddMeasurement(measurementResult);
             await MoveBackwardAsync();
             await Task.Delay(delayDown);
-            await MeasureAsync();
+            measurementResult = _measurementService.MeasureCards();
+            _measurementRecorder.AddMeasurement(measurementResult);
         }
 
         private async Task MoveForwardAsync()
@@ -103,7 +113,7 @@ namespace CardTesterLibrary
             //read state
             if (StateEquals(CardTesterConstants.STATE_DOWN))
             {
-                await _SerialPortOperator.RunCommandAsync(CardTesterConstants.COMMAND_MOVE_FORWARD);
+                await _serialPortOperator.RunCommandAsync(CardTesterConstants.COMMAND_MOVE_FORWARD);
                 await Task.Delay(DELAY_COMMAND);
 
                 while ( StateEquals(CardTesterConstants.STATE_FORWARD))
@@ -113,7 +123,7 @@ namespace CardTesterLibrary
             }
             else
             {
-                _Logger.Information($"Cannot move forward, state = {_State}");
+                _logger.Information($"Cannot move forward, state = {_State}");
             }
             return;
         }
@@ -122,7 +132,7 @@ namespace CardTesterLibrary
         {
             if (StateEquals(CardTesterConstants.STATE_UP))
             {
-                await _SerialPortOperator.RunCommandAsync(CardTesterConstants.COMMAND_MOVE_BACKWARD);
+                await _serialPortOperator.RunCommandAsync(CardTesterConstants.COMMAND_MOVE_BACKWARD);
                 await Task.Delay(DELAY_COMMAND);
                 while( StateEquals(CardTesterConstants.STATE_BACKWARD))
                 {
@@ -131,7 +141,7 @@ namespace CardTesterLibrary
             }
             else
             {
-                _Logger.Information($"Cannot move backward, state = {_State}");
+                _logger.Information($"Cannot move backward, state = {_State}");
             }
             return;
         }
@@ -139,26 +149,26 @@ namespace CardTesterLibrary
         private async Task MeasureAsync()
         {
 
-            _Logger.Information("Measurement...");
+            _logger.Information("Measurement...");
             await Task.Delay(10);
 
         }
 
         public async Task PrepareMeasurement()
         {
-            _Logger.Debug("Prepare measurement");
+            _logger.Debug("Prepare measurement");
 
-            _SerialPortOperator.RunCommand(CardTesterConstants.COMMAND_GET_STATE);
+            _serialPortOperator.RunCommand(CardTesterConstants.COMMAND_GET_STATE);
             await Task.Delay(DELAY_COMMAND);
-            var state = _SerialPortOperator.GetState();
+            var state = _serialPortOperator.GetState();
 
-            _SerialPortOperator.RunCommand(CardTesterConstants.COMMAND_STOP);
+            _serialPortOperator.RunCommand(CardTesterConstants.COMMAND_STOP);
             await Task.Delay(DELAY_COMMAND);
-            state = _SerialPortOperator.GetState();
+            state = _serialPortOperator.GetState();
             while (state != CardTesterConstants.STATE_STOPPED)
             {
                 await Task.Delay(DELAY_COMMAND);
-                state = _SerialPortOperator.GetState();
+                state = _serialPortOperator.GetState();
             }
             await ResetDownAsync();
         }
