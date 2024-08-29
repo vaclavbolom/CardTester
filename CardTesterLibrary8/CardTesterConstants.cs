@@ -14,6 +14,7 @@ namespace CardTesterLibrary
         public const string STATE_DOWN = "d";
         public const string STATE_STOPPED = "s";
         public const string STATE_UNKNOWN = "x";
+        public const string STATE_DOOR_OPEN = "o";
 
         public const string COMMAND_MOVE_FORWARD = "1";
         public const string COMMAND_MOVE_BACKWARD = "2";
