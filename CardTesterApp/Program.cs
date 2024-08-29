@@ -1,3 +1,4 @@
+using System.Text.Json;
 using CardTesterLibrary;
 using Serilog;
 using Serilog.Events;
@@ -19,7 +20,11 @@ namespace CardTesterApp
             var logger = Log.Logger;
 			logger.Debug("\n-----------------\nApplication started");
 
-			var serialPortOperator = new SerialPortOperator("COM4", logger);
+			var settingsString = File.ReadAllText("appsettings.json");
+			var configuration = JsonSerializer.Deserialize<ApplicationSettings>(settingsString)
+				?? throw new ArgumentException(nameof(settingsString));
+
+			var serialPortOperator = new SerialPortOperator(configuration.PortName, logger);
 			var measurementService = new MeasurementServiceMock(logger);
 			var measurementRecorder = new MeasurementRecorder(logger);
 			var cardTester = new CardTester(logger, serialPortOperator, measurementService, measurementRecorder);
@@ -27,7 +32,7 @@ namespace CardTesterApp
             // To customize application configuration such as set high DPI settings or default font,
             // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
-			Application.Run(new TestingAppForm(serialPortOperator, cardTester, logger));
+			Application.Run(new TestingAppForm(serialPortOperator, cardTester, logger, configuration));
 		}
 	}
 }

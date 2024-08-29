@@ -11,6 +11,7 @@ namespace CardTesterApp
         private readonly ILogger _logger;
         private readonly ICardTester _cardTester;
         private readonly ISerialPortOperator _serialPortOperator;
+        private readonly ApplicationSettings _settings;
 
         private const int DELAY_COMMAND = 50;
 
@@ -37,17 +38,17 @@ namespace CardTesterApp
             get => tb_DelayBend.Value;
         }
 
-        private string Message { get; set; }
         private string CardTesterState { get; set; }
 
         private string CardTesterPreviousState { get; set; }
 
 
-        public TestingAppForm(ISerialPortOperator serialPortOperator, ICardTester cardTester, ILogger logger)
+        public TestingAppForm(ISerialPortOperator serialPortOperator, ICardTester cardTester, ILogger logger, ApplicationSettings settings)
         {
             _serialPortOperator = serialPortOperator ?? throw new ArgumentNullException(nameof(serialPortOperator));
             _cardTester = cardTester ?? throw new ArgumentNullException(nameof(cardTester));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _settings = settings ?? throw new ArgumentNullException(nameof(settings));
 
             _timer = new System.Windows.Forms.Timer();
             _timer.Interval = 100;
@@ -55,10 +56,13 @@ namespace CardTesterApp
             _timer.Start();
 
             _logger.Debug("Form created");
-            Message = "Started";
             CardTesterState = _serialPortOperator.GetState();
 
             InitializeComponent();
+            tb_NubmerOfCycles.Value = _settings.NumberOfCycles;
+            tb_DelayBasic.Value = _settings.DelayBasic;
+            tb_DelayBend.Value = _settings.DelayBent;
+            text_ProtocolPath.Text = _settings.OutputDirectory;
             Running = false;
 
             _disabledDuringRunWidgets = new object[]
@@ -84,21 +88,26 @@ namespace CardTesterApp
         /// <param name="e"></param>
         private void StateEventProcessor(object? sender, EventArgs e)
         {
-            UpdateMessage();
-            label_Cycle.Text = _cardTester.TestCycleIndex.ToString();
+            if (Running)
+            {
+                UpdateMessage();
+                label_Cycle.Text = _cardTester.TestCycleIndex.ToString();
+            }
         }
 
-        public void UpdateMessage()
+        public void UpdateMessage(string message = "")
         {
-            var labelMessage = CardTesterState switch
-            {
-                CardTesterConstants.STATE_FORWARD => "Moving FORWARD",
-                CardTesterConstants.STATE_BACKWARD => "Moving BACKWARD",
-                CardTesterConstants.STATE_STOPPED => "Stopped",
-                CardTesterConstants.STATE_DOWN => "Position DOWN",
-                CardTesterConstants.STATE_UP => "Position UP",
-                _ => "Unknown"
-            };
+            var labelMessage = (message.Equals(string.Empty))
+                ? CardTesterState switch
+                    {
+                        CardTesterConstants.STATE_FORWARD => "Moving FORWARD",
+                        CardTesterConstants.STATE_BACKWARD => "Moving BACKWARD",
+                        CardTesterConstants.STATE_STOPPED => "Stopped",
+                        CardTesterConstants.STATE_DOWN => "Position DOWN",
+                        CardTesterConstants.STATE_UP => "Position UP",
+                        _ => "Unknown"
+                    }
+                 : message;
 
             if (label_State.Text.Equals(labelMessage.ToString()))
             {
@@ -189,7 +198,6 @@ namespace CardTesterApp
         {
             _logger.Debug("Run clicked");
             Running = true;
-            Message = "Test running";
             SetWidgetsState();
             await DoTest();
 
@@ -199,8 +207,7 @@ namespace CardTesterApp
             }
 
             Running = false;
-            Message = "Test finished";
-            UpdateMessage();
+            UpdateMessage("Test finished");
             SetWidgetsState();
         }
 
@@ -208,7 +215,7 @@ namespace CardTesterApp
         {
             _logger.Debug("Stop clicked");
             Running = false;
-            Message = "Stopped";
+            UpdateMessage("Stopped");
             SetWidgetsState();
             await DoStop();
 
@@ -226,7 +233,7 @@ namespace CardTesterApp
         private async void btn_Reset_Click(object sender, EventArgs e)
         {
             Running = true;
-            Message = "Returning backward - resetting";
+            UpdateMessage("Returning backward - resetting");
             SetWidgetsState();
 
             await DoReset();
