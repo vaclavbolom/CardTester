@@ -14,6 +14,7 @@ const char STATE_DOWN = 'd';
 const char STATE_MOVING_FORWARD = 'f';
 const char STATE_MOVING_BACKWARD = 'b';
 const char STATE_STOPPED = 's';
+const char STATE_DOOR_OPEN = 'o';
 const char STATE_UNKNOWN = 'x';
 const bool DEBUG = false;
 const bool DEBUG_ALL = false;
@@ -86,7 +87,9 @@ void loop() {
   {
     if (command != COMMAND_GET_STATE)
       command = COMMAND_STOP;
-    Serial.println("--force closed");
+    
+    if (DEBUG)
+      Serial.println("--force closed");
   }
   
   //initial state
@@ -137,10 +140,16 @@ void loop() {
     state_changed = true;
   }
 
-  if ((command == COMMAND_STOP) && (state != STATE_STOPPED))
+  if ((command == COMMAND_STOP) && (state != STATE_STOPPED) && (state != STATE_DOOR_OPEN))
   {    
     digitalWrite(PIN_FORWARD, LOW);
     digitalWrite(PIN_BACKWARD, LOW);
+    state = switch_closed ? STATE_STOPPED : STATE_DOOR_OPEN;
+    state_changed = true;
+  }
+
+  if ((state == STATE_DOOR_OPEN) && switch_closed)
+  {
     state = STATE_STOPPED;
     state_changed = true;
   }
