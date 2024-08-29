@@ -36,5 +36,11 @@ namespace CardTesterLibrary
         /// </summary>
         public string? Card4 { get; set; }
 
+        /// <summary>
+        /// Position of bending machine
+        /// expected BASIC/BENT
+        /// </summary>
+        public string? Position { get; set; } = string.Empty;
+
     }
 }
