@@ -31,6 +31,8 @@ namespace CardTesterApp
         private void InitializeComponent()
         {
             gb_Parameters = new GroupBox();
+            text_ProtocolPath = new TextBox();
+            label_ResultPath = new Label();
             tb_DelayBend = new NumericUpDown();
             tb_DelayBasic = new NumericUpDown();
             tb_NubmerOfCycles = new NumericUpDown();
@@ -47,6 +49,8 @@ namespace CardTesterApp
             btn_Stop = new Button();
             btn_Run = new Button();
             btn_Reset = new Button();
+            label_Description = new Label();
+            textbox_Description = new TextBox();
             gb_Parameters.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)tb_DelayBend).BeginInit();
             ((System.ComponentModel.ISupportInitialize)tb_DelayBasic).BeginInit();
@@ -57,6 +61,10 @@ namespace CardTesterApp
             // 
             // gb_Parameters
             // 
+            gb_Parameters.Controls.Add(textbox_Description);
+            gb_Parameters.Controls.Add(label_Description);
+            gb_Parameters.Controls.Add(text_ProtocolPath);
+            gb_Parameters.Controls.Add(label_ResultPath);
             gb_Parameters.Controls.Add(tb_DelayBend);
             gb_Parameters.Controls.Add(tb_DelayBasic);
             gb_Parameters.Controls.Add(tb_NubmerOfCycles);
@@ -66,10 +74,29 @@ namespace CardTesterApp
             gb_Parameters.Controls.Add(label_NumberOfCycles);
             gb_Parameters.Location = new Point(12, 12);
             gb_Parameters.Name = "gb_Parameters";
-            gb_Parameters.Size = new Size(776, 186);
+            gb_Parameters.Size = new Size(776, 224);
             gb_Parameters.TabIndex = 0;
             gb_Parameters.TabStop = false;
             gb_Parameters.Text = "Test parameters";
+            // 
+            // text_ProtocolPath
+            // 
+            text_ProtocolPath.BorderStyle = BorderStyle.FixedSingle;
+            text_ProtocolPath.Location = new Point(235, 141);
+            text_ProtocolPath.Name = "text_ProtocolPath";
+            text_ProtocolPath.Size = new Size(526, 27);
+            text_ProtocolPath.TabIndex = 11;
+            text_ProtocolPath.TextChanged += text_ProtocolPath_TextChanged;
+            text_ProtocolPath.DoubleClick += text_ProtocolPath_DoubleClick;
+            // 
+            // label_ResultPath
+            // 
+            label_ResultPath.AutoSize = true;
+            label_ResultPath.Location = new Point(18, 144);
+            label_ResultPath.Name = "label_ResultPath";
+            label_ResultPath.Size = new Size(144, 20);
+            label_ResultPath.TabIndex = 10;
+            label_ResultPath.Text = "Result protocol path";
             // 
             // tb_DelayBend
             // 
@@ -141,7 +168,7 @@ namespace CardTesterApp
             gb_Test.Controls.Add(label_Cycle);
             gb_Test.Controls.Add(label_StateLabel);
             gb_Test.Controls.Add(lablel_CycleLabel);
-            gb_Test.Location = new Point(12, 204);
+            gb_Test.Location = new Point(12, 242);
             gb_Test.Name = "gb_Test";
             gb_Test.Size = new Size(776, 128);
             gb_Test.TabIndex = 1;
@@ -187,15 +214,15 @@ namespace CardTesterApp
             gb_Buttons.Controls.Add(btn_Stop);
             gb_Buttons.Controls.Add(btn_Run);
             gb_Buttons.Controls.Add(btn_Reset);
-            gb_Buttons.Location = new Point(12, 338);
+            gb_Buttons.Location = new Point(12, 366);
             gb_Buttons.Name = "gb_Buttons";
-            gb_Buttons.Size = new Size(776, 100);
+            gb_Buttons.Size = new Size(776, 72);
             gb_Buttons.TabIndex = 2;
             gb_Buttons.TabStop = false;
             // 
             // btn_Stop
             // 
-            btn_Stop.Location = new Point(667, 55);
+            btn_Stop.Location = new Point(667, 26);
             btn_Stop.Name = "btn_Stop";
             btn_Stop.Size = new Size(94, 29);
             btn_Stop.TabIndex = 4;
@@ -205,7 +232,7 @@ namespace CardTesterApp
             // 
             // btn_Run
             // 
-            btn_Run.Location = new Point(500, 55);
+            btn_Run.Location = new Point(498, 26);
             btn_Run.Name = "btn_Run";
             btn_Run.Size = new Size(94, 29);
             btn_Run.TabIndex = 3;
@@ -215,13 +242,29 @@ namespace CardTesterApp
             // 
             // btn_Reset
             // 
-            btn_Reset.Location = new Point(386, 55);
+            btn_Reset.Location = new Point(383, 26);
             btn_Reset.Name = "btn_Reset";
             btn_Reset.Size = new Size(94, 29);
             btn_Reset.TabIndex = 2;
             btn_Reset.Text = "Release";
             btn_Reset.UseVisualStyleBackColor = true;
             btn_Reset.Click += btn_Reset_Click;
+            // 
+            // label_Description
+            // 
+            label_Description.AutoSize = true;
+            label_Description.Location = new Point(18, 176);
+            label_Description.Name = "label_Description";
+            label_Description.Size = new Size(113, 20);
+            label_Description.TabIndex = 12;
+            label_Description.Text = "Test description";
+            // 
+            // textbox_Description
+            // 
+            textbox_Description.Location = new Point(235, 176);
+            textbox_Description.Name = "textbox_Description";
+            textbox_Description.Size = new Size(526, 27);
+            textbox_Description.TabIndex = 13;
             // 
             // TestingAppForm
             // 
@@ -233,7 +276,6 @@ namespace CardTesterApp
             Controls.Add(gb_Parameters);
             Name = "TestingAppForm";
             Text = "Form1";
-
             Load += TestingAppForm_Load;
             gb_Parameters.ResumeLayout(false);
             gb_Parameters.PerformLayout();
@@ -265,5 +307,9 @@ namespace CardTesterApp
 		private Label label_StateLabel;
 		private Label label_State;
         private Button btn_SetParameters;
+        private TextBox text_ProtocolPath;
+        private Label label_ResultPath;
+        private TextBox textbox_Description;
+        private Label label_Description;
     }
 }
