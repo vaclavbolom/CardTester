@@ -17,11 +17,13 @@ namespace CardTesterApp
 
         private object[]? _disabledDuringRunWidgets;
         private object[]? _disabledDuringStopWidgets;
+        private object[]? _disabledWhenStoppedWidgets;
 
         private System.Windows.Forms.Timer _timer;
 
 
         private bool Running { get; set; }
+        private bool Initialization { get; set; } = false;
 
         private int NumberOfCycles
         {
@@ -71,10 +73,17 @@ namespace CardTesterApp
                 tb_DelayBasic,
                 tb_DelayBend,
                 btn_Reset,
-                btn_Run
+                btn_Run,
+                text_ProtocolPath,
+                textbox_Description
             };
             _disabledDuringStopWidgets = new object[]
             {
+                btn_Stop
+            };
+            _disabledWhenStoppedWidgets = new object[]
+            {
+                btn_Run,
                 btn_Stop
             };
 
@@ -93,6 +102,12 @@ namespace CardTesterApp
                 UpdateMessage();
                 label_Cycle.Text = _cardTester.TestCycleIndex.ToString();
             }
+            else if (Initialization)
+            {
+                Initialization = false;
+                UpdateMessage();
+                SetWidgetsState();
+            }
         }
 
         public void UpdateMessage(string message = "")
@@ -105,6 +120,7 @@ namespace CardTesterApp
                         CardTesterConstants.STATE_STOPPED => "Stopped",
                         CardTesterConstants.STATE_DOWN => "Position DOWN",
                         CardTesterConstants.STATE_UP => "Position UP",
+                        CardTesterConstants.STATE_DOOR_OPEN => "Door opened",
                         _ => "Unknown"
                     }
                  : message;
@@ -123,6 +139,11 @@ namespace CardTesterApp
             CardTesterPreviousState = CardTesterState;
             CardTesterState = message;
 
+            if (Initialization && CardTesterState == CardTesterConstants.STATE_DOWN && CardTesterPreviousState != string.Empty)
+            {
+                Running = false;
+            }
+
             _logger.Debug($"Card Tester App state changed to {message}");
         }
 
@@ -130,35 +151,35 @@ namespace CardTesterApp
         {
             if (_disabledDuringRunWidgets != null)
             {
-
                 var desiredState = !Running;
-                foreach (var widget in _disabledDuringRunWidgets)
-                {
-                    if (widget is Button)
-                        ((Button)widget).Enabled = desiredState;
-                    if (widget is NumericUpDown)
-                        ((NumericUpDown)widget).Enabled = desiredState;
-                }
+                SetWidgets(_disabledDuringRunWidgets, desiredState);                
             }
 
             if (_disabledDuringStopWidgets != null)
             {
-
                 var desiredState = Running;
-                foreach (var widget in _disabledDuringStopWidgets)
-                {
-                    if (widget is Button)
-                        ((Button)widget).Enabled = desiredState;
-                    if (widget is NumericUpDown)
-                        ((NumericUpDown)widget).Enabled = desiredState;
-
-                }
+                SetWidgets(_disabledDuringStopWidgets, desiredState);               
             }
-            //if (!string.IsNullOrEmpty(Message)) {
-            //    label_State.Text = Message;
-            //}
+            if (_disabledWhenStoppedWidgets != null && CardTesterState == CardTesterConstants.STATE_STOPPED)
+            {
+                var desiredState = (CardTesterState == CardTesterConstants.STATE_STOPPED);
+                SetWidgets(_disabledWhenStoppedWidgets, desiredState);
+            }
+
         }
 
+        private void SetWidgets(object[] widgets, bool desiredState)
+        {
+            foreach (var widget in widgets)
+            {
+                if (widget is Button)
+                    ((Button)widget).Enabled = desiredState;
+                if (widget is NumericUpDown)
+                    ((NumericUpDown)widget).Enabled = desiredState;
+                if (widget is TextBox)
+                    ((TextBox)widget).Enabled = desiredState;
+            }
+        }
 
         private async Task DoReset()
         {
@@ -207,7 +228,8 @@ namespace CardTesterApp
             }
 
             Running = false;
-            UpdateMessage("Test finished");
+            if (CardTesterState != CardTesterConstants.STATE_STOPPED && CardTesterState != CardTesterConstants.STATE_DOOR_OPEN)
+                UpdateMessage("Test finished");
             SetWidgetsState();
         }
 
@@ -248,15 +270,15 @@ namespace CardTesterApp
             SetWidgetsState();
         }
 
-        private void label_State_Click(object sender, EventArgs e)
-        {
-
-        }
 
         private void TestingAppForm_Load(object sender, EventArgs e)
         {
+            Running = true;
+            Initialization = true;
+            _logger.Debug("Load form");
             var task = _cardTester.PrepareMeasurement();
             task.Wait(100);
+            _logger.Debug("after 100");
             UpdateMessage();
             SetWidgetsState();
             CardTesterPreviousState = CardTesterState;

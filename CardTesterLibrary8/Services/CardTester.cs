@@ -67,17 +67,21 @@ namespace CardTesterLibrary
         {
             if (StateEquals(CardTesterConstants.STATE_DOWN))
             {
+                var testInterrupted = false;
                 var testResult = _measurementService.MeasureCards();
                 testResult.Position = POSITION_BASIC;
                 _measurementRecorder.AddMeasurement(testResult);
 
                 for (int i = 0; i < numberOfCycles; i++)
                 {
+                    testInterrupted = (_State == CardTesterConstants.STATE_STOPPED || _State == CardTesterConstants.STATE_DOOR_OPEN);
+                    if (testInterrupted)
+                        break;
                     TestCycleIndex = i + 1;
                     await RunMeasurementCycleAsync(delayUp, delayDown);
                 }
-                //TODO: write test results
-                _measurementRecorder.SaveProtocol(outputPath, description);
+                if (!testInterrupted)
+                    _measurementRecorder.SaveProtocol(outputPath, description);
             }
             else
             {
@@ -86,9 +90,20 @@ namespace CardTesterLibrary
 
         }
 
-        public Task StopAsync()
-        {
-            return Task.Run(_serialPortOperator.Stop);
+        public async Task StopAsync()
+        {           
+            _serialPortOperator.RunCommand(CardTesterConstants.COMMAND_GET_STATE);
+            await Task.Delay(DELAY_COMMAND);
+            var state = _serialPortOperator.GetState();
+
+            _serialPortOperator.RunCommand(CardTesterConstants.COMMAND_STOP);
+            await Task.Delay(DELAY_COMMAND);
+            state = _serialPortOperator.GetState();
+            while (state != CardTesterConstants.STATE_STOPPED)
+            {
+                await Task.Delay(DELAY_COMMAND);
+                state = _serialPortOperator.GetState();
+            }
         }
 
         /// <summary>
@@ -176,6 +191,7 @@ namespace CardTesterLibrary
                 state = _serialPortOperator.GetState();
             }
             await ResetDownAsync();
+            _logger.Debug("Prepare measurement finished");
         }
 
         private bool StateEquals(string expectedState) => _State.Equals(expectedState);

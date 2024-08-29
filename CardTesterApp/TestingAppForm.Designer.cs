@@ -31,12 +31,13 @@ namespace CardTesterApp
         private void InitializeComponent()
         {
             gb_Parameters = new GroupBox();
+            textbox_Description = new TextBox();
+            label_Description = new Label();
             text_ProtocolPath = new TextBox();
             label_ResultPath = new Label();
             tb_DelayBend = new NumericUpDown();
             tb_DelayBasic = new NumericUpDown();
             tb_NubmerOfCycles = new NumericUpDown();
-            btn_SetParameters = new Button();
             label_DelayBend = new Label();
             label_DelayBasic = new Label();
             label_NumberOfCycles = new Label();
@@ -49,8 +50,6 @@ namespace CardTesterApp
             btn_Stop = new Button();
             btn_Run = new Button();
             btn_Reset = new Button();
-            label_Description = new Label();
-            textbox_Description = new TextBox();
             gb_Parameters.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)tb_DelayBend).BeginInit();
             ((System.ComponentModel.ISupportInitialize)tb_DelayBasic).BeginInit();
@@ -68,7 +67,6 @@ namespace CardTesterApp
             gb_Parameters.Controls.Add(tb_DelayBend);
             gb_Parameters.Controls.Add(tb_DelayBasic);
             gb_Parameters.Controls.Add(tb_NubmerOfCycles);
-            gb_Parameters.Controls.Add(btn_SetParameters);
             gb_Parameters.Controls.Add(label_DelayBend);
             gb_Parameters.Controls.Add(label_DelayBasic);
             gb_Parameters.Controls.Add(label_NumberOfCycles);
@@ -78,6 +76,22 @@ namespace CardTesterApp
             gb_Parameters.TabIndex = 0;
             gb_Parameters.TabStop = false;
             gb_Parameters.Text = "Test parameters";
+            // 
+            // textbox_Description
+            // 
+            textbox_Description.Location = new Point(235, 176);
+            textbox_Description.Name = "textbox_Description";
+            textbox_Description.Size = new Size(526, 27);
+            textbox_Description.TabIndex = 13;
+            // 
+            // label_Description
+            // 
+            label_Description.AutoSize = true;
+            label_Description.Location = new Point(18, 176);
+            label_Description.Name = "label_Description";
+            label_Description.Size = new Size(113, 20);
+            label_Description.TabIndex = 12;
+            label_Description.Text = "Test description";
             // 
             // text_ProtocolPath
             // 
@@ -125,15 +139,6 @@ namespace CardTesterApp
             tb_NubmerOfCycles.Name = "tb_NubmerOfCycles";
             tb_NubmerOfCycles.Size = new Size(97, 27);
             tb_NubmerOfCycles.TabIndex = 7;
-            // 
-            // btn_SetParameters
-            // 
-            btn_SetParameters.Location = new Point(458, 42);
-            btn_SetParameters.Name = "btn_SetParameters";
-            btn_SetParameters.Size = new Size(160, 90);
-            btn_SetParameters.TabIndex = 6;
-            btn_SetParameters.Text = "Set parameters";
-            btn_SetParameters.UseVisualStyleBackColor = true;
             // 
             // label_DelayBend
             // 
@@ -250,22 +255,6 @@ namespace CardTesterApp
             btn_Reset.UseVisualStyleBackColor = true;
             btn_Reset.Click += btn_Reset_Click;
             // 
-            // label_Description
-            // 
-            label_Description.AutoSize = true;
-            label_Description.Location = new Point(18, 176);
-            label_Description.Name = "label_Description";
-            label_Description.Size = new Size(113, 20);
-            label_Description.TabIndex = 12;
-            label_Description.Text = "Test description";
-            // 
-            // textbox_Description
-            // 
-            textbox_Description.Location = new Point(235, 176);
-            textbox_Description.Name = "textbox_Description";
-            textbox_Description.Size = new Size(526, 27);
-            textbox_Description.TabIndex = 13;
-            // 
             // TestingAppForm
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -306,7 +295,6 @@ namespace CardTesterApp
 		private Label label_Cycle;
 		private Label label_StateLabel;
 		private Label label_State;
-        private Button btn_SetParameters;
         private TextBox text_ProtocolPath;
         private Label label_ResultPath;
         private TextBox textbox_Description;
