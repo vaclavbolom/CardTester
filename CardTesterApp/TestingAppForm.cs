@@ -166,7 +166,9 @@ namespace CardTesterApp
         {
             var delayBendInMilliseconds = (int)(1000 * DelayBend);
             var delayBasicInMilliseconds = (int)(1000 * DelayBasic);
-            await _cardTester.RunTestAsync(NumberOfCycles, delayBendInMilliseconds, delayBasicInMilliseconds);
+            var outputDirectory = text_ProtocolPath.Text;
+            var description = textbox_Description.Text;
+            await _cardTester.RunTestAsync(NumberOfCycles, delayBendInMilliseconds, delayBasicInMilliseconds, outputDirectory, description);
             await Task.Delay(DELAY_COMMAND);
         }
 
