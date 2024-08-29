@@ -19,9 +19,9 @@ namespace CardTesterLibrary
 
         /// <summary>
         /// Saves results to file
-        /// </summary>
-        /// <param name="filePath"></param>
-        /// <param name="measurementDescription"></param>
-        void SaveProtocol(string filePath, string measurementDescription);
+        /// </summary>       
+        /// <param name="outputDirectory">directory for protocol</param>
+        /// <param name="description">measurement user description</param>
+        void SaveProtocol(string outputDirectory, string description);
     }
 }

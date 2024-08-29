@@ -13,16 +13,19 @@ namespace CardTesterLibrary
     {
         private const string DELIMITER = ",";
         private const string TIME_FORMAT = "yyyy-MM-ddTHH:mm:sszz";
+        private const string TIME_FORMAT_FILE = "yyyy-MM-ddTHHmmsszz";
 
         private readonly ILogger _logger;
 
         private List<Measurement> _measurements;
+       
 
         public MeasurementRecorder(ILogger logger)
         {
             ArgumentNullException.ThrowIfNull(logger, nameof(logger));
             _measurements = new List<Measurement>();
             _logger = logger;
+            
         }
         public void AddMeasurement(Measurement data)
         { 
@@ -31,16 +34,16 @@ namespace CardTesterLibrary
         }
        
 
-        public void SaveProtocol(string filePath, string measurementDescription)
+        public void SaveProtocol(string outputDirectory, string description)
         {            
             var timestamp = DateTime.Now;
-            var fileName = $"MeasurementProtocol-{timestamp.ToString(TIME_FORMAT)}";
+            var fileName = $"MeasurementProtocol-{timestamp.ToString(TIME_FORMAT_FILE)}";
+            
+            var filePath = Path.Exists(outputDirectory) ? Path.Combine(outputDirectory, fileName) : fileName;           
 
-            filePath = Path.Combine(filePath, fileName);
-
-            var descriptionLine = $"Description{DELIMITER}{measurementDescription}";
+            var descriptionLine = $"Description{DELIMITER}{description}{Environment.NewLine}";
             File.WriteAllText(filePath, descriptionLine);
-            string headerLine = $"timestamp{DELIMITER}card 1{DELIMITER}card 2{DELIMITER}card 3{DELIMITER}card 4";            
+            string headerLine = $"timestamp{DELIMITER}card 1{DELIMITER}card 2{DELIMITER}card 3{DELIMITER}card 4{Environment.NewLine}";            
             File.AppendAllText(filePath, headerLine);
             var results = _measurements
                 .Select(x => WriteMeasurement(x))

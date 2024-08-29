@@ -62,7 +62,7 @@ namespace CardTesterLibrary
             return;
         }
 
-        public async Task RunTestAsync(int numberOfCycles, int delayUp, int delayDown)
+        public async Task RunTestAsync(int numberOfCycles, int delayUp, int delayDown, string outputPath, string description)
         {
             if (StateEquals(CardTesterConstants.STATE_DOWN))
             {
@@ -75,6 +75,7 @@ namespace CardTesterLibrary
                     await RunMeasurementCycleAsync(delayUp, delayDown);
                 }
                 //TODO: write test results
+                _measurementRecorder.SaveProtocol(outputPath, description);
             }
             else
             {
