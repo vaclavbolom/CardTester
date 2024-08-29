@@ -40,7 +40,7 @@ namespace CardTesterApp
         private string Message { get; set; }
         private string CardTesterState { get; set; }
 
-        private string CardTesterPreviousState {  get; set; }
+        private string CardTesterPreviousState { get; set; }
 
 
         public TestingAppForm(ISerialPortOperator serialPortOperator, ICardTester cardTester, ILogger logger)
@@ -89,7 +89,7 @@ namespace CardTesterApp
         }
 
         public void UpdateMessage()
-        {           
+        {
             var labelMessage = CardTesterState switch
             {
                 CardTesterConstants.STATE_FORWARD => "Moving FORWARD",
@@ -245,13 +245,29 @@ namespace CardTesterApp
 
         private void TestingAppForm_Load(object sender, EventArgs e)
         {
-            var task =  _cardTester.PrepareMeasurement();
+            var task = _cardTester.PrepareMeasurement();
             task.Wait(100);
-            UpdateMessage(); 
+            UpdateMessage();
             SetWidgetsState();
             CardTesterPreviousState = CardTesterState;
         }
 
-        
+        private void text_ProtocolPath_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void text_ProtocolPath_DoubleClick(object sender, EventArgs e)
+        {
+            using (var fbd = new FolderBrowserDialog())
+            {
+                var result = fbd.ShowDialog();
+
+                if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.SelectedPath))
+                {
+                    text_ProtocolPath.Text = fbd.SelectedPath;
+                }
+            }
+        }
     }
 }
