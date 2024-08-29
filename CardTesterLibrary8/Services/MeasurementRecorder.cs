@@ -43,7 +43,7 @@ namespace CardTesterLibrary
 
             var descriptionLine = $"Description{DELIMITER}{description}{Environment.NewLine}";
             File.WriteAllText(filePath, descriptionLine);
-            string headerLine = $"timestamp{DELIMITER}card 1{DELIMITER}card 2{DELIMITER}card 3{DELIMITER}card 4{Environment.NewLine}";            
+            string headerLine = $"timestamp{DELIMITER}card 1{DELIMITER}card 2{DELIMITER}card 3{DELIMITER}card 4{DELIMITER}position{Environment.NewLine}";            
             File.AppendAllText(filePath, headerLine);
             var results = _measurements
                 .Select(x => WriteMeasurement(x))
@@ -53,7 +53,7 @@ namespace CardTesterLibrary
         }
 
         private string WriteMeasurement(Measurement x)
-            => $"{x.Timestamp.ToString(TIME_FORMAT)}{DELIMITER}{x.Card1}{DELIMITER}{x.Card2}{DELIMITER}{x.Card3}{DELIMITER}{x.Card4}";
+            => $"{x.Timestamp.ToString(TIME_FORMAT)}{DELIMITER}{x.Card1}{DELIMITER}{x.Card2}{DELIMITER}{x.Card3}{DELIMITER}{x.Card4}{DELIMITER}{x.Position}";
        
     }
 }

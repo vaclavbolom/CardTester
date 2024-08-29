@@ -11,7 +11,8 @@ namespace CardTesterLibrary
     {
 
         private const int DELAY_COMMAND = 20;
-
+        private const string POSITION_BASIC = "BASIC";
+        private const string POSITION_BENT = "BENT";
 
         private readonly ILogger _logger;
         private readonly ISerialPortOperator _serialPortOperator;
@@ -67,6 +68,7 @@ namespace CardTesterLibrary
             if (StateEquals(CardTesterConstants.STATE_DOWN))
             {
                 var testResult = _measurementService.MeasureCards();
+                testResult.Position = POSITION_BASIC;
                 _measurementRecorder.AddMeasurement(testResult);
 
                 for (int i = 0; i < numberOfCycles; i++)
@@ -100,10 +102,12 @@ namespace CardTesterLibrary
             await MoveForwardAsync();
             await Task.Delay(delayUp);
             var measurementResult = _measurementService.MeasureCards();
+            measurementResult.Position = POSITION_BENT;
             _measurementRecorder.AddMeasurement(measurementResult);
             await MoveBackwardAsync();
             await Task.Delay(delayDown);
             measurementResult = _measurementService.MeasureCards();
+            measurementResult.Position = POSITION_BASIC;
             _measurementRecorder.AddMeasurement(measurementResult);
         }
 
