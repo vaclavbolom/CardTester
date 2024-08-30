@@ -1,10 +1,11 @@
-// codo for Arduino
+//Code for Controllino, same as card_tester.ino, pin numbers set with Controllino constants
+#include <Controllino.h>
 
-const int PIN_UP = 5;
-const int PIN_DOWN = 6;
-const int PIN_FORWARD = 2;
-const int PIN_BACKWARD = 4;
-const int PIN_CLOSED = 7;
+const int PIN_UP = CONTROLLINO_A0;
+const int PIN_DOWN = CONTROLLINO_A1;
+const int PIN_FORWARD = CONTROLLINO_D2;
+const int PIN_BACKWARD = CONTROLLINO_D4;
+const int PIN_CLOSED = CONTROLLINO_A2;
 const char COMMAND_FORWARD = '1';
 const char COMMAND_BACKWARD = '2';
 const char COMMAND_STOP = '0';
