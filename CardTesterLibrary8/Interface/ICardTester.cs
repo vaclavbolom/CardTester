@@ -45,6 +45,20 @@ namespace CardTesterLibrary
 
 
         /// <summary>
+        /// Bends the card
+        /// </summary>
+        /// <returns></returns>
+        public Task MoveForwardAsync();
+
+
+        /// <summary>
+        /// Unbends the card
+        /// </summary>
+        /// <returns></returns>
+        public Task MoveBackwardAsync();
+
+
+        /// <summary>
         /// Counter of test cycles
         /// </summary>
         public int TestCycleIndex { get; }

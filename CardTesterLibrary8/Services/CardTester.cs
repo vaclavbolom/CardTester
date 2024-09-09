@@ -126,7 +126,7 @@ namespace CardTesterLibrary
             _measurementRecorder.AddMeasurement(measurementResult);
         }
 
-        private async Task MoveForwardAsync()
+        public async Task MoveForwardAsync()
         {
             var movingStates = new string[] { CardTesterConstants.STATE_FORWARD, CardTesterConstants.STATE_STOPPED };
 
@@ -148,7 +148,7 @@ namespace CardTesterLibrary
             return;
         }
 
-        private async Task MoveBackwardAsync()
+        public async Task MoveBackwardAsync()
         {
             if (StateEquals(CardTesterConstants.STATE_UP))
             {
@@ -199,5 +199,6 @@ namespace CardTesterLibrary
         private void ProcessStateChanged(string message) => _State = message;
 
         private void ProcessPortOperatorState(string message) => PortOperatorState = message;
+        
     }
 }
