@@ -25,6 +25,13 @@ namespace CardTesterLibrary
 
         public int TestCycleIndex { get; private set; }
 
+        /// <summary>
+        /// Creates instance of CardTester
+        /// </summary>
+        /// <param name="logger"></param>
+        /// <param name="serialPortOperator"></param>
+        /// <param name="measurementService"></param>
+        /// <param name="measuremntRecorder"></param>
         public CardTester(ILogger logger, ISerialPortOperator serialPortOperator, IMeasurementService measurementService, IMeasurementRecorder measuremntRecorder)
         {
             ArgumentNullException.ThrowIfNull(logger, nameof(logger));
@@ -39,12 +46,22 @@ namespace CardTesterLibrary
             _measurementRecorder = measuremntRecorder;
             _State = CardTesterConstants.STATE_UNKNOWN;
 
-            //Task.Run(() => _SerialPortOperator.Run(ProcessStateChanged));
-            var task = _serialPortOperator.Run(ProcessStateChanged);
-            Task.Delay(100);
+            try
+            {
+                //Task.Run(() => _SerialPortOperator.Run(ProcessStateChanged));
+                var task = _serialPortOperator.Run(ProcessStateChanged);
+                task.Wait();
+                Task.Delay(100);
+            }
+            catch (SerialPOrtOperatorException e)
+            {
+                _logger.Error($"Card tester failed to start: {e.Message}");
+                _State = CardTesterConstants.STATE_ERROR;
+            }
 
         }
 
+        /// <inheritdoc />
         public async Task ResetDownAsync()
         {            
             if (StateEquals(CardTesterConstants.STATE_STOPPED) || StateEquals(CardTesterConstants.STATE_UNKNOWN))
@@ -63,6 +80,8 @@ namespace CardTesterLibrary
             return;
         }
 
+
+        /// <inheritdoc />
         public async Task RunTestAsync(int numberOfCycles, int delayUp, int delayDown, string outputPath, string description)
         {
             if (StateEquals(CardTesterConstants.STATE_DOWN))
@@ -90,6 +109,8 @@ namespace CardTesterLibrary
 
         }
 
+
+        /// <inheritdoc />
         public async Task StopAsync()
         {           
             _serialPortOperator.RunCommand(CardTesterConstants.COMMAND_GET_STATE);
@@ -126,20 +147,17 @@ namespace CardTesterLibrary
             _measurementRecorder.AddMeasurement(measurementResult);
         }
 
-        public async Task MoveForwardAsync()
-        {
-            var movingStates = new string[] { CardTesterConstants.STATE_FORWARD, CardTesterConstants.STATE_STOPPED };
 
+        /// <summary>
+        /// Bends the card
+        /// </summary>
+        /// <returns></returns>
+        private async Task MoveForwardAsync()
+        {           
             //read state
             if (StateEquals(CardTesterConstants.STATE_DOWN))
             {
-                await _serialPortOperator.RunCommandAsync(CardTesterConstants.COMMAND_MOVE_FORWARD);
-                await Task.Delay(DELAY_COMMAND);
-
-                while ( StateEquals(CardTesterConstants.STATE_FORWARD))
-                {
-                    await Task.Delay(DELAY_COMMAND);
-                }
+                await MoveForwardUnsafeAsync();
             }
             else
             {
@@ -148,22 +166,44 @@ namespace CardTesterLibrary
             return;
         }
 
-        public async Task MoveBackwardAsync()
+        /// <summary>
+        /// Unbends the card
+        /// </summary>
+        /// <returns></returns>
+        private async Task MoveBackwardAsync()
         {
             if (StateEquals(CardTesterConstants.STATE_UP))
             {
-                await _serialPortOperator.RunCommandAsync(CardTesterConstants.COMMAND_MOVE_BACKWARD);
-                await Task.Delay(DELAY_COMMAND);
-                while( StateEquals(CardTesterConstants.STATE_BACKWARD))
-                {
-                    await Task.Delay(0);
-                }
+                await MoveBackwardUnsafeAsync();
             }
             else
             {
                 _logger.Information($"Cannot move backward, state = {_State}");
             }
             return;
+        }
+
+        /// <inheritdoc />
+        public async Task MoveForwardUnsafeAsync()
+        {
+            await _serialPortOperator.RunCommandAsync(CardTesterConstants.COMMAND_MOVE_FORWARD);
+            await Task.Delay(DELAY_COMMAND);
+
+            while (StateEquals(CardTesterConstants.STATE_FORWARD))
+            {
+                await Task.Delay(DELAY_COMMAND);
+            }
+        }
+
+        /// <inheritdoc />
+        public async Task MoveBackwardUnsafeAsync()
+        {
+            await _serialPortOperator.RunCommandAsync(CardTesterConstants.COMMAND_MOVE_BACKWARD);
+            await Task.Delay(DELAY_COMMAND);
+            while (StateEquals(CardTesterConstants.STATE_BACKWARD))
+            {
+                await Task.Delay(0);
+            }
         }
 
         private async Task MeasureAsync()
@@ -198,7 +238,6 @@ namespace CardTesterLibrary
 
         private void ProcessStateChanged(string message) => _State = message;
 
-        private void ProcessPortOperatorState(string message) => PortOperatorState = message;
-        
+        private void ProcessPortOperatorState(string message) => PortOperatorState = message;        
     }
 }
