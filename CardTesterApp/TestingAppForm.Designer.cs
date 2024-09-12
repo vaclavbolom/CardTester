@@ -47,11 +47,14 @@ namespace CardTesterApp
             label_StateLabel = new Label();
             lablel_CycleLabel = new Label();
             gb_Buttons = new GroupBox();
+            btn_Unbend = new Button();
+            btn_Bend = new Button();
             btn_Stop = new Button();
             btn_Run = new Button();
             btn_Reset = new Button();
-            btn_Bend = new Button();
-            btn_Unbend = new Button();
+            btn_Calibration = new Button();
+            comboBox1 = new ComboBox();
+            label_CardType = new Label();
             gb_Parameters.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)tb_DelayBend).BeginInit();
             ((System.ComponentModel.ISupportInitialize)tb_DelayBasic).BeginInit();
@@ -62,6 +65,8 @@ namespace CardTesterApp
             // 
             // gb_Parameters
             // 
+            gb_Parameters.Controls.Add(label_CardType);
+            gb_Parameters.Controls.Add(comboBox1);
             gb_Parameters.Controls.Add(textbox_Description);
             gb_Parameters.Controls.Add(label_Description);
             gb_Parameters.Controls.Add(text_ProtocolPath);
@@ -218,6 +223,7 @@ namespace CardTesterApp
             // 
             // gb_Buttons
             // 
+            gb_Buttons.Controls.Add(btn_Calibration);
             gb_Buttons.Controls.Add(btn_Unbend);
             gb_Buttons.Controls.Add(btn_Bend);
             gb_Buttons.Controls.Add(btn_Stop);
@@ -228,6 +234,24 @@ namespace CardTesterApp
             gb_Buttons.Size = new Size(776, 72);
             gb_Buttons.TabIndex = 2;
             gb_Buttons.TabStop = false;
+            // 
+            // btn_Unbend
+            // 
+            btn_Unbend.Location = new Point(142, 26);
+            btn_Unbend.Name = "btn_Unbend";
+            btn_Unbend.Size = new Size(94, 29);
+            btn_Unbend.TabIndex = 6;
+            btn_Unbend.Text = "Unbend";
+            btn_Unbend.UseVisualStyleBackColor = true;
+            // 
+            // btn_Bend
+            // 
+            btn_Bend.Location = new Point(24, 26);
+            btn_Bend.Name = "btn_Bend";
+            btn_Bend.Size = new Size(94, 29);
+            btn_Bend.TabIndex = 5;
+            btn_Bend.Text = "Bend";
+            btn_Bend.UseVisualStyleBackColor = true;
             // 
             // btn_Stop
             // 
@@ -241,7 +265,7 @@ namespace CardTesterApp
             // 
             // btn_Run
             // 
-            btn_Run.Location = new Point(529, 26);
+            btn_Run.Location = new Point(567, 26);
             btn_Run.Name = "btn_Run";
             btn_Run.Size = new Size(94, 29);
             btn_Run.TabIndex = 3;
@@ -251,7 +275,7 @@ namespace CardTesterApp
             // 
             // btn_Reset
             // 
-            btn_Reset.Location = new Point(383, 26);
+            btn_Reset.Location = new Point(467, 26);
             btn_Reset.Name = "btn_Reset";
             btn_Reset.Size = new Size(94, 29);
             btn_Reset.TabIndex = 2;
@@ -259,23 +283,34 @@ namespace CardTesterApp
             btn_Reset.UseVisualStyleBackColor = true;
             btn_Reset.Click += btn_Reset_Click;
             // 
-            // btn_Bend
+            // btn_Calibration
             // 
-            btn_Bend.Location = new Point(24, 26);
-            btn_Bend.Name = "btn_Bend";
-            btn_Bend.Size = new Size(94, 29);
-            btn_Bend.TabIndex = 5;
-            btn_Bend.Text = "Bend";
-            btn_Bend.UseVisualStyleBackColor = true;
+            btn_Calibration.Location = new Point(367, 26);
+            btn_Calibration.Name = "btn_Calibration";
+            btn_Calibration.Size = new Size(94, 29);
+            btn_Calibration.TabIndex = 7;
+            btn_Calibration.Text = "Calibration";
+            btn_Calibration.UseVisualStyleBackColor = true;
+            btn_Calibration.Click += button1_Click;
             // 
-            // btn_Unbend
+            // comboBox1
             // 
-            btn_Unbend.Location = new Point(142, 26);
-            btn_Unbend.Name = "btn_Unbend";
-            btn_Unbend.Size = new Size(94, 29);
-            btn_Unbend.TabIndex = 6;
-            btn_Unbend.Text = "Unbend";
-            btn_Unbend.UseVisualStyleBackColor = true;
+            comboBox1.FormattingEnabled = true;
+            comboBox1.Items.AddRange(new object[] { "Card1", "Card2", "Card3" });
+            comboBox1.Location = new Point(610, 42);
+            comboBox1.Name = "comboBox1";
+            comboBox1.Size = new Size(151, 28);
+            comboBox1.TabIndex = 14;
+            // 
+            // label_CardType
+            // 
+            label_CardType.AutoSize = true;
+            label_CardType.Location = new Point(531, 45);
+            label_CardType.Name = "label_CardType";
+            label_CardType.Size = new Size(76, 20);
+            label_CardType.TabIndex = 15;
+            label_CardType.Text = "Card type:";
+            label_CardType.Click += label1_Click;
             // 
             // TestingAppForm
             // 
@@ -323,5 +358,8 @@ namespace CardTesterApp
         private Label label_Description;
         private Button btn_Unbend;
         private Button btn_Bend;
+        private Button btn_Calibration;
+        private Label label_CardType;
+        private ComboBox comboBox1;
     }
 }
