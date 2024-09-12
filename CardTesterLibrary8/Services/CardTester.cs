@@ -53,7 +53,12 @@ namespace CardTesterLibrary
                 task.Wait();
                 Task.Delay(100);
             }
-            catch (SerialPOrtOperatorException e)
+            catch (SerialPortOperatorException e)
+            {
+                _logger.Error($"Card tester failed to start: {e.Message}");
+                _State = CardTesterConstants.STATE_ERROR;
+            }
+            catch (Exception e)
             {
                 _logger.Error($"Card tester failed to start: {e.Message}");
                 _State = CardTesterConstants.STATE_ERROR;

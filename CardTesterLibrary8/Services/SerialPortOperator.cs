@@ -56,13 +56,13 @@ namespace CardTesterLibrary
                 catch (UnauthorizedAccessException ex)
                 {
                     _Logger.Error($"{ex.Message} ({ex.GetType().Name})");
-                    throw new SerialPOrtOperatorException("Unauthorized access - serial port is probably being used by another application");
+                    throw new SerialPortOperatorException("Unauthorized access - serial port is probably being used by another application");
                 }
                 catch (FileNotFoundException ex)
                 {
                     var message = $"Cannot connect to serial port: {ex.Message}";
                     _Logger.Error(message);
-                    throw new SerialPOrtOperatorException(message);
+                    throw new SerialPortOperatorException(message);
                 }
                 catch (Exception ex)
                 {
