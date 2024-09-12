@@ -7,17 +7,17 @@ using System.Threading.Tasks;
 
 namespace CardTesterLibrary
 {
-    public class SerialPOrtOperatorException : Exception
+    public class SerialPortOperatorException : Exception
     {
-        public SerialPOrtOperatorException()
+        public SerialPortOperatorException()
         {
         }
 
-        public SerialPOrtOperatorException(string? message) : base(message)
+        public SerialPortOperatorException(string? message) : base(message)
         {
         }
 
-        public SerialPOrtOperatorException(string? message, Exception? innerException) : base(message, innerException)
+        public SerialPortOperatorException(string? message, Exception? innerException) : base(message, innerException)
         {
         }     
     }
