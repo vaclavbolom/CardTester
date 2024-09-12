@@ -50,6 +50,8 @@ namespace CardTesterApp
             btn_Stop = new Button();
             btn_Run = new Button();
             btn_Reset = new Button();
+            btn_Bend = new Button();
+            btn_Unbend = new Button();
             gb_Parameters.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)tb_DelayBend).BeginInit();
             ((System.ComponentModel.ISupportInitialize)tb_DelayBasic).BeginInit();
@@ -216,6 +218,8 @@ namespace CardTesterApp
             // 
             // gb_Buttons
             // 
+            gb_Buttons.Controls.Add(btn_Unbend);
+            gb_Buttons.Controls.Add(btn_Bend);
             gb_Buttons.Controls.Add(btn_Stop);
             gb_Buttons.Controls.Add(btn_Run);
             gb_Buttons.Controls.Add(btn_Reset);
@@ -237,7 +241,7 @@ namespace CardTesterApp
             // 
             // btn_Run
             // 
-            btn_Run.Location = new Point(498, 26);
+            btn_Run.Location = new Point(529, 26);
             btn_Run.Name = "btn_Run";
             btn_Run.Size = new Size(94, 29);
             btn_Run.TabIndex = 3;
@@ -254,6 +258,24 @@ namespace CardTesterApp
             btn_Reset.Text = "Release";
             btn_Reset.UseVisualStyleBackColor = true;
             btn_Reset.Click += btn_Reset_Click;
+            // 
+            // btn_Bend
+            // 
+            btn_Bend.Location = new Point(24, 26);
+            btn_Bend.Name = "btn_Bend";
+            btn_Bend.Size = new Size(94, 29);
+            btn_Bend.TabIndex = 5;
+            btn_Bend.Text = "Bend";
+            btn_Bend.UseVisualStyleBackColor = true;
+            // 
+            // btn_Unbend
+            // 
+            btn_Unbend.Location = new Point(142, 26);
+            btn_Unbend.Name = "btn_Unbend";
+            btn_Unbend.Size = new Size(94, 29);
+            btn_Unbend.TabIndex = 6;
+            btn_Unbend.Text = "Unbend";
+            btn_Unbend.UseVisualStyleBackColor = true;
             // 
             // TestingAppForm
             // 
@@ -299,5 +321,7 @@ namespace CardTesterApp
         private Label label_ResultPath;
         private TextBox textbox_Description;
         private Label label_Description;
+        private Button btn_Unbend;
+        private Button btn_Bend;
     }
 }

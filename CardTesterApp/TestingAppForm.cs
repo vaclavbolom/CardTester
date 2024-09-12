@@ -114,15 +114,15 @@ namespace CardTesterApp
         {
             var labelMessage = (message.Equals(string.Empty))
                 ? CardTesterState switch
-                    {
-                        CardTesterConstants.STATE_FORWARD => "Moving FORWARD",
-                        CardTesterConstants.STATE_BACKWARD => "Moving BACKWARD",
-                        CardTesterConstants.STATE_STOPPED => "Stopped",
-                        CardTesterConstants.STATE_DOWN => "Position DOWN",
-                        CardTesterConstants.STATE_UP => "Position UP",
-                        CardTesterConstants.STATE_DOOR_OPEN => "Door opened",
-                        _ => "Unknown"
-                    }
+                {
+                    CardTesterConstants.STATE_FORWARD => "Moving FORWARD",
+                    CardTesterConstants.STATE_BACKWARD => "Moving BACKWARD",
+                    CardTesterConstants.STATE_STOPPED => "Stopped",
+                    CardTesterConstants.STATE_DOWN => "Position DOWN",
+                    CardTesterConstants.STATE_UP => "Position UP",
+                    CardTesterConstants.STATE_DOOR_OPEN => "Door opened",
+                    _ => "Unknown"
+                }
                  : message;
 
             if (label_State.Text.Equals(labelMessage.ToString()))
@@ -152,13 +152,13 @@ namespace CardTesterApp
             if (_disabledDuringRunWidgets != null)
             {
                 var desiredState = !Running;
-                SetWidgets(_disabledDuringRunWidgets, desiredState);                
+                SetWidgets(_disabledDuringRunWidgets, desiredState);
             }
 
             if (_disabledDuringStopWidgets != null)
             {
                 var desiredState = Running;
-                SetWidgets(_disabledDuringStopWidgets, desiredState);               
+                SetWidgets(_disabledDuringStopWidgets, desiredState);
             }
             if (_disabledWhenStoppedWidgets != null && CardTesterState == CardTesterConstants.STATE_STOPPED)
             {
