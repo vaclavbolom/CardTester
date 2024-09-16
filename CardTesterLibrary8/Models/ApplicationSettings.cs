@@ -17,5 +17,9 @@ namespace CardTesterLibrary
         public decimal DelayBasic { get; set; }
 
         public decimal DelayBent { get; set; }
+
+        public IList<string> CardTypes { get; set; } = new List<string>();
+
+        public int CalibrationValidityInHours { get; set; }
     }
 }

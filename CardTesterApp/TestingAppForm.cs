@@ -44,6 +44,8 @@ namespace CardTesterApp
 
         private string CardTesterPreviousState { get; set; }
 
+        private DateTime CalibrationStamp { get; set; }
+
 
         public TestingAppForm(ISerialPortOperator serialPortOperator, ICardTester cardTester, ILogger logger, ApplicationSettings settings)
         {
@@ -57,6 +59,8 @@ namespace CardTesterApp
             _timer.Tick += new EventHandler(StateEventProcessor);
             _timer.Start();
 
+            CalibrationStamp = DateTime.MinValue;
+
             _logger.Debug("Form created");
             CardTesterState = _serialPortOperator.GetState();
 
@@ -65,6 +69,13 @@ namespace CardTesterApp
             tb_DelayBasic.Value = _settings.DelayBasic;
             tb_DelayBend.Value = _settings.DelayBent;
             text_ProtocolPath.Text = _settings.OutputDirectory;
+            label_Calibration.Text = AppConstants.CALIBRATION_NOT_SET;
+            foreach (var item in _settings.CardTypes)
+            {
+                cb_CardType.Items.Add(item);
+            }
+
+            cb_CardType.SelectedIndex = 0;
             Running = false;
 
             _disabledDuringRunWidgets = new object[]
@@ -308,6 +319,11 @@ namespace CardTesterApp
         }
 
         private void label1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label1_Click_1(object sender, EventArgs e)
         {
 
         }
