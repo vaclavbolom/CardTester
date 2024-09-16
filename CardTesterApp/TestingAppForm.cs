@@ -119,6 +119,36 @@ namespace CardTesterApp
                 UpdateMessage();
                 SetWidgetsState();
             }
+
+            CheckCalibration();
+        }
+
+        private void CheckCalibration()
+        {
+            var currentStamp = DateTime.Now;
+            var calibrationLabel = string.Empty;
+            var CalibrationValid = (CalibrationStamp > currentStamp);
+            if (!CalibrationValid)
+            {
+                calibrationLabel = (CalibrationStamp.Equals(DateTime.MinValue))
+                    ? AppConstants.CALIBRATION_NOT_SET
+                    : AppConstants.CALIBRATION_EXPIRED;
+            }
+            else
+            {
+                calibrationLabel = AppConstants.CALIBRATION_OK;
+            }
+            if (!label_Calibration.Equals(calibrationLabel))
+            {
+                label_Calibration.Text = calibrationLabel;
+                label_Calibration.ForeColor = CalibrationValid ? Color.Green : Color.Red;
+            }
+        }
+
+        private void Calibrate()
+        {
+            CalibrationStamp = DateTime.Now.AddHours(_settings.CalibrationValidityInHours);
+            //TODO: interact with smart card reader, set up to initial position
         }
 
         public void UpdateMessage(string message = "")
@@ -313,19 +343,9 @@ namespace CardTesterApp
             }
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void btn_Calibration_Click(object sender, EventArgs e)
         {
-
-        }
-
-        private void label1_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label1_Click_1(object sender, EventArgs e)
-        {
-
+            Calibrate();
         }
     }
 }

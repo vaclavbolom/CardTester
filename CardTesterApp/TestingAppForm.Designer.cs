@@ -93,7 +93,7 @@ namespace CardTesterApp
             label_CardType.Size = new Size(76, 20);
             label_CardType.TabIndex = 15;
             label_CardType.Text = "Card type:";
-            label_CardType.Click += label1_Click;
+          
             // 
             // cb_CardType
             // 
@@ -213,8 +213,7 @@ namespace CardTesterApp
             label_Calibration.Name = "label_Calibration";
             label_Calibration.Size = new Size(50, 20);
             label_Calibration.TabIndex = 4;
-            label_Calibration.Text = "label1";
-            label_Calibration.Click += label1_Click_1;
+            label_Calibration.Text = "label1";            
             // 
             // label_State
             // 
@@ -272,7 +271,7 @@ namespace CardTesterApp
             btn_Calibration.TabIndex = 7;
             btn_Calibration.Text = "Calibration";
             btn_Calibration.UseVisualStyleBackColor = true;
-            btn_Calibration.Click += button1_Click;
+            btn_Calibration.Click += btn_Calibration_Click;
             // 
             // btn_Unbend
             // 
