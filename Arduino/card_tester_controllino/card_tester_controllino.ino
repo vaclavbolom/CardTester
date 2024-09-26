@@ -4,7 +4,7 @@
 const int PIN_UP = CONTROLLINO_A0;
 const int PIN_DOWN = CONTROLLINO_A1;
 const int PIN_FORWARD = CONTROLLINO_D2;
-const int PIN_BACKWARD = CONTROLLINO_D4;
+const int PIN_BACKWARD = CONTROLLINO_D0;
 const int PIN_CLOSED = CONTROLLINO_A2;
 const char COMMAND_FORWARD = '1';
 const char COMMAND_BACKWARD = '2';
@@ -55,10 +55,11 @@ void loop() {
   char data = ' ';
   int switch_up = digitalRead(PIN_UP);
   int switch_down = digitalRead(PIN_DOWN);
-  float switch_closed = digitalRead(PIN_CLOSED);
+  int switch_closed = !digitalRead(PIN_CLOSED);
 
   if (DEBUG){      
       Serial.println("---- LOOP ----");
+      Serial.print("switch closed: ");
       Serial.println(switch_closed);
   }
   if (Serial.available())
@@ -138,6 +139,7 @@ void loop() {
 
   if ((switch_down == HIGH) && (state == STATE_MOVING_BACKWARD))
   {
+    delay(200);
     digitalWrite(PIN_FORWARD, LOW);
     digitalWrite(PIN_BACKWARD, LOW);
     state = STATE_DOWN;
