@@ -8,7 +8,7 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
-  int myInput = digitalRead(CONTROLLINO_A0);
+  int myInput = !digitalRead(CONTROLLINO_A0);
   Serial.print("Input value: ");
   Serial.println(myInput);
   delay(500);
