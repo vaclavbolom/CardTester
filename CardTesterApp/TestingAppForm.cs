@@ -44,6 +44,8 @@ namespace CardTesterApp
 
         private string CardTesterPreviousState { get; set; }
 
+        private DateTime CalibrationStamp { get; set; }
+
 
         public TestingAppForm(ISerialPortOperator serialPortOperator, ICardTester cardTester, ILogger logger, ApplicationSettings settings)
         {
@@ -57,6 +59,8 @@ namespace CardTesterApp
             _timer.Tick += new EventHandler(StateEventProcessor);
             _timer.Start();
 
+            CalibrationStamp = DateTime.MinValue;
+
             _logger.Debug("Form created");
             CardTesterState = _serialPortOperator.GetState();
 
@@ -65,6 +69,13 @@ namespace CardTesterApp
             tb_DelayBasic.Value = _settings.DelayBasic;
             tb_DelayBend.Value = _settings.DelayBent;
             text_ProtocolPath.Text = _settings.OutputDirectory;
+            label_Calibration.Text = AppConstants.CALIBRATION_NOT_SET;
+            foreach (var item in _settings.CardTypes)
+            {
+                cb_CardType.Items.Add(item);
+            }
+
+            cb_CardType.SelectedIndex = 0;
             Running = false;
 
             _disabledDuringRunWidgets = new object[]
@@ -108,21 +119,51 @@ namespace CardTesterApp
                 UpdateMessage();
                 SetWidgetsState();
             }
+
+            CheckCalibration();
+        }
+
+        private void CheckCalibration()
+        {
+            var currentStamp = DateTime.Now;
+            var calibrationLabel = string.Empty;
+            var CalibrationValid = (CalibrationStamp > currentStamp);
+            if (!CalibrationValid)
+            {
+                calibrationLabel = (CalibrationStamp.Equals(DateTime.MinValue))
+                    ? AppConstants.CALIBRATION_NOT_SET
+                    : AppConstants.CALIBRATION_EXPIRED;
+            }
+            else
+            {
+                calibrationLabel = AppConstants.CALIBRATION_OK;
+            }
+            if (!label_Calibration.Equals(calibrationLabel))
+            {
+                label_Calibration.Text = calibrationLabel;
+                label_Calibration.ForeColor = CalibrationValid ? Color.Green : Color.Red;
+            }
+        }
+
+        private void Calibrate()
+        {
+            CalibrationStamp = DateTime.Now.AddHours(_settings.CalibrationValidityInHours);
+            //TODO: interact with smart card reader, set up to initial position
         }
 
         public void UpdateMessage(string message = "")
         {
             var labelMessage = (message.Equals(string.Empty))
                 ? CardTesterState switch
-                    {
-                        CardTesterConstants.STATE_FORWARD => "Moving FORWARD",
-                        CardTesterConstants.STATE_BACKWARD => "Moving BACKWARD",
-                        CardTesterConstants.STATE_STOPPED => "Stopped",
-                        CardTesterConstants.STATE_DOWN => "Position DOWN",
-                        CardTesterConstants.STATE_UP => "Position UP",
-                        CardTesterConstants.STATE_DOOR_OPEN => "Door opened",
-                        _ => "Unknown"
-                    }
+                {
+                    CardTesterConstants.STATE_FORWARD => "Moving FORWARD",
+                    CardTesterConstants.STATE_BACKWARD => "Moving BACKWARD",
+                    CardTesterConstants.STATE_STOPPED => "Stopped",
+                    CardTesterConstants.STATE_DOWN => "Position DOWN",
+                    CardTesterConstants.STATE_UP => "Position UP",
+                    CardTesterConstants.STATE_DOOR_OPEN => "Door opened",
+                    _ => "Unknown"
+                }
                  : message;
 
             if (label_State.Text.Equals(labelMessage.ToString()))
@@ -152,13 +193,13 @@ namespace CardTesterApp
             if (_disabledDuringRunWidgets != null)
             {
                 var desiredState = !Running;
-                SetWidgets(_disabledDuringRunWidgets, desiredState);                
+                SetWidgets(_disabledDuringRunWidgets, desiredState);
             }
 
             if (_disabledDuringStopWidgets != null)
             {
                 var desiredState = Running;
-                SetWidgets(_disabledDuringStopWidgets, desiredState);               
+                SetWidgets(_disabledDuringStopWidgets, desiredState);
             }
             if (_disabledWhenStoppedWidgets != null && CardTesterState == CardTesterConstants.STATE_STOPPED)
             {
@@ -300,6 +341,11 @@ namespace CardTesterApp
                     text_ProtocolPath.Text = fbd.SelectedPath;
                 }
             }
+        }
+
+        private void btn_Calibration_Click(object sender, EventArgs e)
+        {
+            Calibrate();
         }
     }
 }

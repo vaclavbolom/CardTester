@@ -45,6 +45,22 @@ namespace CardTesterLibrary
 
 
         /// <summary>
+        /// Bends the card. Does not check initial position. 
+        /// For maintanance operation.
+        /// </summary>
+        /// <returns></returns>
+        public Task MoveForwardUnsafeAsync();
+
+
+        /// <summary>
+        /// Unbends the card. Doues not check initial state.
+        /// For maintanance operation.
+        /// </summary>
+        /// <returns></returns>
+        public Task MoveBackwardUnsafeAsync();
+
+
+        /// <summary>
         /// Counter of test cycles
         /// </summary>
         public int TestCycleIndex { get; }
