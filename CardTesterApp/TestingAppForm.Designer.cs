@@ -264,7 +264,7 @@ namespace CardTesterApp
             Controls.Add(gb_Test);
             Controls.Add(gb_Parameters);
             Name = "TestingAppForm";
-            Text = "Form1";
+            Text = "Bending Machine Operator";
             Load += TestingAppForm_Load;
             gb_Parameters.ResumeLayout(false);
             gb_Parameters.PerformLayout();
