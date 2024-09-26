@@ -37,7 +37,7 @@ namespace CardTesterLibrary
         public void SaveProtocol(string outputDirectory, string description)
         {            
             var timestamp = DateTime.Now;
-            var fileName = $"MeasurementProtocol-{timestamp.ToString(TIME_FORMAT_FILE)}";
+            var fileName = $"MeasurementProtocol-{timestamp.ToString(TIME_FORMAT_FILE)}.csv";
             
             var filePath = Path.Exists(outputDirectory) ? Path.Combine(outputDirectory, fileName) : fileName;           
 
