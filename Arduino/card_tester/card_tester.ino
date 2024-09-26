@@ -54,7 +54,7 @@ void loop() {
   char data = ' ';
   int switch_up = digitalRead(PIN_UP);
   int switch_down = digitalRead(PIN_DOWN);
-  float switch_closed = digitalRead(PIN_CLOSED);
+  int switch_closed = !digitalRead(PIN_CLOSED);
 
   if (DEBUG){      
       Serial.println("---- LOOP ----");
