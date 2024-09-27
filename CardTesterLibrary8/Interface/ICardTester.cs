@@ -23,10 +23,16 @@ namespace CardTesterLibrary
         public Task RunTestAsync(int numberOfCycles, int delayUp, int delayDown, string outputPath, string description);
 
         /// <summary>
-        /// Moves piston to lower position in case it is stopped.
+        /// Moves piston to lower position in case it is stopped. (unbend)
         /// </summary>
         /// <returns></returns>
         public Task ResetDownAsync();
+
+        /// <summary>
+        /// Moves piston to upper position in case it is stopped. (bend)
+        /// </summary>
+        /// <returns></returns>
+        public Task ResetUpAsync();
 
         /// <summary>
         /// Stops piston movement.

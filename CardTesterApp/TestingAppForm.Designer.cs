@@ -78,9 +78,11 @@ namespace CardTesterApp
             gb_Parameters.Controls.Add(label_DelayBend);
             gb_Parameters.Controls.Add(label_DelayBasic);
             gb_Parameters.Controls.Add(label_NumberOfCycles);
-            gb_Parameters.Location = new Point(12, 12);
+            gb_Parameters.Location = new Point(10, 9);
+            gb_Parameters.Margin = new Padding(3, 2, 3, 2);
             gb_Parameters.Name = "gb_Parameters";
-            gb_Parameters.Size = new Size(776, 224);
+            gb_Parameters.Padding = new Padding(3, 2, 3, 2);
+            gb_Parameters.Size = new Size(679, 168);
             gb_Parameters.TabIndex = 0;
             gb_Parameters.TabStop = false;
             gb_Parameters.Text = "Test parameters";
@@ -88,42 +90,44 @@ namespace CardTesterApp
             // label_CardType
             // 
             label_CardType.AutoSize = true;
-            label_CardType.Location = new Point(531, 45);
+            label_CardType.Location = new Point(465, 34);
             label_CardType.Name = "label_CardType";
-            label_CardType.Size = new Size(76, 20);
+            label_CardType.Size = new Size(61, 15);
             label_CardType.TabIndex = 15;
             label_CardType.Text = "Card type:";
-          
             // 
             // cb_CardType
             // 
-            cb_CardType.Location = new Point(610, 42);
+            cb_CardType.Location = new Point(534, 32);
+            cb_CardType.Margin = new Padding(3, 2, 3, 2);
             cb_CardType.Name = "cb_CardType";
-            cb_CardType.Size = new Size(151, 28);
+            cb_CardType.Size = new Size(133, 23);
             cb_CardType.TabIndex = 14;
             // 
             // textbox_Description
             // 
-            textbox_Description.Location = new Point(235, 176);
+            textbox_Description.Location = new Point(206, 132);
+            textbox_Description.Margin = new Padding(3, 2, 3, 2);
             textbox_Description.Name = "textbox_Description";
-            textbox_Description.Size = new Size(526, 27);
+            textbox_Description.Size = new Size(461, 23);
             textbox_Description.TabIndex = 13;
             // 
             // label_Description
             // 
             label_Description.AutoSize = true;
-            label_Description.Location = new Point(18, 176);
+            label_Description.Location = new Point(16, 132);
             label_Description.Name = "label_Description";
-            label_Description.Size = new Size(113, 20);
+            label_Description.Size = new Size(89, 15);
             label_Description.TabIndex = 12;
             label_Description.Text = "Test description";
             // 
             // text_ProtocolPath
             // 
             text_ProtocolPath.BorderStyle = BorderStyle.FixedSingle;
-            text_ProtocolPath.Location = new Point(235, 141);
+            text_ProtocolPath.Location = new Point(206, 106);
+            text_ProtocolPath.Margin = new Padding(3, 2, 3, 2);
             text_ProtocolPath.Name = "text_ProtocolPath";
-            text_ProtocolPath.Size = new Size(526, 27);
+            text_ProtocolPath.Size = new Size(460, 23);
             text_ProtocolPath.TabIndex = 11;
             text_ProtocolPath.TextChanged += text_ProtocolPath_TextChanged;
             text_ProtocolPath.DoubleClick += text_ProtocolPath_DoubleClick;
@@ -131,9 +135,9 @@ namespace CardTesterApp
             // label_ResultPath
             // 
             label_ResultPath.AutoSize = true;
-            label_ResultPath.Location = new Point(18, 144);
+            label_ResultPath.Location = new Point(16, 108);
             label_ResultPath.Name = "label_ResultPath";
-            label_ResultPath.Size = new Size(144, 20);
+            label_ResultPath.Size = new Size(114, 15);
             label_ResultPath.TabIndex = 10;
             label_ResultPath.Text = "Result protocol path";
             // 
@@ -141,54 +145,57 @@ namespace CardTesterApp
             // 
             tb_DelayBend.DecimalPlaces = 1;
             tb_DelayBend.Increment = new decimal(new int[] { 1, 0, 0, 65536 });
-            tb_DelayBend.Location = new Point(235, 105);
+            tb_DelayBend.Location = new Point(206, 79);
+            tb_DelayBend.Margin = new Padding(3, 2, 3, 2);
             tb_DelayBend.Maximum = new decimal(new int[] { 10, 0, 0, 0 });
             tb_DelayBend.Name = "tb_DelayBend";
-            tb_DelayBend.Size = new Size(97, 27);
+            tb_DelayBend.Size = new Size(85, 23);
             tb_DelayBend.TabIndex = 9;
             // 
             // tb_DelayBasic
             // 
             tb_DelayBasic.DecimalPlaces = 1;
             tb_DelayBasic.Increment = new decimal(new int[] { 1, 0, 0, 65536 });
-            tb_DelayBasic.Location = new Point(235, 73);
+            tb_DelayBasic.Location = new Point(206, 55);
+            tb_DelayBasic.Margin = new Padding(3, 2, 3, 2);
             tb_DelayBasic.Maximum = new decimal(new int[] { 10, 0, 0, 0 });
             tb_DelayBasic.Name = "tb_DelayBasic";
-            tb_DelayBasic.Size = new Size(97, 27);
+            tb_DelayBasic.Size = new Size(85, 23);
             tb_DelayBasic.TabIndex = 8;
             // 
             // tb_NubmerOfCycles
             // 
-            tb_NubmerOfCycles.Location = new Point(235, 40);
+            tb_NubmerOfCycles.Location = new Point(206, 30);
+            tb_NubmerOfCycles.Margin = new Padding(3, 2, 3, 2);
             tb_NubmerOfCycles.Maximum = new decimal(new int[] { 100000, 0, 0, 0 });
             tb_NubmerOfCycles.Name = "tb_NubmerOfCycles";
-            tb_NubmerOfCycles.Size = new Size(97, 27);
+            tb_NubmerOfCycles.Size = new Size(85, 23);
             tb_NubmerOfCycles.TabIndex = 7;
             // 
             // label_DelayBend
             // 
             label_DelayBend.AutoSize = true;
-            label_DelayBend.Location = new Point(18, 112);
+            label_DelayBend.Location = new Point(16, 84);
             label_DelayBend.Name = "label_DelayBend";
-            label_DelayBend.Size = new Size(151, 20);
+            label_DelayBend.Size = new Size(120, 15);
             label_DelayBend.TabIndex = 2;
             label_DelayBend.Text = "Wait in bend position";
             // 
             // label_DelayBasic
             // 
             label_DelayBasic.AutoSize = true;
-            label_DelayBasic.Location = new Point(18, 75);
+            label_DelayBasic.Location = new Point(16, 56);
             label_DelayBasic.Name = "label_DelayBasic";
-            label_DelayBasic.Size = new Size(151, 20);
+            label_DelayBasic.Size = new Size(120, 15);
             label_DelayBasic.TabIndex = 1;
             label_DelayBasic.Text = "Wait in basic position";
             // 
             // label_NumberOfCycles
             // 
             label_NumberOfCycles.AutoSize = true;
-            label_NumberOfCycles.Location = new Point(18, 42);
+            label_NumberOfCycles.Location = new Point(16, 32);
             label_NumberOfCycles.Name = "label_NumberOfCycles";
-            label_NumberOfCycles.Size = new Size(124, 20);
+            label_NumberOfCycles.Size = new Size(100, 15);
             label_NumberOfCycles.TabIndex = 0;
             label_NumberOfCycles.Text = "Number of cycles";
             // 
@@ -199,9 +206,11 @@ namespace CardTesterApp
             gb_Test.Controls.Add(label_Cycle);
             gb_Test.Controls.Add(label_StateLabel);
             gb_Test.Controls.Add(lablel_CycleLabel);
-            gb_Test.Location = new Point(12, 242);
+            gb_Test.Location = new Point(10, 182);
+            gb_Test.Margin = new Padding(3, 2, 3, 2);
             gb_Test.Name = "gb_Test";
-            gb_Test.Size = new Size(776, 128);
+            gb_Test.Padding = new Padding(3, 2, 3, 2);
+            gb_Test.Size = new Size(679, 96);
             gb_Test.TabIndex = 1;
             gb_Test.TabStop = false;
             gb_Test.Text = "Test";
@@ -209,43 +218,43 @@ namespace CardTesterApp
             // label_Calibration
             // 
             label_Calibration.AutoSize = true;
-            label_Calibration.Location = new Point(594, 23);
+            label_Calibration.Location = new Point(520, 17);
             label_Calibration.Name = "label_Calibration";
-            label_Calibration.Size = new Size(50, 20);
+            label_Calibration.Size = new Size(38, 15);
             label_Calibration.TabIndex = 4;
-            label_Calibration.Text = "label1";            
+            label_Calibration.Text = "label1";
             // 
             // label_State
             // 
-            label_State.Location = new Point(129, 77);
+            label_State.Location = new Point(113, 58);
             label_State.Name = "label_State";
-            label_State.Size = new Size(632, 25);
+            label_State.Size = new Size(553, 19);
             label_State.TabIndex = 3;
             label_State.Text = "unknown";
             // 
             // label_Cycle
             // 
-            label_Cycle.Location = new Point(129, 34);
+            label_Cycle.Location = new Point(113, 26);
             label_Cycle.Name = "label_Cycle";
-            label_Cycle.Size = new Size(62, 25);
+            label_Cycle.Size = new Size(54, 19);
             label_Cycle.TabIndex = 2;
             label_Cycle.Text = "N/A";
             // 
             // label_StateLabel
             // 
             label_StateLabel.AutoSize = true;
-            label_StateLabel.Location = new Point(18, 77);
+            label_StateLabel.Location = new Point(16, 58);
             label_StateLabel.Name = "label_StateLabel";
-            label_StateLabel.Size = new Size(100, 20);
+            label_StateLabel.Size = new Size(81, 15);
             label_StateLabel.TabIndex = 1;
             label_StateLabel.Text = "Current state: ";
             // 
             // lablel_CycleLabel
             // 
             lablel_CycleLabel.AutoSize = true;
-            lablel_CycleLabel.Location = new Point(18, 34);
+            lablel_CycleLabel.Location = new Point(16, 26);
             lablel_CycleLabel.Name = "lablel_CycleLabel";
-            lablel_CycleLabel.Size = new Size(92, 20);
+            lablel_CycleLabel.Size = new Size(76, 15);
             lablel_CycleLabel.TabIndex = 0;
             lablel_CycleLabel.Text = "Curent cycle:";
             // 
@@ -257,17 +266,20 @@ namespace CardTesterApp
             gb_Buttons.Controls.Add(btn_Stop);
             gb_Buttons.Controls.Add(btn_Run);
             gb_Buttons.Controls.Add(btn_Reset);
-            gb_Buttons.Location = new Point(12, 366);
+            gb_Buttons.Location = new Point(10, 274);
+            gb_Buttons.Margin = new Padding(3, 2, 3, 2);
             gb_Buttons.Name = "gb_Buttons";
-            gb_Buttons.Size = new Size(776, 72);
+            gb_Buttons.Padding = new Padding(3, 2, 3, 2);
+            gb_Buttons.Size = new Size(679, 54);
             gb_Buttons.TabIndex = 2;
             gb_Buttons.TabStop = false;
             // 
             // btn_Calibration
             // 
-            btn_Calibration.Location = new Point(367, 26);
+            btn_Calibration.Location = new Point(321, 20);
+            btn_Calibration.Margin = new Padding(3, 2, 3, 2);
             btn_Calibration.Name = "btn_Calibration";
-            btn_Calibration.Size = new Size(94, 29);
+            btn_Calibration.Size = new Size(82, 22);
             btn_Calibration.TabIndex = 7;
             btn_Calibration.Text = "Calibration";
             btn_Calibration.UseVisualStyleBackColor = true;
@@ -275,27 +287,32 @@ namespace CardTesterApp
             // 
             // btn_Unbend
             // 
-            btn_Unbend.Location = new Point(142, 26);
+            btn_Unbend.Location = new Point(124, 20);
+            btn_Unbend.Margin = new Padding(3, 2, 3, 2);
             btn_Unbend.Name = "btn_Unbend";
-            btn_Unbend.Size = new Size(94, 29);
+            btn_Unbend.Size = new Size(82, 22);
             btn_Unbend.TabIndex = 6;
             btn_Unbend.Text = "Unbend";
             btn_Unbend.UseVisualStyleBackColor = true;
+            btn_Unbend.Click += btn_Unbend_Click;
             // 
             // btn_Bend
             // 
-            btn_Bend.Location = new Point(24, 26);
+            btn_Bend.Location = new Point(21, 20);
+            btn_Bend.Margin = new Padding(3, 2, 3, 2);
             btn_Bend.Name = "btn_Bend";
-            btn_Bend.Size = new Size(94, 29);
+            btn_Bend.Size = new Size(82, 22);
             btn_Bend.TabIndex = 5;
             btn_Bend.Text = "Bend";
             btn_Bend.UseVisualStyleBackColor = true;
+            btn_Bend.Click += btn_Bend_Click;
             // 
             // btn_Stop
             // 
-            btn_Stop.Location = new Point(667, 26);
+            btn_Stop.Location = new Point(584, 20);
+            btn_Stop.Margin = new Padding(3, 2, 3, 2);
             btn_Stop.Name = "btn_Stop";
-            btn_Stop.Size = new Size(94, 29);
+            btn_Stop.Size = new Size(82, 22);
             btn_Stop.TabIndex = 4;
             btn_Stop.Text = "Stop";
             btn_Stop.UseVisualStyleBackColor = true;
@@ -303,9 +320,10 @@ namespace CardTesterApp
             // 
             // btn_Run
             // 
-            btn_Run.Location = new Point(567, 26);
+            btn_Run.Location = new Point(496, 20);
+            btn_Run.Margin = new Padding(3, 2, 3, 2);
             btn_Run.Name = "btn_Run";
-            btn_Run.Size = new Size(94, 29);
+            btn_Run.Size = new Size(82, 22);
             btn_Run.TabIndex = 3;
             btn_Run.Text = "Run test";
             btn_Run.UseVisualStyleBackColor = true;
@@ -313,9 +331,10 @@ namespace CardTesterApp
             // 
             // btn_Reset
             // 
-            btn_Reset.Location = new Point(467, 26);
+            btn_Reset.Location = new Point(409, 20);
+            btn_Reset.Margin = new Padding(3, 2, 3, 2);
             btn_Reset.Name = "btn_Reset";
-            btn_Reset.Size = new Size(94, 29);
+            btn_Reset.Size = new Size(82, 22);
             btn_Reset.TabIndex = 2;
             btn_Reset.Text = "Release";
             btn_Reset.UseVisualStyleBackColor = true;
@@ -323,15 +342,18 @@ namespace CardTesterApp
             // 
             // TestingAppForm
             // 
-            AutoScaleDimensions = new SizeF(8F, 20F);
+            AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
+            ClientSize = new Size(700, 338);
             Controls.Add(gb_Buttons);
             Controls.Add(gb_Test);
             Controls.Add(gb_Parameters);
+            KeyPreview = true;
+            Margin = new Padding(3, 2, 3, 2);
             Name = "TestingAppForm";
             Text = "Bending Machine Operator";
             Load += TestingAppForm_Load;
+            KeyDown += TestingAppForm_KeyDown;
             gb_Parameters.ResumeLayout(false);
             gb_Parameters.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)tb_DelayBend).EndInit();

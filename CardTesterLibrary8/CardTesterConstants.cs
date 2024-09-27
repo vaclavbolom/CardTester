@@ -22,5 +22,6 @@ namespace CardTesterLibrary
         public const string COMMAND_STOP = "0";
         public const string COMMAND_RESET = "3";
         public const string COMMAND_GET_STATE = "4";
+        public const string COMMAND_RESET_UP = "5";
     }
 }

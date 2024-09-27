@@ -48,9 +48,9 @@ namespace CardTesterLibrary
 
             try
             {
-                //Task.Run(() => _SerialPortOperator.Run(ProcessStateChanged));
-                var task = _serialPortOperator.Run(ProcessStateChanged);
-                task.Wait();
+                Task.Run(() => _serialPortOperator.Run(ProcessStateChanged));
+                //var task = _serialPortOperator.Run(ProcessStateChanged);
+                //task.Wait();
                 Task.Delay(100);
             }
             catch (SerialPortOperatorException e)
@@ -68,12 +68,30 @@ namespace CardTesterLibrary
 
         /// <inheritdoc />
         public async Task ResetDownAsync()
-        {            
+        {
+            await Reset(CardTesterConstants.COMMAND_RESET);
+        }
+
+        /// <inheritdoc />
+        public async Task ResetUpAsync()
+        {
+            await Reset(CardTesterConstants.COMMAND_RESET_UP);
+        }
+
+        private async Task Reset(string command)
+        {
+            var movingState = command switch
+            {
+                CardTesterConstants.COMMAND_RESET => CardTesterConstants.STATE_FORWARD,
+                CardTesterConstants.COMMAND_RESET_UP => CardTesterConstants.STATE_BACKWARD,
+                _ => throw new CardTesterException($"Cannot reset with command {command}")
+            };
+
             if (StateEquals(CardTesterConstants.STATE_STOPPED) || StateEquals(CardTesterConstants.STATE_UNKNOWN))
             {
-                await _serialPortOperator.RunCommandAsync(CardTesterConstants.COMMAND_RESET);
+                await _serialPortOperator.RunCommandAsync(command);
                 await Task.Delay(DELAY_COMMAND);
-                while (StateEquals(CardTesterConstants.STATE_BACKWARD))
+                while (StateEquals(movingState))
                 {
                     await Task.Delay(DELAY_COMMAND);
                 }
@@ -84,6 +102,7 @@ namespace CardTesterLibrary
             }
             return;
         }
+
 
 
         /// <inheritdoc />
@@ -194,6 +213,13 @@ namespace CardTesterLibrary
             await _serialPortOperator.RunCommandAsync(CardTesterConstants.COMMAND_MOVE_FORWARD);
             await Task.Delay(DELAY_COMMAND);
 
+            if (_State != CardTesterConstants.STATE_FORWARD)
+            {
+                var msg = $"Cannot move forward. State: {_State}";
+                _logger.Error(msg);
+                throw new CardTesterException(msg);
+            }
+
             while (StateEquals(CardTesterConstants.STATE_FORWARD))
             {
                 await Task.Delay(DELAY_COMMAND);
@@ -205,6 +231,14 @@ namespace CardTesterLibrary
         {
             await _serialPortOperator.RunCommandAsync(CardTesterConstants.COMMAND_MOVE_BACKWARD);
             await Task.Delay(DELAY_COMMAND);
+
+            if (_State != CardTesterConstants.STATE_BACKWARD)
+            {
+                var msg = $"Cannot move forward. State: {_State}";
+                _logger.Error(msg);
+                throw new CardTesterException(msg);
+            }
+
             while (StateEquals(CardTesterConstants.STATE_BACKWARD))
             {
                 await Task.Delay(0);
@@ -243,6 +277,8 @@ namespace CardTesterLibrary
 
         private void ProcessStateChanged(string message) => _State = message;
 
-        private void ProcessPortOperatorState(string message) => PortOperatorState = message;        
+        private void ProcessPortOperatorState(string message) => PortOperatorState = message;
+
+        
     }
 }

@@ -46,6 +46,8 @@ namespace CardTesterApp
 
         private DateTime CalibrationStamp { get; set; }
 
+        private bool ServiceMode { get; set; } = false;
+
 
         public TestingAppForm(ISerialPortOperator serialPortOperator, ICardTester cardTester, ILogger logger, ApplicationSettings settings)
         {
@@ -113,9 +115,10 @@ namespace CardTesterApp
                 UpdateMessage();
                 label_Cycle.Text = _cardTester.TestCycleIndex.ToString();
             }
-            else if (Initialization)
+            else 
             {
-                Initialization = false;
+                if (Initialization)
+                    Initialization = false;
                 UpdateMessage();
                 SetWidgetsState();
             }
@@ -147,6 +150,7 @@ namespace CardTesterApp
 
         private void Calibrate()
         {
+            //TODO: run release
             CalibrationStamp = DateTime.Now.AddHours(_settings.CalibrationValidityInHours);
             //TODO: interact with smart card reader, set up to initial position
         }
@@ -225,11 +229,22 @@ namespace CardTesterApp
         private async Task DoReset()
         {
             _logger.Debug("DoReset started");
-            UpdateMessage();
+
+            Running = true;
+            SetWidgetsState();
+            UpdateMessage("Returning backward - resetting");
 
             await _cardTester.ResetDownAsync();
             await Task.Delay(10);
+
+            while (Running && CardTesterState != CardTesterConstants.STATE_DOWN)
+            {
+                await Task.Delay(DELAY_COMMAND);
+            }
+
+            Running = false;
             UpdateMessage();
+
             _logger.Debug("DoReset finished");
         }
 
@@ -261,16 +276,24 @@ namespace CardTesterApp
             _logger.Debug("Run clicked");
             Running = true;
             SetWidgetsState();
-            await DoTest();
-
-            while (Running && CardTesterState != CardTesterConstants.STATE_DOWN)
+            try
             {
-                await Task.Delay(DELAY_COMMAND);
-            }
+                await DoTest();
 
-            Running = false;
-            if (CardTesterState != CardTesterConstants.STATE_STOPPED && CardTesterState != CardTesterConstants.STATE_DOOR_OPEN)
-                UpdateMessage("Test finished");
+                while (Running && CardTesterState != CardTesterConstants.STATE_DOWN)
+                {
+                    await Task.Delay(DELAY_COMMAND);
+                }
+
+                Running = false;
+                if (CardTesterState != CardTesterConstants.STATE_STOPPED && CardTesterState != CardTesterConstants.STATE_DOOR_OPEN)
+                    UpdateMessage("Test finished");
+            }
+            catch(CardTesterException ex)
+            {
+                Running = false;
+                UpdateMessage("Failed to run test");
+            }
             SetWidgetsState();
         }
 
@@ -295,19 +318,7 @@ namespace CardTesterApp
 
         private async void btn_Reset_Click(object sender, EventArgs e)
         {
-            Running = true;
-            UpdateMessage("Returning backward - resetting");
-            SetWidgetsState();
-
             await DoReset();
-
-            while (Running && CardTesterState != CardTesterConstants.STATE_DOWN)
-            {
-                await Task.Delay(DELAY_COMMAND);
-            }
-
-            Running = false;
-            UpdateMessage();
             SetWidgetsState();
         }
 
@@ -343,9 +354,48 @@ namespace CardTesterApp
             }
         }
 
-        private void btn_Calibration_Click(object sender, EventArgs e)
+        private async void btn_Calibration_Click(object sender, EventArgs e)
         {
+            await  DoReset();
             Calibrate();
+
+            SetWidgetsState();
+        }
+        
+
+        private void TestingAppForm_KeyDown(object sender, KeyEventArgs e)
+        {
+            // enter service mode
+            if (e.Control && e.Shift && e.KeyCode == Keys.S)
+            {
+                ServiceMode = !ServiceMode;
+
+                btn_Bend.Visible = ServiceMode;
+                btn_Unbend.Visible = ServiceMode;
+
+
+                e.SuppressKeyPress = true;
+            }
+        }
+
+        private async void btn_Bend_Click(object sender, EventArgs e)
+        {
+            Running = true;
+
+            await _cardTester.MoveForwardUnsafeAsync();
+
+            Running = false;
+            UpdateMessage();
+        }
+
+        private async void btn_Unbend_Click(object sender, EventArgs e)
+        {
+            Running = true;
+
+            await _cardTester.MoveBackwardUnsafeAsync();
+
+            Running = false;
+            UpdateMessage();
         }
     }
 }
