@@ -173,6 +173,7 @@ namespace CardTesterApp
 
         private void Calibrate()
         {
+            Task.Run(() => _serialPortOperator.Run());
             //TODO: run release
             CalibrationStamp = DateTime.Now.AddHours(_settings.CalibrationValidityInHours);
             //TODO: interact with smart card reader, set up to initial position
