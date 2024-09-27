@@ -74,6 +74,10 @@ namespace CardTesterApp
             tb_DelayBend.Value = _settings.DelayBent;
             text_ProtocolPath.Text = _settings.OutputDirectory;
             label_Calibration.Text = AppConstants.CALIBRATION_NOT_SET;
+            label_Message.Text = string.Empty;
+            btn_Bend.Visible = false;
+            btn_Unbend.Visible = false;
+
             foreach (var item in _settings.CardTypes)
             {
                 cb_CardType.Items.Add(item);
@@ -112,9 +116,9 @@ namespace CardTesterApp
         /// <param name="e"></param>
         private void StateEventProcessor(object? sender, EventArgs e)
         {
+            UpdateStateMessage();
             if (Running)
             {
-                UpdateMessage();
                 label_Cycle.Text = _cardTester.TestCycleIndex.ToString();
                 CheckMeasurementTimeout();
             }
@@ -122,7 +126,6 @@ namespace CardTesterApp
             {
                 if (Initialization)
                     Initialization = false;
-                UpdateMessage();
                 SetWidgetsState();
             }
 
@@ -173,34 +176,38 @@ namespace CardTesterApp
 
         private void Calibrate()
         {
-            Task.Run(() => _serialPortOperator.Run());
             //TODO: run release
             CalibrationStamp = DateTime.Now.AddHours(_settings.CalibrationValidityInHours);
             //TODO: interact with smart card reader, set up to initial position
         }
 
-        public void UpdateMessage(string message = "")
+        public void UpdateStateMessage()
         {
-            var labelMessage = (message.Equals(string.Empty))
-                ? CardTesterState switch
-                {
-                    CardTesterConstants.STATE_FORWARD => "Moving FORWARD",
-                    CardTesterConstants.STATE_BACKWARD => "Moving BACKWARD",
-                    CardTesterConstants.STATE_STOPPED => "Stopped",
-                    CardTesterConstants.STATE_DOWN => "Position DOWN",
-                    CardTesterConstants.STATE_UP => "Position UP",
-                    CardTesterConstants.STATE_DOOR_OPEN => "Door opened",
-                    _ => "Unknown"
-                }
-                 : message;
-
-            if (label_State.Text.Equals(labelMessage.ToString()))
+            var labelMessage = CardTesterState switch
             {
-                return;
-            }
+                CardTesterConstants.STATE_FORWARD => "Moving FORWARD",
+                CardTesterConstants.STATE_BACKWARD => "Moving BACKWARD",
+                CardTesterConstants.STATE_STOPPED => "Stopped",
+                CardTesterConstants.STATE_DOWN => "Position DOWN",
+                CardTesterConstants.STATE_UP => "Position UP",
+                CardTesterConstants.STATE_DOOR_OPEN => "Door opened",
+                _ => "Unknown"
+            };
 
-            label_State.Text = labelMessage;
-            _logger.Debug($"Message changed, state:{CardTesterState}, message:{labelMessage}");
+            if (!label_State.Text.Equals(labelMessage.ToString()))
+            {
+                label_State.Text = labelMessage;
+                _logger.Debug($"Message changed, state:{CardTesterState}, message:{labelMessage}");
+            }
+        }
+
+        public void UpdateMessage(string message)
+        {
+            if (!label_Message.Text.Equals(message))
+            {
+                label_Message.Text = message;
+                _logger.Debug($"Message changed: {message}");
+            }
         }
 
         public void CardTesterStateChanged(string message)
@@ -268,7 +275,7 @@ namespace CardTesterApp
             }
 
             Running = false;
-            UpdateMessage();
+            UpdateMessage("Prepared");
 
             _logger.Debug("DoReset finished");
         }
@@ -289,7 +296,6 @@ namespace CardTesterApp
 
             await _cardTester.StopAsync();
             await Task.Delay(DELAY_COMMAND);
-            UpdateMessage();
 
             _logger.Debug("DoStop finished");
         }
@@ -302,6 +308,7 @@ namespace CardTesterApp
             _logger.Debug("Run clicked");
             Running = true;
             SetWidgetsState();
+            UpdateMessage("Running test");
             try
             {
                 await DoTest();
@@ -336,7 +343,6 @@ namespace CardTesterApp
                 await Task.Delay(DELAY_COMMAND);
             }
 
-            UpdateMessage();
             SetWidgetsState();
             await Task.Delay(DELAY_COMMAND);
             _logger.Debug($"Stop finished, state:{CardTesterState}");
@@ -358,7 +364,6 @@ namespace CardTesterApp
             var task = _cardTester.PrepareMeasurement();
             task.Wait(100);
             _logger.Debug("after 100");
-            UpdateMessage();
             SetWidgetsState();
             CardTesterPreviousState = CardTesterState;
         }
@@ -388,8 +393,27 @@ namespace CardTesterApp
             Calibrate();
 
             SetWidgetsState();
+        }        
+
+        private async void btn_Bend_Click(object sender, EventArgs e)
+        {
+            SetStateChangeStamp();
+            Running = true;
+
+            await _cardTester.ResetUpAsync();
+
+            Running = false;
         }
 
+        private async void btn_Unbend_Click(object sender, EventArgs e)
+        {
+            SetStateChangeStamp();
+            Running = true;
+
+            await _cardTester.ResetDownAsync();
+
+            Running = false;
+        }
 
         private void TestingAppForm_KeyDown(object sender, KeyEventArgs e)
         {
@@ -404,33 +428,6 @@ namespace CardTesterApp
 
                 e.SuppressKeyPress = true;
             }
-        }
-
-        private async void btn_Bend_Click(object sender, EventArgs e)
-        {
-            SetStateChangeStamp();
-            Running = true;
-
-            await _cardTester.ResetUpAsync();
-
-            Running = false;
-            UpdateMessage();
-        }
-
-        private async void btn_Unbend_Click(object sender, EventArgs e)
-        {
-            SetStateChangeStamp();
-            Running = true;
-
-            await _cardTester.ResetDownAsync();
-
-            Running = false;
-            UpdateMessage();
-        }
-
-        private void TestingAppForm_MouseDown(object sender, MouseEventArgs e)
-        {
-
         }
     }
 }

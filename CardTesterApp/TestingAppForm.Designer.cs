@@ -44,6 +44,7 @@ namespace CardTesterApp
             label_DelayBasic = new Label();
             label_NumberOfCycles = new Label();
             gb_Test = new GroupBox();
+            label_Message = new Label();
             label_Calibration = new Label();
             label_State = new Label();
             label_Cycle = new Label();
@@ -98,6 +99,7 @@ namespace CardTesterApp
             // 
             // cb_CardType
             // 
+            cb_CardType.DropDownStyle = ComboBoxStyle.DropDownList;
             cb_CardType.Location = new Point(534, 32);
             cb_CardType.Margin = new Padding(3, 2, 3, 2);
             cb_CardType.Name = "cb_CardType";
@@ -201,6 +203,7 @@ namespace CardTesterApp
             // 
             // gb_Test
             // 
+            gb_Test.Controls.Add(label_Message);
             gb_Test.Controls.Add(label_Calibration);
             gb_Test.Controls.Add(label_State);
             gb_Test.Controls.Add(label_Cycle);
@@ -215,12 +218,19 @@ namespace CardTesterApp
             gb_Test.TabStop = false;
             gb_Test.Text = "Test";
             // 
+            // label_Message
+            // 
+            label_Message.Location = new Point(409, 58);
+            label_Message.Name = "label_Message";
+            label_Message.Size = new Size(257, 23);
+            label_Message.TabIndex = 5;
+            label_Message.Text = "label1";
+            // 
             // label_Calibration
             // 
-            label_Calibration.AutoSize = true;
-            label_Calibration.Location = new Point(520, 17);
+            label_Calibration.Location = new Point(409, 18);
             label_Calibration.Name = "label_Calibration";
-            label_Calibration.Size = new Size(38, 15);
+            label_Calibration.Size = new Size(257, 23);
             label_Calibration.TabIndex = 4;
             label_Calibration.Text = "label1";
             // 
@@ -353,7 +363,7 @@ namespace CardTesterApp
             Name = "TestingAppForm";
             Text = "Bending Machine Operator";
             Load += TestingAppForm_Load;
-            MouseDown += TestingAppForm_MouseDown;
+            KeyDown += TestingAppForm_KeyDown;
             gb_Parameters.ResumeLayout(false);
             gb_Parameters.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)tb_DelayBend).EndInit();
@@ -393,5 +403,6 @@ namespace CardTesterApp
         private Label label_CardType;
         private ComboBox cb_CardType;
         private Label label_Calibration;
+        private Label label_Message;
     }
 }
