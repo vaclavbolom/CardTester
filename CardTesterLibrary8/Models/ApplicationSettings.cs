@@ -25,5 +25,7 @@ namespace CardTesterLibrary
         public int CalibrationValidityInHours { get; set; }
 
         public int MeasurementTimeoutInSeconds { get; set; }
+
+        public string CsvDelimiter { get; set; } = ",";
     }
 }
