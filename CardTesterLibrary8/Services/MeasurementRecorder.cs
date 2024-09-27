@@ -11,20 +11,22 @@ namespace CardTesterLibrary
 {
     public class MeasurementRecorder : IMeasurementRecorder
     {
-        private const string DELIMITER = ",";
         private const string TIME_FORMAT = "yyyy-MM-ddTHH:mm:sszz";
         private const string TIME_FORMAT_FILE = "yyyy-MM-ddTHHmmsszz";
 
         private readonly ILogger _logger;
 
         private List<Measurement> _measurements;
+
+        private readonly string _csvDelimiter;
        
 
-        public MeasurementRecorder(ILogger logger)
+        public MeasurementRecorder(ILogger logger, string csvDelimiter=",")
         {
             ArgumentNullException.ThrowIfNull(logger, nameof(logger));
             _measurements = new List<Measurement>();
             _logger = logger;
+            _csvDelimiter = csvDelimiter;
             
         }
         public void AddMeasurement(Measurement data)
@@ -41,9 +43,9 @@ namespace CardTesterLibrary
             
             var filePath = Path.Exists(outputDirectory) ? Path.Combine(outputDirectory, fileName) : fileName;           
 
-            var descriptionLine = $"Description{DELIMITER}{description}{Environment.NewLine}";
+            var descriptionLine = $"Description{_csvDelimiter}{description}{Environment.NewLine}";
             File.WriteAllText(filePath, descriptionLine);
-            string headerLine = $"timestamp{DELIMITER}card 1{DELIMITER}card 2{DELIMITER}card 3{DELIMITER}card 4{DELIMITER}position{Environment.NewLine}";            
+            string headerLine = $"timestamp{_csvDelimiter}card 1{_csvDelimiter}card 2{_csvDelimiter}card 3{_csvDelimiter}card 4{_csvDelimiter}position{Environment.NewLine}";            
             File.AppendAllText(filePath, headerLine);
             var results = _measurements
                 .Select(x => WriteMeasurement(x))
@@ -53,7 +55,7 @@ namespace CardTesterLibrary
         }
 
         private string WriteMeasurement(Measurement x)
-            => $"{x.Timestamp.ToString(TIME_FORMAT)}{DELIMITER}{x.Card1}{DELIMITER}{x.Card2}{DELIMITER}{x.Card3}{DELIMITER}{x.Card4}{DELIMITER}{x.Position}";
+            => $"{x.Timestamp.ToString(TIME_FORMAT)}{_csvDelimiter}{x.Card1}{_csvDelimiter}{x.Card2}{_csvDelimiter}{x.Card3}{_csvDelimiter}{x.Card4}{_csvDelimiter}{x.Position}";
        
     }
 }
