@@ -12,6 +12,8 @@ namespace CardTesterLibrary
 
         public string OutputDirectory { get; set; } = string.Empty;
 
+        public string LogDirectory { get; set; } = string.Empty;
+
         public int NumberOfCycles { get; set; }
 
         public decimal DelayBasic { get; set; }
@@ -21,5 +23,7 @@ namespace CardTesterLibrary
         public IList<string> CardTypes { get; set; } = new List<string>();
 
         public int CalibrationValidityInHours { get; set; }
+
+        public int MeasurementTimeoutInSeconds { get; set; }
     }
 }

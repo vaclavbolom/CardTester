@@ -46,6 +46,8 @@ namespace CardTesterApp
 
         private DateTime CalibrationStamp { get; set; }
 
+        private DateTime StateChangeStamp { get; set; } = DateTime.UtcNow;
+
         private bool ServiceMode { get; set; } = false;
 
 
@@ -114,8 +116,9 @@ namespace CardTesterApp
             {
                 UpdateMessage();
                 label_Cycle.Text = _cardTester.TestCycleIndex.ToString();
+                CheckMeasurementTimeout();
             }
-            else 
+            else
             {
                 if (Initialization)
                     Initialization = false;
@@ -124,6 +127,26 @@ namespace CardTesterApp
             }
 
             CheckCalibration();
+        }
+
+        private void SetStateChangeStamp()
+        {
+            StateChangeStamp = DateTime.UtcNow;
+        }
+
+        private void CheckMeasurementTimeout()
+        {
+            var currentStamp = DateTime.UtcNow;
+            var delay = currentStamp - StateChangeStamp;
+
+            if ((delay.TotalMilliseconds / 1000) > _settings.MeasurementTimeoutInSeconds)
+            {
+                Running = false;
+                Task.Run(() => _cardTester.StopAsync());
+                UpdateMessage("Stopped - measurement timeout");
+                _logger.Error("Measurement timeout");
+                SetWidgetsState();
+            }
         }
 
         private void CheckCalibration()
@@ -183,6 +206,7 @@ namespace CardTesterApp
         {
             CardTesterPreviousState = CardTesterState;
             CardTesterState = message;
+            StateChangeStamp = DateTime.UtcNow;
 
             if (Initialization && CardTesterState == CardTesterConstants.STATE_DOWN && CardTesterPreviousState != string.Empty)
             {
@@ -273,6 +297,7 @@ namespace CardTesterApp
 
         private async void btn_Run_Click(object sender, EventArgs e)
         {
+            SetStateChangeStamp();
             _logger.Debug("Run clicked");
             Running = true;
             SetWidgetsState();
@@ -289,7 +314,7 @@ namespace CardTesterApp
                 if (CardTesterState != CardTesterConstants.STATE_STOPPED && CardTesterState != CardTesterConstants.STATE_DOOR_OPEN)
                     UpdateMessage("Test finished");
             }
-            catch(CardTesterException ex)
+            catch (CardTesterException ex)
             {
                 Running = false;
                 UpdateMessage("Failed to run test");
@@ -318,6 +343,7 @@ namespace CardTesterApp
 
         private async void btn_Reset_Click(object sender, EventArgs e)
         {
+            SetStateChangeStamp();
             await DoReset();
             SetWidgetsState();
         }
@@ -356,12 +382,13 @@ namespace CardTesterApp
 
         private async void btn_Calibration_Click(object sender, EventArgs e)
         {
-            await  DoReset();
+            SetStateChangeStamp();
+            await DoReset();
             Calibrate();
 
             SetWidgetsState();
         }
-        
+
 
         private void TestingAppForm_KeyDown(object sender, KeyEventArgs e)
         {
@@ -380,9 +407,10 @@ namespace CardTesterApp
 
         private async void btn_Bend_Click(object sender, EventArgs e)
         {
+            SetStateChangeStamp();
             Running = true;
 
-            await _cardTester.MoveForwardUnsafeAsync();
+            await _cardTester.ResetUpAsync();
 
             Running = false;
             UpdateMessage();
@@ -390,12 +418,18 @@ namespace CardTesterApp
 
         private async void btn_Unbend_Click(object sender, EventArgs e)
         {
+            SetStateChangeStamp();
             Running = true;
 
-            await _cardTester.MoveBackwardUnsafeAsync();
+            await _cardTester.ResetDownAsync();
 
             Running = false;
             UpdateMessage();
+        }
+
+        private void TestingAppForm_MouseDown(object sender, MouseEventArgs e)
+        {
+
         }
     }
 }

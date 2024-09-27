@@ -228,7 +228,7 @@ namespace CardTesterApp
             // 
             label_State.Location = new Point(113, 58);
             label_State.Name = "label_State";
-            label_State.Size = new Size(553, 19);
+            label_State.Size = new Size(290, 19);
             label_State.TabIndex = 3;
             label_State.Text = "unknown";
             // 
@@ -353,7 +353,7 @@ namespace CardTesterApp
             Name = "TestingAppForm";
             Text = "Bending Machine Operator";
             Load += TestingAppForm_Load;
-            KeyDown += TestingAppForm_KeyDown;
+            MouseDown += TestingAppForm_MouseDown;
             gb_Parameters.ResumeLayout(false);
             gb_Parameters.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)tb_DelayBend).EndInit();
