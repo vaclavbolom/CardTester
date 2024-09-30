@@ -18,6 +18,11 @@ namespace CardTesterLibrary
 		/// </summary>
 		/// <returns></returns>
 		Task Run(ProcessDataDelegate processData);
+		
+		/// <summary>
+		/// Registers method for processing of state update
+		/// </summary>
+		void AddProcessDataMethod(ProcessDataDelegate processData);
 
 		/// <summary>
 		/// Stops loop
@@ -49,6 +54,6 @@ namespace CardTesterLibrary
 		public void RegisterStateChangeMethod(ProcessDataDelegate method);
 
 
-
+		bool IsDeviceConnected { get; }
     }
 }

@@ -26,6 +26,10 @@ namespace CardTesterLibrary
 
         private ProcessDataDelegate? _ProcessDataMethod;
 
+        public bool IsDeviceConnected { get; private set; } = false;
+
+        public int MyProperty { get; set; }
+
         public SerialPortOperator(string portName, ILogger logger)
         {
             _Logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -36,7 +40,7 @@ namespace CardTesterLibrary
 
         public async Task Run(ProcessDataDelegate processDataMethod)
         {
-            _ProcessDataMethod += processDataMethod ?? throw new ArgumentNullException(nameof(processDataMethod));
+            AddProcessDataMethod(processDataMethod);
             using (var port = CreatePort())
             {
                 try
@@ -44,7 +48,7 @@ namespace CardTesterLibrary
                     port.Open();
                     var readTask = ReadFromSerialPort(port);
                     var writeTask = WriteToSerialPort(port);
-
+                    IsDeviceConnected = true;
 
                     await Task.WhenAll(readTask, writeTask);
                 }
@@ -69,6 +73,11 @@ namespace CardTesterLibrary
                     _Logger.Error(ex.Message, ex);
                 }
             }
+        }
+
+        public void AddProcessDataMethod(ProcessDataDelegate processDataMethod)
+        {
+            _ProcessDataMethod += processDataMethod ?? throw new ArgumentNullException(nameof(processDataMethod));
         }
 
         public void RegisterStateChangeMethod(ProcessDataDelegate method) 
@@ -162,6 +171,6 @@ namespace CardTesterLibrary
                 }
             }
 
-        }
+        }        
     }
 }
