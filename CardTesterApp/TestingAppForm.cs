@@ -15,10 +15,7 @@ namespace CardTesterApp
 
         private const int DELAY_COMMAND = 50;
 
-        private object[]? _disabledDuringRunWidgets;
-        private object[]? _disabledDuringStopWidgets;
-        private object[]? _disabledWhenStoppedWidgets;
-        private object[]? _fillWidgets;
+        private readonly object[]? _fillWidgets;
 
         private System.Windows.Forms.Timer _timer;
 
@@ -96,26 +93,7 @@ namespace CardTesterApp
                 textbox_Description,
                 cb_CardType
 
-            };
-            _disabledDuringRunWidgets = new object[]
-            {
-                tb_NubmerOfCycles,
-                tb_DelayBasic,
-                tb_DelayBend,
-                btn_Reset,
-                btn_Run,
-                text_ProtocolPath,
-                textbox_Description
-            };
-            _disabledDuringStopWidgets = new object[]
-            {
-                btn_Stop
-            };
-            _disabledWhenStoppedWidgets = new object[]
-            {
-                btn_Run,
-                btn_Stop
-            };
+            };            
 
             _serialPortOperator.RegisterStateChangeMethod(CardTesterStateChanged);
         }
@@ -137,9 +115,9 @@ namespace CardTesterApp
             {
                 if (Initialization)
                     Initialization = false;
-                SetWidgetsState();
             }
 
+            SetWidgetsState();
             CheckCalibration();
         }
 
@@ -159,7 +137,7 @@ namespace CardTesterApp
                 Task.Run(() => _cardTester.StopAsync());
                 UpdateMessage("Stopped - measurement timeout");
                 _logger.Error("Measurement timeout");
-                SetWidgetsState();
+                //SetWidgetsState();
             }
         }
 
@@ -209,6 +187,13 @@ namespace CardTesterApp
                 label_State.Text = labelMessage;
                 _logger.Debug($"Message changed, state:{CardTesterState}, message:{labelMessage}");
             }
+            if (!_serialPortOperator.IsDeviceConnected)
+            {
+                var msg = "Device disconnected";
+                _logger.Warning(msg);
+                UpdateMessage(msg);
+
+            }
         }
 
         public void UpdateMessage(string message)
@@ -255,12 +240,7 @@ namespace CardTesterApp
 
             // Stop
             bool stopState = _serialPortOperator.IsDeviceConnected
-                && (
-                    Running
-                    || _serialPortOperator.IsDeviceConnected
-                    || (CardTesterState == CardTesterConstants.STATE_FORWARD)
-                    || (CardTesterState == CardTesterConstants.STATE_BACKWARD)
-                    );
+                && Running;
             btn_Stop.Enabled = stopState;
 
             //RUN
@@ -297,7 +277,7 @@ namespace CardTesterApp
             _logger.Debug("DoReset started");
 
             Running = true;
-            SetWidgetsState();
+            //SetWidgetsState();
             UpdateMessage("Returning backward - resetting");
 
             await _cardTester.ResetDownAsync();
@@ -341,7 +321,7 @@ namespace CardTesterApp
             SetStateChangeStamp();
             _logger.Debug("Run clicked");
             Running = true;
-            SetWidgetsState();
+            //SetWidgetsState();
             UpdateMessage("Running test");
             try
             {
@@ -361,15 +341,16 @@ namespace CardTesterApp
                 Running = false;
                 UpdateMessage("Failed to run test");
             }
-            SetWidgetsState();
+            //SetWidgetsState();
         }
 
         private async void btn_Stop_Click(object sender, EventArgs e)
         {
+            _serialPortOperator.RunCommand(CardTesterConstants.COMMAND_GET_STATE);
             _logger.Debug("Stop clicked");
             Running = false;
             UpdateMessage("Stopped");
-            SetWidgetsState();
+            //SetWidgetsState();
             await DoStop();
 
             while (CardTesterState != CardTesterConstants.STATE_STOPPED)
@@ -377,16 +358,17 @@ namespace CardTesterApp
                 await Task.Delay(DELAY_COMMAND);
             }
 
-            SetWidgetsState();
+            //SetWidgetsState();
             await Task.Delay(DELAY_COMMAND);
             _logger.Debug($"Stop finished, state:{CardTesterState}");
         }
 
         private async void btn_Reset_Click(object sender, EventArgs e)
         {
+            _serialPortOperator.RunCommand(CardTesterConstants.COMMAND_GET_STATE);
             SetStateChangeStamp();
             await DoReset();
-            SetWidgetsState();
+            //SetWidgetsState();
         }
 
 
@@ -398,7 +380,7 @@ namespace CardTesterApp
             var task = _cardTester.PrepareMeasurement();
             task.Wait(100);
             _logger.Debug("after 100");
-            SetWidgetsState();
+            //SetWidgetsState();
             CardTesterPreviousState = CardTesterState;
         }
 
@@ -426,7 +408,7 @@ namespace CardTesterApp
             await DoReset();
             Calibrate();
 
-            SetWidgetsState();
+            //SetWidgetsState();
         }
 
         private async void btn_Bend_Click(object sender, EventArgs e)

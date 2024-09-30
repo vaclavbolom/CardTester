@@ -25,8 +25,17 @@ namespace CardTesterLibrary
         private string _PreviousState = string.Empty;
 
         private ProcessDataDelegate? _ProcessDataMethod;
+        private SerialPort? _serialPort;
 
-        public bool IsDeviceConnected { get; private set; } = false;
+        public bool IsDeviceConnected { 
+            get
+            {
+                var isConnected = (_serialPort != null)
+                    && _serialPort.IsOpen;
+                return isConnected;
+            } 
+            
+        }
 
         public int MyProperty { get; set; }
 
@@ -41,14 +50,14 @@ namespace CardTesterLibrary
         public async Task Run(ProcessDataDelegate processDataMethod)
         {
             AddProcessDataMethod(processDataMethod);
-            using (var port = CreatePort())
+            using (_serialPort = CreatePort())
             {
                 try
                 {
-                    port.Open();
-                    var readTask = ReadFromSerialPort(port);
-                    var writeTask = WriteToSerialPort(port);
-                    IsDeviceConnected = true;
+                    _serialPort.Open();
+                    var readTask = ReadFromSerialPort(_serialPort);
+                    var writeTask = WriteToSerialPort(_serialPort);
+                    
 
                     await Task.WhenAll(readTask, writeTask);
                 }
