@@ -18,6 +18,7 @@ namespace CardTesterApp
         private object[]? _disabledDuringRunWidgets;
         private object[]? _disabledDuringStopWidgets;
         private object[]? _disabledWhenStoppedWidgets;
+        private object[]? _fillWidgets;
 
         private System.Windows.Forms.Timer _timer;
 
@@ -86,6 +87,16 @@ namespace CardTesterApp
             cb_CardType.SelectedIndex = 0;
             Running = false;
 
+            _fillWidgets = new object[]
+            {
+                tb_NubmerOfCycles,
+                tb_DelayBasic,
+                tb_DelayBend,
+                text_ProtocolPath,
+                textbox_Description,
+                cb_CardType
+
+            };
             _disabledDuringRunWidgets = new object[]
             {
                 tb_NubmerOfCycles,
@@ -176,7 +187,6 @@ namespace CardTesterApp
 
         private void Calibrate()
         {
-            //TODO: run release
             CalibrationStamp = DateTime.Now.AddHours(_settings.CalibrationValidityInHours);
             //TODO: interact with smart card reader, set up to initial position
         }
@@ -226,22 +236,46 @@ namespace CardTesterApp
 
         private void SetWidgetsState()
         {
-            if (_disabledDuringRunWidgets != null)
-            {
-                var desiredState = !Running;
-                SetWidgets(_disabledDuringRunWidgets, desiredState);
-            }
+            //Calibration, fill widgets
+            bool calibrationAndFillWidgetState = !Running
+                || CardTesterState == CardTesterConstants.STATE_DOWN
+                || CardTesterState == CardTesterConstants.STATE_STOPPED
+                || !_serialPortOperator.IsDeviceConnected;
+            SetWidgets(_fillWidgets, calibrationAndFillWidgetState);
+            btn_Calibration.Enabled = calibrationAndFillWidgetState;
 
-            if (_disabledDuringStopWidgets != null)
-            {
-                var desiredState = Running;
-                SetWidgets(_disabledDuringStopWidgets, desiredState);
-            }
-            if (_disabledWhenStoppedWidgets != null && CardTesterState == CardTesterConstants.STATE_STOPPED)
-            {
-                var desiredState = (CardTesterState == CardTesterConstants.STATE_STOPPED);
-                SetWidgets(_disabledWhenStoppedWidgets, desiredState);
-            }
+            // Release
+            bool releaseState = _serialPortOperator.IsDeviceConnected
+                && (
+                    !Running
+                    || CardTesterState == CardTesterConstants.STATE_DOWN
+                    || CardTesterState == CardTesterConstants.STATE_STOPPED
+                    );
+            btn_Reset.Enabled = releaseState;
+
+            // Stop
+            bool stopState = _serialPortOperator.IsDeviceConnected
+                && (
+                    Running
+                    || _serialPortOperator.IsDeviceConnected
+                    || (CardTesterState == CardTesterConstants.STATE_FORWARD)
+                    || (CardTesterState == CardTesterConstants.STATE_BACKWARD)
+                    );
+            btn_Stop.Enabled = stopState;
+
+            //RUN
+            bool runState = _serialPortOperator.IsDeviceConnected
+                && !Running
+                && CardTesterState == CardTesterConstants.STATE_DOWN;
+            btn_Run.Enabled = runState;
+                
+            // service buttons
+            bool serviceButtonsState = _serialPortOperator.IsDeviceConnected
+                && !Running
+                && (CardTesterState != CardTesterConstants.STATE_BACKWARD)
+                && (CardTesterState != CardTesterConstants.STATE_FORWARD);
+            btn_Bend.Enabled = serviceButtonsState;
+            btn_Unbend.Enabled = serviceButtonsState;
 
         }
 
@@ -393,7 +427,7 @@ namespace CardTesterApp
             Calibrate();
 
             SetWidgetsState();
-        }        
+        }
 
         private async void btn_Bend_Click(object sender, EventArgs e)
         {
@@ -428,6 +462,11 @@ namespace CardTesterApp
 
                 e.SuppressKeyPress = true;
             }
+        }
+
+        private void cb_CardType_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

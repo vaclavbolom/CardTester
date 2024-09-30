@@ -105,6 +105,7 @@ namespace CardTesterApp
             cb_CardType.Name = "cb_CardType";
             cb_CardType.Size = new Size(133, 23);
             cb_CardType.TabIndex = 14;
+            cb_CardType.SelectedIndexChanged += cb_CardType_SelectedIndexChanged;
             // 
             // textbox_Description
             // 
