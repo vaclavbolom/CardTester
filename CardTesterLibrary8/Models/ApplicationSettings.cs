@@ -27,5 +27,7 @@ namespace CardTesterLibrary
         public int MeasurementTimeoutInSeconds { get; set; }
 
         public string CsvDelimiter { get; set; } = ",";
+
+        public string CardReaderDll { get; set; } = string.Empty ;
     }
 }
