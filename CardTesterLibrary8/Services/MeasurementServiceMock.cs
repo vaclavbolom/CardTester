@@ -11,20 +11,42 @@ namespace CardTesterLibrary
     public class MeasurementServiceMock : IMeasurementService
     {
         private readonly ILogger _logger;
+
+        private string MeasurementName { get; set; } = string.Empty;
+        private string WorkOrderId { get; set; } = string.Empty;
+
+        private List<int> CardIds { get; set; } = new List<int>();
+
         public MeasurementServiceMock(ILogger logger)
         {
             ArgumentNullException.ThrowIfNull(nameof(logger));
             _logger = logger;
         }
-        public Measurement MeasureCards()
+
+        public void FinishMeasurement()
         {
+            
+        }
+
+        public void InitializeMeasurement(string measurementName, string workOrderId, List<int> cardIds)
+        {
+            MeasurementName = measurementName;
+            WorkOrderId = workOrderId;
+            CardIds = cardIds;
+        }
+
+        public Measurement MeasureCards(int measurementIndex)
+        {
+            var position = Convert.ToBoolean(measurementIndex % 2) ? "FLAT" : "BENT";
             var result = new Measurement
             {
                 Timestamp = DateTime.Now,
-                Card1 = "OK",
-                Card2 = "OK",
-                Card3 = "OK",
-                Card4 = "OK"
+                Card1Result = "OK",
+                Card2Result = "OK",
+                Card3Result = "OK",
+                Card4Result = "OK",
+                MeasurementIndex = measurementIndex,
+                Position = position
             };
 
             _logger.Debug("Cards measured");

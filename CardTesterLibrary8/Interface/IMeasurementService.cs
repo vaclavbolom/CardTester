@@ -14,7 +14,23 @@ namespace CardTesterLibrary
         /// <summary>
         /// Measures card response
         /// </summary>
-        /// <returns>result of measurement</returns>
-        public Measurement MeasureCards();
+        /// <param name="measurementIndex"></param>
+        /// <returns></returns>
+        public Measurement MeasureCards(int measurementIndex);
+
+        /// <summary>
+        /// Initializes measurement
+        ///   - sets measurement parametes
+        ///   - initializes Card reader
+        /// </summary>
+        /// <param name="measurementName"></param>
+        /// <param name="workOrderId"></param>
+        /// <param name="cardIds"></param>
+        public void InitializeMeasurement(string measurementName, string workOrderId, List<int> cardIds);
+
+        /// <summary>
+        /// Finalizes measurement at card reader side
+        /// </summary>
+        public void FinishMeasurement();
     }
 }
