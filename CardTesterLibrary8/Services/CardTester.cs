@@ -106,12 +106,12 @@ namespace CardTesterLibrary
 
 
         /// <inheritdoc />
-        public async Task RunTestAsync(int numberOfCycles, int delayUp, int delayDown, string outputPath, string description)
+        public async Task RunTestAsync(int numberOfCycles, int delayUp, int delayDown, string outputPath, string description, string workOrderId, List<int> cardIds)
         {
             if (StateEquals(CardTesterConstants.STATE_DOWN))
             {
                 var testInterrupted = false;
-                var testResult = _measurementService.MeasureCards();
+                var testResult = _measurementService.MeasureCards(0);
                 testResult.Position = POSITION_BASIC;
                 _measurementRecorder.AddMeasurement(testResult);
 
@@ -121,10 +121,10 @@ namespace CardTesterLibrary
                     if (testInterrupted)
                         break;
                     TestCycleIndex = i + 1;
-                    await RunMeasurementCycleAsync(delayUp, delayDown);
+                    await RunMeasurementCycleAsync(delayUp, delayDown, TestCycleIndex);
                 }
                 if (!testInterrupted)
-                    _measurementRecorder.SaveProtocol(outputPath, description);
+                    _measurementRecorder.SaveProtocol(outputPath, description, workOrderId);
             }
             else
             {
@@ -156,17 +156,19 @@ namespace CardTesterLibrary
         /// </summary>
         /// <param name="delayUp">delay in bend state [milliseconds]</param>
         /// <param name="delayDown">delay in basic state [milliseconds]</param>
+        /// <param name="testCycleIndex"></param>
         /// <returns></returns>
-        private async Task RunMeasurementCycleAsync(int delayUp, int delayDown)
+        private async Task RunMeasurementCycleAsync(int delayUp, int delayDown, int testCycleIndex)
         { 
+            var measurementIndex = (testCycleIndex -  1) * 2 + 1;
             await MoveForwardAsync();
             await Task.Delay(delayUp);
-            var measurementResult = _measurementService.MeasureCards();
+            var measurementResult = _measurementService.MeasureCards(measurementIndex);
             measurementResult.Position = POSITION_BENT;
             _measurementRecorder.AddMeasurement(measurementResult);
             await MoveBackwardAsync();
             await Task.Delay(delayDown);
-            measurementResult = _measurementService.MeasureCards();
+            measurementResult = _measurementService.MeasureCards(measurementIndex + 1);
             measurementResult.Position = POSITION_BASIC;
             _measurementRecorder.AddMeasurement(measurementResult);
         }
