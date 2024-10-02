@@ -176,6 +176,8 @@ namespace CardTesterApp
 
         private void Calibrate()
         {
+            UpdateMessage("Calibration in progress...");
+            Running = true;
             CalibrationStamp = DateTime.Now.AddHours(_settings.CalibrationValidityInHours);
             var jobName = cb_CardType.Text;
             var workOrderId = tb_WorkOrderId.Text;
@@ -189,12 +191,17 @@ namespace CardTesterApp
             try
             {
                 _measurementService.InitializeMeasurement(jobName, workOrderId, cardIds);
+                UpdateMessage("Prepared");
             }
             catch (MeasurementServiceException e)
             {
                 var msg = "Cannot initialize measurement";
                 _logger.Error(msg, e);
                 UpdateMessage(msg);
+            }
+            finally
+            {
+                Running = false;
             }
         }
 
@@ -443,6 +450,7 @@ namespace CardTesterApp
         {
             SetStateChangeStamp();
             await DoReset();
+            
             Calibrate();
 
             //SetWidgetsState();
