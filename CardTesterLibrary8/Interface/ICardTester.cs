@@ -19,10 +19,11 @@ namespace CardTesterLibrary
         /// <param name="delayDown">delay in lower position before card test [milliseconds]</param>
         /// <param name="outputPath">directory for protocol</param>
         /// <param name="description">test user description</param>
-        /// <param name="cardIds"></param>
+        /// <param name="jobName"></param>
         /// <param name="workOrderId"></param>
+        /// <param name="cardIds"></param>
         /// <returns></returns>
-        public Task RunTestAsync(int numberOfCycles, int delayUp, int delayDown, string outputPath, string description, string workOrderId, List<int> cardIds);
+        public Task RunTestAsync(int numberOfCycles, int delayUp, int delayDown, string outputPath, string description, string workOrderId, string jobName, List<int> cardIds);
 
         /// <summary>
         /// Moves piston to lower position in case it is stopped. (unbend)

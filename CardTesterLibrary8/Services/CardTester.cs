@@ -11,7 +11,7 @@ namespace CardTesterLibrary
     {
 
         private const int DELAY_COMMAND = 20;
-        private const string POSITION_BASIC = "BASIC";
+        private const string POSITION_BASIC = "FLAT";
         private const string POSITION_BENT = "BENT";
 
         private readonly ILogger _logger;
@@ -106,7 +106,7 @@ namespace CardTesterLibrary
 
 
         /// <inheritdoc />
-        public async Task RunTestAsync(int numberOfCycles, int delayUp, int delayDown, string outputPath, string description, string workOrderId, List<int> cardIds)
+        public async Task RunTestAsync(int numberOfCycles, int delayUp, int delayDown, string outputPath, string description, string workOrderId, string jobName, List<int> cardIds)
         {
             if (StateEquals(CardTesterConstants.STATE_DOWN))
             {
@@ -124,7 +124,7 @@ namespace CardTesterLibrary
                     await RunMeasurementCycleAsync(delayUp, delayDown, TestCycleIndex);
                 }
                 if (!testInterrupted)
-                    _measurementRecorder.SaveProtocol(outputPath, description, workOrderId);
+                    _measurementRecorder.SaveProtocol(outputPath, description, workOrderId, jobName);
             }
             else
             {
