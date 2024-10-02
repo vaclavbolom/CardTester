@@ -65,22 +65,25 @@ namespace CardTesterLibrary
 
         private readonly ILogger _logger;
         private readonly string _dllName;
+        private readonly int _numberOfCards;
 
         private string MeasurementName { get; set; } = string.Empty;
         private string WorkOrderId { get; set; } = string.Empty;
         private List<int> CardIds { get; set; } = new List<int>();
         private int MeasurementHandle { get; set; }
 
-        public CardMeasurementService(ILogger logger, string dllName)
+        public CardMeasurementService(ILogger logger, string dllName, int numberOfCards=4)
         {
             ArgumentNullException.ThrowIfNull(nameof(logger));
             _logger = logger;
             _dllName = dllName;
+            _numberOfCards = numberOfCards;
 
             JobStart = (JobStartDelegate)LoadFunction<JobStartDelegate>(_dllName, "JobStart");
             CardRun = (CardRunDelegate)LoadFunction<CardRunDelegate>(_dllName, "CardRun");
             JobEnd = (JobEndDelegate)LoadFunction<JobEndDelegate>(_dllName, "JobEnd");
         }
+
         public void FinishMeasurement()
         {
             int measurementHandle = 0;
@@ -94,6 +97,9 @@ namespace CardTesterLibrary
             MeasurementName = measurementName;
             WorkOrderId = workOrderId;
             CardIds = cardIds;
+
+            if (_numberOfCards != cardIds.Count)
+                throw new MeasurementServiceException("Number of card is different than count of provided Card IDs");
 
             var result = CodingResult.CODING_RESULT_UNINITIALIZED;
             var errorSize = 1024;
@@ -137,9 +143,9 @@ namespace CardTesterLibrary
                 Position = position
             };
 
-            for (int i = 1; i < 5; i++)
+            for (int i = 0; i < _numberOfCards; i++)
             {
-                CardRun(ref handle, i, CardIds[i - 1], measurementIndex, ref result, error, ref errorSize);
+                CardRun(ref handle, i + 1, CardIds[i], measurementIndex, ref result, error, ref errorSize);
 
                 var message = string.Empty;
                 if (errorSize > 0)
@@ -148,26 +154,8 @@ namespace CardTesterLibrary
                     if (clearMessage != null)
                         message = System.Text.Encoding.UTF8.GetString(clearMessage);
                 }
-                switch(i)
-                {
-                    case 1: 
-                        measurementResult.Card1Result = result.ToString();
-                        measurementResult.Card1Note = message;
-                        break;
-                    case 2:
-                        measurementResult.Card2Result = result.ToString();
-                        measurementResult.Card2Note = message;
-                        break;
-                    case 3:
-                        measurementResult.Card3Result = result.ToString();
-                        measurementResult.Card3Note = message;
-                        break; ;
-                    case 4:
-                        measurementResult.Card4Result = result.ToString();
-                        measurementResult.Card4Note = message;
-                        break; ;
-                    default: break;
-                }
+                measurementResult.CardResults[i] = result.ToString();
+                measurementResult.CardNotes[i] = message;               
             }
 
             return measurementResult;

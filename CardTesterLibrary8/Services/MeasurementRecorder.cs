@@ -19,15 +19,20 @@ namespace CardTesterLibrary
         private List<Measurement> _measurements;
 
         private readonly string _csvDelimiter;
+
+        private List<int> CardIds { get; set; }
        
 
-        public MeasurementRecorder(ILogger logger, string csvDelimiter=",")
+        public MeasurementRecorder(ILogger logger, List<int> cardIds, string csvDelimiter=",")
         {
             ArgumentNullException.ThrowIfNull(logger, nameof(logger));
+            if (cardIds.Count == 0)
+                throw new ArgumentException("cardIds is empty");
+            
             _measurements = new List<Measurement>();
             _logger = logger;
             _csvDelimiter = csvDelimiter;
-            
+            CardIds = cardIds;            
         }
         public void AddMeasurement(Measurement data)
         { 
@@ -36,16 +41,19 @@ namespace CardTesterLibrary
         }
        
 
-        public void SaveProtocol(string outputDirectory, string description)
+        public void SaveProtocol(string outputDirectory, string description, string workOrderId)
         {            
             var timestamp = DateTime.Now;
             var fileName = $"MeasurementProtocol-{timestamp.ToString(TIME_FORMAT_FILE)}.csv";
             
             var filePath = Path.Exists(outputDirectory) ? Path.Combine(outputDirectory, fileName) : fileName;           
 
-            var descriptionLine = $"Description{_csvDelimiter}{description}{Environment.NewLine}";
+            var descriptionLine = $"Job Name{_csvDelimiter}{description}{Environment.NewLine}";
             File.WriteAllText(filePath, descriptionLine);
-            string headerLine = $"timestamp{_csvDelimiter}card 1{_csvDelimiter}card 2{_csvDelimiter}card 3{_csvDelimiter}card 4{_csvDelimiter}position{Environment.NewLine}";            
+            var workOrderIdLine = $"Work Order ID{_csvDelimiter}{workOrderId}{Environment.NewLine}";
+            File.WriteAllText(filePath, workOrderIdLine);
+
+            string headerLine = BuildMeasurementHeader();
             File.AppendAllText(filePath, headerLine);
             var results = _measurements
                 .Select(x => WriteMeasurement(x))
@@ -54,8 +62,45 @@ namespace CardTesterLibrary
             _logger.Debug($"Protocol saved to {filePath}");
         }
 
+        public void StartMeasurement(List<int> cardIds)
+        {
+            if (cardIds == null || cardIds.Count == 0)
+                throw new ArgumentNullException(nameof(cardIds));
+
+            CardIds = cardIds;
+            _measurements = new List<Measurement>();
+        }
+
         private string WriteMeasurement(Measurement x)
-            => $"{x.Timestamp.ToString(TIME_FORMAT)}{_csvDelimiter}{x.Card1}{_csvDelimiter}{x.Card2}{_csvDelimiter}{x.Card3}{_csvDelimiter}{x.Card4}{_csvDelimiter}{x.Position}";
-       
+        {
+            var N = x.CardResults.Count;
+            var record = 
+                x.Timestamp.ToString(TIME_FORMAT) + _csvDelimiter
+                + x.MeasurementIndex.ToString() + _csvDelimiter
+                + x.Position + _csvDelimiter;
+            for (int i = 0; i < N; i++)
+            {
+                record += x.CardResults[i] + _csvDelimiter
+                    + x.CardNotes[i] + _csvDelimiter;
+            }
+
+            return record;            
+        }
+
+        private string BuildMeasurementHeader()
+        {
+            var header = "timestamp" + _csvDelimiter
+                + "index" + _csvDelimiter
+                + "position" + _csvDelimiter;
+
+            for (int i = 0; i < CardIds.Count; i++)
+            {
+                header += $"{CardIds[i]} result" + _csvDelimiter
+                    + $"{CardIds[i]} note" + _csvDelimiter;
+            }
+
+            return header;
+        }
+
     }
 }
