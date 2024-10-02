@@ -32,7 +32,7 @@ namespace CardTesterLibrary
             if (hModule.ToString() == "0")
             {
                 int iError = GetLastError();
-                //throw error
+                throw new MeasurementServiceException("Failed to load Card Reader DLL");
             }
             var functionAddress = GetProcAddress(hModule, functionName);
             return Marshal.GetDelegateForFunctionPointer(functionAddress, typeof(T));
@@ -86,14 +86,26 @@ namespace CardTesterLibrary
 
         public void FinishMeasurement()
         {
+            _logger.Debug("Finish measurement");
             int measurementHandle = 0;
-            JobEnd(ref measurementHandle);
+            try
+            {
+                JobEnd(ref measurementHandle);
+            }
+            catch (Exception ex)
+            {
+                var msg = $"Failed to run JobEnd: {ex.Message}";
+                _logger.Error(msg, ex);
+                throw new MeasurementServiceException(msg, ex);
+            }
 
             MeasurementHandle = measurementHandle;
+            _logger.Debug("Finish measurement - end");
         }
 
         public void InitializeMeasurement(string measurementName, string workOrderId, List<int> cardIds)
         {
+            _logger.Debug("InitializeMeasurement");
             MeasurementName = measurementName;
             WorkOrderId = workOrderId;
             CardIds = cardIds;
@@ -105,39 +117,50 @@ namespace CardTesterLibrary
             var errorSize = 1024;
             var error = new byte[1024];
             var handle = 0;
+            var errorMessage = string.Empty;
 
-            MeasurementHandle = JobStart(
-                MeasurementName.ToCharArray(), 
-                MeasurementName.Length, 
-                WorkOrderId.ToCharArray(), 
-                WorkOrderId.Length, 
-                ref result, 
-                error, 
-                ref errorSize);
-
-            if (errorSize > 0)
+            try
             {
-                var clearError = error.Skip(0).Take(errorSize).ToArray();
-                var errorMessage = Encoding.UTF8.GetString(clearError);
-                var message = $"Cannot initialize measurement, {error}: {errorMessage}";
+                MeasurementHandle = JobStart(
+                    MeasurementName.ToCharArray(),
+                    MeasurementName.Length,
+                    WorkOrderId.ToCharArray(),
+                    WorkOrderId.Length,
+                    ref result,
+                    error,
+                    ref errorSize);
 
-                _logger.Error(message);
-                throw new MeasurementServiceException(message);
+                if (errorSize > 0)
+                {
+                    var clearError = error.Skip(0).Take(errorSize).ToArray();
+                    errorMessage = Encoding.UTF8.GetString(clearError);
+                    var message = $"JobStartError, {errorMessage}";
+
+                    _logger.Error(message);
+                }
             }
-
+            catch (Exception e)                
+            {
+                var msg = $"Failed to run JobStart, {e.Message}";
+                _logger.Error(msg);
+                throw new MeasurementServiceException(msg);
+            }
+            
             MeasurementHandle = handle;
+            _logger.Debug("InitializeMeasurement - end");
         }
 
         public Measurement MeasureCards(int measurementIndex)
         {
+            _logger.Debug("Meassure cards");
             var result = CodingResult.CODING_RESULT_UNINITIALIZED;
             var errorSize = 1024;
             var error = new byte[1024];
             var handle = 0;
             var position = Convert.ToBoolean(measurementIndex % 2) ? "FLAT" : "BENT";
 
-            var measurementResult = new Measurement
-            {
+            var measurementResult = new Measurement(_numberOfCards) 
+            {            
                 MeasurementIndex = measurementIndex,
                 Timestamp = DateTime.UtcNow,
                 Position = position
@@ -145,19 +168,34 @@ namespace CardTesterLibrary
 
             for (int i = 0; i < _numberOfCards; i++)
             {
-                CardRun(ref handle, i + 1, CardIds[i], measurementIndex, ref result, error, ref errorSize);
-
                 var message = string.Empty;
-                if (errorSize > 0)
+                try
                 {
-                    var clearMessage = error.Skip(0).Take(errorSize).ToArray();
-                    if (clearMessage != null)
-                        message = System.Text.Encoding.UTF8.GetString(clearMessage);
+                    _logger.Debug("CardRun");
+                    CardRun(ref handle, i + 1, CardIds[i], measurementIndex, ref result, error, ref errorSize);
+
+                    if (errorSize > 0)
+                    {
+                        var clearMessage = error.Skip(0).Take(errorSize).ToArray();
+                        if (clearMessage != null)
+                        {
+                            message = System.Text.Encoding.UTF8.GetString(clearMessage);
+                        }
+                    }
                 }
+                catch (Exception e)
+                {
+                    var msg = $"Failed to run CardRun {e.Message}";
+                    _logger.Warning(msg, e);
+                    result = CodingResult.CODING_RESULT_SYSTEM_ERROR;
+                    message = "Failed to run CardRun";
+                }
+                _logger.Debug($"CardRun results: {result}, message: {message}");
                 measurementResult.CardResults[i] = result.ToString();
                 measurementResult.CardNotes[i] = message;               
             }
 
+            _logger.Debug("Meassure cards - end");
             return measurementResult;
         }
     }
