@@ -11,6 +11,7 @@ namespace CardTesterApp
         private readonly ILogger _logger;
         private readonly ICardTester _cardTester;
         private readonly ISerialPortOperator _serialPortOperator;
+        private readonly IMeasurementService _measurementService;
         private readonly ApplicationSettings _settings;
 
         private const int DELAY_COMMAND = 50;
@@ -49,11 +50,12 @@ namespace CardTesterApp
         private bool ServiceMode { get; set; } = false;
 
 
-        public TestingAppForm(ISerialPortOperator serialPortOperator, ICardTester cardTester, ILogger logger, ApplicationSettings settings)
+        public TestingAppForm(ISerialPortOperator serialPortOperator, ICardTester cardTester, ILogger logger, IMeasurementService measurementService, ApplicationSettings settings)
         {
             _serialPortOperator = serialPortOperator ?? throw new ArgumentNullException(nameof(serialPortOperator));
             _cardTester = cardTester ?? throw new ArgumentNullException(nameof(cardTester));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _measurementService = measurementService ?? throw new ArgumentNullException(nameof(measurementService));
             _settings = settings ?? throw new ArgumentNullException(nameof(settings));
 
             _timer = new System.Windows.Forms.Timer();
@@ -64,6 +66,7 @@ namespace CardTesterApp
             CalibrationStamp = DateTime.MinValue;
 
             _logger.Debug("Form created");
+            CardTesterPreviousState = CardTesterConstants.STATE_UNKNOWN;
             CardTesterState = _serialPortOperator.GetState();
 
             InitializeComponent();
@@ -93,7 +96,7 @@ namespace CardTesterApp
                 textbox_Description,
                 cb_CardType
 
-            };            
+            };
 
             _serialPortOperator.RegisterStateChangeMethod(CardTesterStateChanged);
         }
@@ -166,7 +169,15 @@ namespace CardTesterApp
         private void Calibrate()
         {
             CalibrationStamp = DateTime.Now.AddHours(_settings.CalibrationValidityInHours);
-            //TODO: interact with smart card reader, set up to initial position
+            try
+            {
+                _measurementService.InitializeMeasurement("", "", [1, 2, 3, 4]);
+            }
+            catch (MeasurementServiceException e)
+            {
+                var msg = "Cannot initialize measurement";
+                UpdateMessage(msg);
+            }
         }
 
         public void UpdateStateMessage()
@@ -248,7 +259,7 @@ namespace CardTesterApp
                 && !Running
                 && CardTesterState == CardTesterConstants.STATE_DOWN;
             btn_Run.Enabled = runState;
-                
+
             // service buttons
             bool serviceButtonsState = _serialPortOperator.IsDeviceConnected
                 && !Running
@@ -300,7 +311,10 @@ namespace CardTesterApp
             var delayBasicInMilliseconds = (int)(1000 * DelayBasic);
             var outputDirectory = text_ProtocolPath.Text;
             var description = textbox_Description.Text;
-            await _cardTester.RunTestAsync(NumberOfCycles, delayBendInMilliseconds, delayBasicInMilliseconds, outputDirectory, description);
+            var workOrderId = "";
+            var cardIds = new List<int>([1, 2, 3, 4]);
+            //TODO: add test information
+            await _cardTester.RunTestAsync(NumberOfCycles, delayBendInMilliseconds, delayBasicInMilliseconds, outputDirectory, description, workOrderId, cardIds);
             await Task.Delay(DELAY_COMMAND);
         }
 
@@ -447,6 +461,16 @@ namespace CardTesterApp
         }
 
         private void cb_CardType_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label_CardType_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void gb_Buttons_Enter(object sender, EventArgs e)
         {
 
         }
