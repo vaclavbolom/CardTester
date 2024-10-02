@@ -13,19 +13,25 @@ namespace CardTesterApp
 		[STAThread]
 		static void Main()
 		{
+			var settingsString = File.ReadAllText("appsettings.json");
+			var configuration = JsonSerializer.Deserialize<ApplicationSettings>(settingsString)
+				?? throw new ArgumentException(nameof(settingsString));
+
+			var logFile = "CardTesterApp.log";
+
+			if (Path.Exists(configuration.LogDirectory))
+				logFile = Path.Combine(configuration.LogDirectory, logFile);
             Log.Logger = new LoggerConfiguration()
-              .WriteTo.File("CardTesterApp.log", LogEventLevel.Debug)
+              .WriteTo.File(logFile, LogEventLevel.Debug)
               .MinimumLevel.Debug()
               .CreateLogger();
             var logger = Log.Logger;
 			logger.Debug("\n-----------------\nApplication started");
 
-			var settingsString = File.ReadAllText("appsettings.json");
-			var configuration = JsonSerializer.Deserialize<ApplicationSettings>(settingsString)
-				?? throw new ArgumentException(nameof(settingsString));
 
 			var serialPortOperator = new SerialPortOperator(configuration.PortName, logger);
-			var measurementService = new MeasurementServiceMock(logger);
+			//var measurementService = new MeasurementServiceMock(logger);
+			var measurementService = new CardMeasurementService(logger, configuration.CardReaderDll, configuration.DefaultCardIds.Count);
 			var measurementRecorder = new MeasurementRecorder(logger, configuration.DefaultCardIds, configuration.CsvDelimiter);
 			var cardTester = new CardTester(logger, serialPortOperator, measurementService, measurementRecorder);
 
