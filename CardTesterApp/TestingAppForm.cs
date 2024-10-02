@@ -74,6 +74,10 @@ namespace CardTesterApp
             tb_DelayBasic.Value = _settings.DelayBasic;
             tb_DelayBend.Value = _settings.DelayBent;
             text_ProtocolPath.Text = _settings.OutputDirectory;
+            tb_Card1.Value = settings.DefaultCardIds[0];
+            tb_Card2.Value = settings.DefaultCardIds[1];
+            tb_Card3.Value = settings.DefaultCardIds[2];
+            tb_Card4.Value = settings.DefaultCardIds[3];
             label_Calibration.Text = AppConstants.CALIBRATION_NOT_SET;
             label_Message.Text = string.Empty;
             btn_Bend.Visible = false;
@@ -169,13 +173,23 @@ namespace CardTesterApp
         private void Calibrate()
         {
             CalibrationStamp = DateTime.Now.AddHours(_settings.CalibrationValidityInHours);
+            var jobName = cb_CardType.Text;
+            var workOrderId = tb_WorkOrderId.Text;
+            var cardIds = new List<int>([
+                (int)tb_Card1.Value,
+                (int)tb_Card2.Value,
+                (int)tb_Card3.Value,
+                (int)tb_Card4.Value
+                ]);
+            _logger.Debug($"Calibration: jobName={jobName}, WOID={workOrderId}, cards={cardIds}");
             try
             {
-                _measurementService.InitializeMeasurement("", "", [1, 2, 3, 4]);
+                _measurementService.InitializeMeasurement(jobName, workOrderId, cardIds);
             }
             catch (MeasurementServiceException e)
             {
                 var msg = "Cannot initialize measurement";
+                _logger.Error(msg, e);
                 UpdateMessage(msg);
             }
         }
@@ -312,13 +326,14 @@ namespace CardTesterApp
             var outputDirectory = text_ProtocolPath.Text;
             var description = textbox_Description.Text;
             var workOrderId = tb_WorkOrderId.Text;
+            var jobName = cb_CardType.Text;
             var cardIds = new List<int>([
                 (int)tb_Card1.Value,
                 (int)tb_Card2.Value,
                 (int)tb_Card3.Value,
                 (int)tb_Card4.Value
                 ]);
-            await _cardTester.RunTestAsync(NumberOfCycles, delayBendInMilliseconds, delayBasicInMilliseconds, outputDirectory, description, workOrderId, cardIds);
+            await _cardTester.RunTestAsync(NumberOfCycles, delayBendInMilliseconds, delayBasicInMilliseconds, outputDirectory, description, workOrderId, jobName, cardIds);
             await Task.Delay(DELAY_COMMAND);
         }
 
