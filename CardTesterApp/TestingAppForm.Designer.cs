@@ -31,6 +31,16 @@ namespace CardTesterApp
         private void InitializeComponent()
         {
             gb_Parameters = new GroupBox();
+            label_Card4 = new Label();
+            label_Card3 = new Label();
+            label_Card2 = new Label();
+            label_Card1 = new Label();
+            tb_Card4 = new NumericUpDown();
+            tb_Card3 = new NumericUpDown();
+            tb_Card2 = new NumericUpDown();
+            tb_Card1 = new NumericUpDown();
+            tb_WorkOrderId = new TextBox();
+            label_WorkOrderId = new Label();
             label_CardType = new Label();
             cb_CardType = new ComboBox();
             textbox_Description = new TextBox();
@@ -57,25 +67,15 @@ namespace CardTesterApp
             btn_Stop = new Button();
             btn_Run = new Button();
             btn_Reset = new Button();
-            label_WorkOrderId = new Label();
-            textBox1 = new TextBox();
-            tb_Card1 = new NumericUpDown();
-            tb_Card2 = new NumericUpDown();
-            tb_Card3 = new NumericUpDown();
-            tb_Card4 = new NumericUpDown();
-            label_Card1 = new Label();
-            label_Card2 = new Label();
-            label_Card3 = new Label();
-            label_Card4 = new Label();
             gb_Parameters.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)tb_Card4).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)tb_Card3).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)tb_Card2).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)tb_Card1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)tb_DelayBend).BeginInit();
             ((System.ComponentModel.ISupportInitialize)tb_DelayBasic).BeginInit();
             ((System.ComponentModel.ISupportInitialize)tb_NubmerOfCycles).BeginInit();
             gb_Test.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)tb_Card1).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)tb_Card2).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)tb_Card3).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)tb_Card4).BeginInit();
             SuspendLayout();
             // 
             // gb_Parameters
@@ -88,7 +88,7 @@ namespace CardTesterApp
             gb_Parameters.Controls.Add(tb_Card3);
             gb_Parameters.Controls.Add(tb_Card2);
             gb_Parameters.Controls.Add(tb_Card1);
-            gb_Parameters.Controls.Add(textBox1);
+            gb_Parameters.Controls.Add(tb_WorkOrderId);
             gb_Parameters.Controls.Add(label_WorkOrderId);
             gb_Parameters.Controls.Add(label_CardType);
             gb_Parameters.Controls.Add(cb_CardType);
@@ -110,6 +110,90 @@ namespace CardTesterApp
             gb_Parameters.TabIndex = 0;
             gb_Parameters.TabStop = false;
             gb_Parameters.Text = "Test parameters";
+            // 
+            // label_Card4
+            // 
+            label_Card4.AutoSize = true;
+            label_Card4.Location = new Point(544, 126);
+            label_Card4.Name = "label_Card4";
+            label_Card4.Size = new Size(55, 15);
+            label_Card4.TabIndex = 27;
+            label_Card4.Text = "Card 4 ID";
+            // 
+            // label_Card3
+            // 
+            label_Card3.AutoSize = true;
+            label_Card3.Location = new Point(371, 126);
+            label_Card3.Name = "label_Card3";
+            label_Card3.Size = new Size(55, 15);
+            label_Card3.TabIndex = 26;
+            label_Card3.Text = "Card 3 ID";
+            // 
+            // label_Card2
+            // 
+            label_Card2.AutoSize = true;
+            label_Card2.Location = new Point(193, 126);
+            label_Card2.Name = "label_Card2";
+            label_Card2.Size = new Size(55, 15);
+            label_Card2.TabIndex = 25;
+            label_Card2.Text = "Card 2 ID";
+            // 
+            // label_Card1
+            // 
+            label_Card1.AutoSize = true;
+            label_Card1.Location = new Point(14, 126);
+            label_Card1.Name = "label_Card1";
+            label_Card1.Size = new Size(55, 15);
+            label_Card1.TabIndex = 24;
+            label_Card1.Text = "Card 1 ID";
+            // 
+            // tb_Card4
+            // 
+            tb_Card4.Location = new Point(544, 144);
+            tb_Card4.Maximum = new decimal(new int[] { 999999999, 0, 0, 0 });
+            tb_Card4.Name = "tb_Card4";
+            tb_Card4.Size = new Size(120, 23);
+            tb_Card4.TabIndex = 23;
+            // 
+            // tb_Card3
+            // 
+            tb_Card3.Location = new Point(371, 144);
+            tb_Card3.Maximum = new decimal(new int[] { 999999999, 0, 0, 0 });
+            tb_Card3.Name = "tb_Card3";
+            tb_Card3.Size = new Size(120, 23);
+            tb_Card3.TabIndex = 22;
+            // 
+            // tb_Card2
+            // 
+            tb_Card2.Location = new Point(193, 144);
+            tb_Card2.Maximum = new decimal(new int[] { 999999999, 0, 0, 0 });
+            tb_Card2.Name = "tb_Card2";
+            tb_Card2.Size = new Size(120, 23);
+            tb_Card2.TabIndex = 21;
+            // 
+            // tb_Card1
+            // 
+            tb_Card1.Location = new Point(14, 144);
+            tb_Card1.Maximum = new decimal(new int[] { 999999999, 0, 0, 0 });
+            tb_Card1.Name = "tb_Card1";
+            tb_Card1.Size = new Size(120, 23);
+            tb_Card1.TabIndex = 20;
+            // 
+            // tb_WorkOrderId
+            // 
+            tb_WorkOrderId.Location = new Point(535, 62);
+            tb_WorkOrderId.Name = "tb_WorkOrderId";
+            tb_WorkOrderId.Size = new Size(131, 23);
+            tb_WorkOrderId.TabIndex = 17;
+            // 
+            // label_WorkOrderId
+            // 
+            label_WorkOrderId.AutoSize = true;
+            label_WorkOrderId.Location = new Point(452, 65);
+            label_WorkOrderId.Name = "label_WorkOrderId";
+            label_WorkOrderId.Size = new Size(85, 15);
+            label_WorkOrderId.TabIndex = 16;
+            label_WorkOrderId.Text = "Work Order ID:";
             // 
             // label_CardType
             // 
@@ -370,90 +454,6 @@ namespace CardTesterApp
             btn_Reset.UseVisualStyleBackColor = true;
             btn_Reset.Click += btn_Reset_Click;
             // 
-            // label_WorkOrderId
-            // 
-            label_WorkOrderId.AutoSize = true;
-            label_WorkOrderId.Location = new Point(452, 65);
-            label_WorkOrderId.Name = "label_WorkOrderId";
-            label_WorkOrderId.Size = new Size(85, 15);
-            label_WorkOrderId.TabIndex = 16;
-            label_WorkOrderId.Text = "Work Order ID:";
-            // 
-            // textBox1
-            // 
-            textBox1.Location = new Point(535, 62);
-            textBox1.Name = "textBox1";
-            textBox1.Size = new Size(131, 23);
-            textBox1.TabIndex = 17;
-            // 
-            // tb_Card1
-            // 
-            tb_Card1.Location = new Point(14, 144);
-            tb_Card1.Maximum = new decimal(new int[] { 999999999, 0, 0, 0 });
-            tb_Card1.Name = "tb_Card1";
-            tb_Card1.Size = new Size(120, 23);
-            tb_Card1.TabIndex = 20;
-            // 
-            // tb_Card2
-            // 
-            tb_Card2.Location = new Point(193, 144);
-            tb_Card2.Maximum = new decimal(new int[] { 999999999, 0, 0, 0 });
-            tb_Card2.Name = "tb_Card2";
-            tb_Card2.Size = new Size(120, 23);
-            tb_Card2.TabIndex = 21;
-            // 
-            // tb_Card3
-            // 
-            tb_Card3.Location = new Point(371, 144);
-            tb_Card3.Maximum = new decimal(new int[] { 999999999, 0, 0, 0 });
-            tb_Card3.Name = "tb_Card3";
-            tb_Card3.Size = new Size(120, 23);
-            tb_Card3.TabIndex = 22;
-            // 
-            // tb_Card4
-            // 
-            tb_Card4.Location = new Point(544, 144);
-            tb_Card4.Maximum = new decimal(new int[] { 999999999, 0, 0, 0 });
-            tb_Card4.Name = "tb_Card4";
-            tb_Card4.Size = new Size(120, 23);
-            tb_Card4.TabIndex = 23;
-            // 
-            // label_Card1
-            // 
-            label_Card1.AutoSize = true;
-            label_Card1.Location = new Point(14, 126);
-            label_Card1.Name = "label_Card1";
-            label_Card1.Size = new Size(55, 15);
-            label_Card1.TabIndex = 24;
-            label_Card1.Text = "Card 1 ID";
-            // 
-            // label_Card2
-            // 
-            label_Card2.AutoSize = true;
-            label_Card2.Location = new Point(193, 126);
-            label_Card2.Name = "label_Card2";
-            label_Card2.Size = new Size(55, 15);
-            label_Card2.TabIndex = 25;
-            label_Card2.Text = "Card 2 ID";
-            // 
-            // label_Card3
-            // 
-            label_Card3.AutoSize = true;
-            label_Card3.Location = new Point(371, 126);
-            label_Card3.Name = "label_Card3";
-            label_Card3.Size = new Size(55, 15);
-            label_Card3.TabIndex = 26;
-            label_Card3.Text = "Card 3 ID";
-            // 
-            // label_Card4
-            // 
-            label_Card4.AutoSize = true;
-            label_Card4.Location = new Point(544, 126);
-            label_Card4.Name = "label_Card4";
-            label_Card4.Size = new Size(55, 15);
-            label_Card4.TabIndex = 27;
-            label_Card4.Text = "Card 4 ID";
-            // 
             // TestingAppForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -476,15 +476,15 @@ namespace CardTesterApp
             KeyDown += TestingAppForm_KeyDown;
             gb_Parameters.ResumeLayout(false);
             gb_Parameters.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)tb_Card4).EndInit();
+            ((System.ComponentModel.ISupportInitialize)tb_Card3).EndInit();
+            ((System.ComponentModel.ISupportInitialize)tb_Card2).EndInit();
+            ((System.ComponentModel.ISupportInitialize)tb_Card1).EndInit();
             ((System.ComponentModel.ISupportInitialize)tb_DelayBend).EndInit();
             ((System.ComponentModel.ISupportInitialize)tb_DelayBasic).EndInit();
             ((System.ComponentModel.ISupportInitialize)tb_NubmerOfCycles).EndInit();
             gb_Test.ResumeLayout(false);
             gb_Test.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)tb_Card1).EndInit();
-            ((System.ComponentModel.ISupportInitialize)tb_Card2).EndInit();
-            ((System.ComponentModel.ISupportInitialize)tb_Card3).EndInit();
-            ((System.ComponentModel.ISupportInitialize)tb_Card4).EndInit();
             ResumeLayout(false);
         }
 
@@ -517,7 +517,7 @@ namespace CardTesterApp
         private ComboBox cb_CardType;
         private Label label_Calibration;
         private Label label_Message;
-        private TextBox textBox1;
+        private TextBox tb_WorkOrderId;
         private Label label_WorkOrderId;
         private Label label_Card4;
         private Label label_Card3;

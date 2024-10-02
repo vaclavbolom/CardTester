@@ -311,9 +311,13 @@ namespace CardTesterApp
             var delayBasicInMilliseconds = (int)(1000 * DelayBasic);
             var outputDirectory = text_ProtocolPath.Text;
             var description = textbox_Description.Text;
-            var workOrderId = "";
-            var cardIds = new List<int>([1, 2, 3, 4]);
-            //TODO: add test information
+            var workOrderId = tb_WorkOrderId.Text;
+            var cardIds = new List<int>([
+                (int)tb_Card1.Value,
+                (int)tb_Card2.Value,
+                (int)tb_Card3.Value,
+                (int)tb_Card4.Value
+                ]);
             await _cardTester.RunTestAsync(NumberOfCycles, delayBendInMilliseconds, delayBasicInMilliseconds, outputDirectory, description, workOrderId, cardIds);
             await Task.Delay(DELAY_COMMAND);
         }
