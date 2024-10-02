@@ -171,7 +171,7 @@ namespace CardTesterLibrary
                 var message = string.Empty;
                 try
                 {
-                    _logger.Debug("CardRun");
+                    _logger.Debug($"CardRun, i={i}, card ID={CardIds[i]}");
                     CardRun(ref handle, i + 1, CardIds[i], measurementIndex, ref result, error, ref errorSize);
 
                     if (errorSize > 0)
