@@ -29,5 +29,7 @@ namespace CardTesterLibrary
         public string CsvDelimiter { get; set; } = ",";
 
         public string CardReaderDll { get; set; } = string.Empty ;
+
+        public List<int> DefaultCardIds { get; set; } = new List<int>([1, 2, 3, 4]);
     }
 }
