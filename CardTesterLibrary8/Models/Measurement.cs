@@ -17,45 +17,17 @@ namespace CardTesterLibrary
         public DateTime Timestamp { get; set; }
 
         /// <summary>
-        /// Card 1 result
+        /// Measurement results
         /// </summary>
-        public string? Card1Result { get; set; }
+        public List<string> CardResults { get; set; }
+
 
         /// <summary>
-        /// Card2 result
+        /// Additional notes for measurements
         /// </summary>
-        public string? Card2Result { get; set; }
+        public List<string> CardNotes { get; set; }
 
-        /// <summary>
-        /// Card 3 result
-        /// </summary>
-        public string? Card3Result { get; set; }
-
-        /// <summary>
-        /// Card 4 result
-        /// </summary>
-        public string? Card4Result { get; set; }
-
-        /// <summary>
-        /// Card 1 Note
-        /// </summary>
-        public string? Card1Note { get; set; }
-
-        /// <summary>
-        /// Card2 Note
-        /// </summary>
-        public string? Card2Note { get; set; }
-
-        /// <summary>
-        /// Card 3 Note
-        /// </summary>
-        public string? Card3Note { get; set; }
-
-        /// <summary>
-        /// Card 4 Note
-        /// </summary>
-        public string? Card4Note { get; set; }
-
+        
         /// <summary>
         /// Position of bending machine
         /// expected BASIC/BENT
@@ -63,6 +35,12 @@ namespace CardTesterLibrary
         public string? Position { get; set; } = string.Empty;
 
         public int MeasurementIndex { get; set; }
+
+        public Measurement(int numberOfCards=4)
+        {
+            CardResults = new List<string>(numberOfCards);
+            CardNotes = new List<string>(numberOfCards);
+        }
 
     }
 }
