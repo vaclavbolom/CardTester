@@ -37,7 +37,8 @@ namespace CardTesterTests
             _logger.Debug("\n---------------\nPrepareMeasurement test");
             var portOperator = new SerialPortOperator("COM4", _logger);
             var measurementService = new MeasurementServiceMock(_logger);
-            var measurementRecorder = new MeasurementRecorder(_logger);
+            var cardIds = new List<int>([1,2,3,4]);
+            var measurementRecorder = new MeasurementRecorder(_logger, cardIds);
             var tester = new CardTester(_logger, portOperator, measurementService, measurementRecorder);
 
             await tester.PrepareMeasurement(); ;
