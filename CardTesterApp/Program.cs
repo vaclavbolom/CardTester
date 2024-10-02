@@ -26,13 +26,13 @@ namespace CardTesterApp
 
 			var serialPortOperator = new SerialPortOperator(configuration.PortName, logger);
 			var measurementService = new MeasurementServiceMock(logger);
-			var measurementRecorder = new MeasurementRecorder(logger);
+			var measurementRecorder = new MeasurementRecorder(logger, configuration.DefaultCardIds, configuration.CsvDelimiter);
 			var cardTester = new CardTester(logger, serialPortOperator, measurementService, measurementRecorder);
 
             // To customize application configuration such as set high DPI settings or default font,
             // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
-			Application.Run(new TestingAppForm(serialPortOperator, cardTester, logger, configuration));
+			Application.Run(new TestingAppForm(serialPortOperator, cardTester, logger, measurementService, configuration));
 		}
 	}
 }
