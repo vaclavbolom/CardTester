@@ -110,6 +110,7 @@ namespace CardTesterLibrary
         {
             if (StateEquals(CardTesterConstants.STATE_DOWN))
             {
+                _measurementRecorder.StartMeasurement(cardIds);
                 var testInterrupted = false;
                 var testResult = _measurementService.MeasureCards(0);
                 testResult.Position = POSITION_BASIC;
