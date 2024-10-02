@@ -98,8 +98,12 @@ namespace CardTesterApp
                 tb_DelayBend,
                 text_ProtocolPath,
                 textbox_Description,
-                cb_CardType
-
+                cb_CardType,
+                tb_Card1,
+                tb_Card2,
+                tb_Card3,
+                tb_Card4,
+                tb_WorkOrderId
             };
 
             _serialPortOperator.RegisterStateChangeMethod(CardTesterStateChanged);
