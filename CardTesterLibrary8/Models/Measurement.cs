@@ -38,8 +38,8 @@ namespace CardTesterLibrary
 
         public Measurement(int numberOfCards=4)
         {
-            CardResults = new List<string>(numberOfCards);
-            CardNotes = new List<string>(numberOfCards);
+            CardResults = new List<string>(new string [numberOfCards]);
+            CardNotes = new List<string>(new string [numberOfCards]);
         }
 
     }
