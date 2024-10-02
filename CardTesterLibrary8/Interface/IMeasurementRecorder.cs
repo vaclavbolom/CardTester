@@ -22,6 +22,14 @@ namespace CardTesterLibrary
         /// </summary>       
         /// <param name="outputDirectory">directory for protocol</param>
         /// <param name="description">measurement user description</param>
-        void SaveProtocol(string outputDirectory, string description);
+        /// <param name="workOrderId"></param>
+        void SaveProtocol(string outputDirectory, string description, string workOrderId);
+
+        /// <summary>
+        /// Prepares new measeurement buffer
+        /// </summary>
+        /// <param name="cardIds"></param>
+        void StartMeasurement(List<int> cardIds);
+       
     }
 }
