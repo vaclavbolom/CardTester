@@ -23,7 +23,8 @@ namespace CardTesterLibrary
         /// <param name="outputDirectory">directory for protocol</param>
         /// <param name="description">measurement user description</param>
         /// <param name="workOrderId"></param>
-        void SaveProtocol(string outputDirectory, string description, string workOrderId);
+        /// <param name="jobName"></param>
+        void SaveProtocol(string outputDirectory, string description, string workOrderId, string jobName);
 
         /// <summary>
         /// Prepares new measeurement buffer

@@ -13,6 +13,7 @@ namespace CardTesterLibrary
     {
         private const string TIME_FORMAT = "yyyy-MM-ddTHH:mm:sszz";
         private const string TIME_FORMAT_FILE = "yyyy-MM-ddTHHmmsszz";
+        private const string DELIMITER_REPLACEMENT = "-";
 
         private readonly ILogger _logger;
 
@@ -41,17 +42,19 @@ namespace CardTesterLibrary
         }
        
 
-        public void SaveProtocol(string outputDirectory, string description, string workOrderId)
+        public void SaveProtocol(string outputDirectory, string description, string workOrderId, string jobName)
         {            
             var timestamp = DateTime.Now;
             var fileName = $"MeasurementProtocol-{timestamp.ToString(TIME_FORMAT_FILE)}.csv";
             
-            var filePath = Path.Exists(outputDirectory) ? Path.Combine(outputDirectory, fileName) : fileName;           
+            var filePath = Path.Exists(outputDirectory) ? Path.Combine(outputDirectory, fileName) : fileName;
 
-            var descriptionLine = $"Job Name{_csvDelimiter}{description}{Environment.NewLine}";
-            File.WriteAllText(filePath, descriptionLine);
+            var descriptionLine = $"Description{_csvDelimiter}{description}{Environment.NewLine}";
+            File.AppendAllText(filePath, descriptionLine);
+            var jobNameLine = $"Job Name{_csvDelimiter}{jobName}{Environment.NewLine}";
+            File.AppendAllText(filePath, jobNameLine);
             var workOrderIdLine = $"Work Order ID{_csvDelimiter}{workOrderId}{Environment.NewLine}";
-            File.WriteAllText(filePath, workOrderIdLine);
+            File.AppendAllText(filePath, workOrderIdLine);
 
             string headerLine = BuildMeasurementHeader();
             File.AppendAllText(filePath, headerLine);
@@ -80,8 +83,8 @@ namespace CardTesterLibrary
                 + x.Position + _csvDelimiter;
             for (int i = 0; i < N; i++)
             {
-                record += x.CardResults[i] + _csvDelimiter
-                    + x.CardNotes[i] + _csvDelimiter;
+                record += CleanResult(x.CardResults[i]) + _csvDelimiter
+                    + CleanResult(x.CardNotes[i]) + _csvDelimiter;
             }
 
             return record;            
@@ -99,8 +102,10 @@ namespace CardTesterLibrary
                     + $"{CardIds[i]} note" + _csvDelimiter;
             }
 
-            return header;
+            return header + Environment.NewLine;
         }
+
+        private string CleanResult(string result) => result.Replace(_csvDelimiter, DELIMITER_REPLACEMENT);
 
     }
 }
