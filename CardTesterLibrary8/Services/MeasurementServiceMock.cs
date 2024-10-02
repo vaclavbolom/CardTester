@@ -38,16 +38,20 @@ namespace CardTesterLibrary
         public Measurement MeasureCards(int measurementIndex)
         {
             var position = Convert.ToBoolean(measurementIndex % 2) ? "FLAT" : "BENT";
+            var N = CardIds.Count;
             var result = new Measurement
             {
-                Timestamp = DateTime.Now,
-                Card1Result = "OK",
-                Card2Result = "OK",
-                Card3Result = "OK",
-                Card4Result = "OK",
+                Timestamp = DateTime.Now,                
                 MeasurementIndex = measurementIndex,
-                Position = position
+                Position = position,
+                CardResults = new List<string>(new string[N]),
+                CardNotes = new List<string>(new string[N])
             };
+            for (int i = 0; i < CardIds.Count; i++)
+            {
+                result.CardResults[i] = "OK";
+
+            }                
 
             _logger.Debug("Cards measured");
             return result;
