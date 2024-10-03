@@ -162,7 +162,8 @@ namespace CardTesterApp
             var CalibrationValid = (CalibrationStamp > currentStamp);
             if (!CalibrationValid)
             {
-                _logger.Warning("Calibration invalid");
+                if (CalibrationStamp != DateTime.MinValue)
+                    _logger.Warning("Calibration invalid");
                 calibrationLabel = (CalibrationStamp.Equals(DateTime.MinValue))
                     ? AppConstants.CALIBRATION_NOT_SET
                     : AppConstants.CALIBRATION_EXPIRED;
@@ -329,7 +330,8 @@ namespace CardTesterApp
             }
 
             Running = false;
-            UpdateMessage("Prepared");
+            if (CardTesterState == CardTesterConstants.STATE_DOWN)
+                UpdateMessage("Prepared");
 
             _logger.Debug("DoReset finished");
         }
@@ -462,15 +464,25 @@ namespace CardTesterApp
         private async void btn_Calibration_Click(object sender, EventArgs e)
         {
             _logger.Debug($"Calibration clicked, state: {CardTesterState}");
+            label_Message.Text = "Calibration....";
             SetStateChangeStamp();
             await DoReset();
+            
             _logger.Debug($"Calibration clicked - after reset, state: {CardTesterState}");
-
+            await SetCalibrationMessage();
             Calibrate();
 
             _logger.Debug($"Calibration clicked - after calibration, state: {CardTesterState}");
 
+            label_Message.Text = "Prepared";
             //SetWidgetsState();
+        }
+
+        private async Task SetCalibrationMessage()
+        {
+            label_Message.Text = "Calibration....";
+            await Task.Delay(10);
+
         }
 
         private async void btn_Bend_Click(object sender, EventArgs e)
@@ -480,6 +492,11 @@ namespace CardTesterApp
             Running = true;
 
             await _cardTester.ResetUpAsync();
+
+            while (CardTesterState != CardTesterConstants.STATE_UP)
+            {
+                await Task.Delay(1);
+            }
 
             Running = false;
             _logger.Debug($"Bend click - after reset, state: {CardTesterState}");
@@ -493,6 +510,10 @@ namespace CardTesterApp
 
             await _cardTester.ResetDownAsync();
 
+            while (CardTesterState != CardTesterConstants.STATE_DOWN)
+            {
+                await Task.Delay(1);
+            }
             Running = false;
             _logger.Debug($"Unbend click - after reset, state: {CardTesterState}");
         }
