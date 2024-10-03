@@ -13,7 +13,7 @@ namespace CardTesterLibrary
     public class SerialPortOperator : ISerialPortOperator
     {
         private readonly ILogger _logger;
-        private readonly int _WriteDelay = 10;
+        private readonly int _WriteDelay = 5;
 
         private bool _CancelOperation = false;
 
@@ -107,8 +107,9 @@ namespace CardTesterLibrary
         public async Task RunCommandAsync(string command)
         {
             _Command = command;            
+            _logger.Debug($"Run Command Async, command:{command}, state:{_State}");
             await Task.Delay(1);
-            _logger.Debug($"Run Command Async: {command}");
+            _logger.Debug($"Run Command Async - after delay, command:{command}, state:{_State}");
         }
 
         public string GetState()
