@@ -10,6 +10,7 @@ const char COMMAND_FORWARD = '1';
 const char COMMAND_BACKWARD = '2';
 const char COMMAND_STOP = '0';
 const char COMMAND_RESET = '3';
+const char COMMAND_RESET_UP = '5';
 const char COMMAND_GET_STATE = '4';
 const char COMMAND_EMPTY = ' ';
 const char STATE_UP = 'u';
@@ -77,7 +78,8 @@ void loop() {
       case COMMAND_FORWARD:
       case COMMAND_BACKWARD:        
       case COMMAND_STOP:       
-      case COMMAND_RESET:      
+      case COMMAND_RESET:    
+      case COMMAND_RESET_UP:  
       case COMMAND_GET_STATE:
         command = data;
         break;
@@ -115,6 +117,17 @@ void loop() {
     state_changed = true;
   }
 
+  if (state == STATE_DOWN && !switch_down)
+  {
+    state = STATE_STOPPED;
+    state_changed = true;
+  }
+
+  if (state == STATE_UP && !switch_up){
+    state = STATE_STOPPED;
+    state_changed = true;
+  }
+  
   if ((switch_down == HIGH) && (state == STATE_DOWN) && (command == COMMAND_FORWARD))
   {
     digitalWrite(PIN_FORWARD, HIGH);
@@ -160,11 +173,22 @@ void loop() {
     state_changed = true;
   }
 
-  if ((state == STATE_STOPPED) && (command == COMMAND_RESET))
+  // reset down
+  if (IsStopped(state) && (command == COMMAND_RESET))
   {
     digitalWrite(PIN_FORWARD, LOW);
     digitalWrite(PIN_BACKWARD, HIGH);
     state = STATE_MOVING_BACKWARD;
+    state_changed = true;
+  }
+
+
+  //reset up
+  if (IsStopped(state) && (command == COMMAND_RESET_UP))
+  {
+    digitalWrite(PIN_BACKWARD, LOW);
+    digitalWrite(PIN_FORWARD, HIGH);
+    state = STATE_MOVING_FORWARD;
     state_changed = true;
   }
 
@@ -200,4 +224,18 @@ void loop() {
   command = COMMAND_EMPTY;
 
   delay(DELAY);
+}
+
+bool IsStopped(char state)
+{
+  switch(state)
+  {
+    case STATE_DOWN:
+    case STATE_UP:
+    case STATE_STOPPED:
+      return true;
+    default:
+      return false;
+  }
+  
 }
