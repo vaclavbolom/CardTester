@@ -1,4 +1,4 @@
-// codo for Arduino
+// code for Arduino
 
 const int PIN_UP = 5;
 const int PIN_DOWN = 6;
@@ -59,6 +59,7 @@ void loop() {
 
   if (DEBUG){      
       Serial.println("---- LOOP ----");
+      Serial.print("switch closed: ");
       Serial.println(switch_closed);
   }
   if (Serial.available())
@@ -150,6 +151,7 @@ void loop() {
 
   if ((switch_down == HIGH) && (state == STATE_MOVING_BACKWARD))
   {
+    delay(200);
     digitalWrite(PIN_FORWARD, LOW);
     digitalWrite(PIN_BACKWARD, LOW);
     state = STATE_DOWN;
