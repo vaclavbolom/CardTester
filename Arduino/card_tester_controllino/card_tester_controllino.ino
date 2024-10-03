@@ -23,6 +23,8 @@ const char STATE_UNKNOWN = 'x';
 const bool DEBUG = false;
 const bool DEBUG_ALL = false;
 const int DELAY = 1;
+const int BEND_DELAY_FLAT = 100;
+const int BEND_DELAY_BENT = 10;
 
 char command = COMMAND_EMPTY;
 char state = STATE_UNKNOWN;
@@ -117,16 +119,16 @@ void loop() {
     state_changed = true;
   }
 
-  if (state == STATE_DOWN && !switch_down)
-  {
-    state = STATE_STOPPED;
-    state_changed = true;
-  }
+  // if (state == STATE_DOWN && !switch_down)
+  // {
+  //   state = STATE_STOPPED;
+  //   state_changed = true;
+  // }
 
-  if (state == STATE_UP && !switch_up){
-    state = STATE_STOPPED;
-    state_changed = true;
-  }
+  // if (state == STATE_UP && !switch_up){
+  //   state = STATE_STOPPED;
+  //   state_changed = true;
+  // }
   
   if ((switch_down == HIGH) && (state == STATE_DOWN) && (command == COMMAND_FORWARD))
   {
@@ -137,6 +139,7 @@ void loop() {
 
   if ((switch_up == HIGH) && (state == STATE_MOVING_FORWARD))
   {
+    delay(BEND_DELAY_BENT);
     digitalWrite(PIN_FORWARD, LOW);
     digitalWrite(PIN_BACKWARD, LOW);
     state = STATE_UP;
@@ -152,7 +155,7 @@ void loop() {
 
   if ((switch_down == HIGH) && (state == STATE_MOVING_BACKWARD))
   {
-    delay(200);
+    delay(BEND_DELAY_FLAT);
     digitalWrite(PIN_FORWARD, LOW);
     digitalWrite(PIN_BACKWARD, LOW);
     state = STATE_DOWN;
