@@ -14,7 +14,7 @@ namespace CardTesterApp
         private readonly IMeasurementService _measurementService;
         private readonly ApplicationSettings _settings;
 
-        private const int DELAY_COMMAND = 50;
+        private const int DELAY_COMMAND = 20;
 
         private readonly object[]? _fillWidgets;
 
@@ -59,7 +59,7 @@ namespace CardTesterApp
             _settings = settings ?? throw new ArgumentNullException(nameof(settings));
 
             _timer = new System.Windows.Forms.Timer();
-            _timer.Interval = 100;
+            _timer.Interval = 10;
             _timer.Tick += new EventHandler(StateEventProcessor);
             _timer.Start();
 
@@ -383,7 +383,10 @@ namespace CardTesterApp
             catch (CardTesterException ex)
             {
                 Running = false;
-                UpdateMessage("Failed to run test");
+                var msg = $"Failed to run test: {ex.Message}";
+                _logger.Error(msg);
+                UpdateMessage(msg);
+                //TODO: return to basic position, read state
             }
             //SetWidgetsState();
         }

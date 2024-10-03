@@ -69,16 +69,16 @@ namespace CardTesterLibrary
         /// <inheritdoc />
         public async Task ResetDownAsync()
         {
-            await Reset(CardTesterConstants.COMMAND_RESET);
+            await Reset(CardTesterConstants.COMMAND_RESET, CardTesterConstants.STATE_UP);
         }
 
         /// <inheritdoc />
         public async Task ResetUpAsync()
         {
-            await Reset(CardTesterConstants.COMMAND_RESET_UP);
+            await Reset(CardTesterConstants.COMMAND_RESET_UP, CardTesterConstants.STATE_DOWN);
         }
 
-        private async Task Reset(string command)
+        private async Task Reset(string command, string possibleState)
         {
             var movingState = command switch
             {
@@ -87,7 +87,7 @@ namespace CardTesterLibrary
                 _ => throw new CardTesterException($"Cannot reset with command {command}")
             };
 
-            if (StateEquals(CardTesterConstants.STATE_STOPPED) || StateEquals(CardTesterConstants.STATE_UNKNOWN))
+            if (StateEquals(CardTesterConstants.STATE_STOPPED) || StateEquals(CardTesterConstants.STATE_UNKNOWN) || StateEquals(possibleState))
             {
                 await _serialPortOperator.RunCommandAsync(command);
                 await Task.Delay(DELAY_COMMAND);
@@ -180,7 +180,8 @@ namespace CardTesterLibrary
         /// </summary>
         /// <returns></returns>
         private async Task MoveForwardAsync()
-        {           
+        {
+            _logger.Debug($"MoveForward: {_State}");
             //read state
             if (StateEquals(CardTesterConstants.STATE_DOWN))
             {
@@ -199,6 +200,7 @@ namespace CardTesterLibrary
         /// <returns></returns>
         private async Task MoveBackwardAsync()
         {
+            _logger.Debug($"MoveBackward: {_State}");
             if (StateEquals(CardTesterConstants.STATE_UP))
             {
                 await MoveBackwardUnsafeAsync();
@@ -237,7 +239,7 @@ namespace CardTesterLibrary
 
             if (_State != CardTesterConstants.STATE_BACKWARD)
             {
-                var msg = $"Cannot move forward. State: {_State}";
+                var msg = $"Cannot move backward. State: {_State}";
                 _logger.Error(msg);
                 throw new CardTesterException(msg);
             }
