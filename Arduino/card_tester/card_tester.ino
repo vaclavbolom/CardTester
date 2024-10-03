@@ -129,7 +129,7 @@ void loop() {
   //   state_changed = true;
   // }
   
-  if (/*(switch_down == HIGH)*/ && (state == STATE_DOWN) && (command == COMMAND_FORWARD))
+  if (/*(switch_down == HIGH) &&*/ (state == STATE_DOWN) && (command == COMMAND_FORWARD))
   {
     digitalWrite(PIN_FORWARD, HIGH);
     state = STATE_MOVING_FORWARD;
