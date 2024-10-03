@@ -130,7 +130,7 @@ void loop() {
   //   state_changed = true;
   // }
   
-  if ((switch_down == HIGH) && (state == STATE_DOWN) && (command == COMMAND_FORWARD))
+  if (/*(switch_down == HIGH)*/ && (state == STATE_DOWN) && (command == COMMAND_FORWARD))
   {
     digitalWrite(PIN_FORWARD, HIGH);
     state = STATE_MOVING_FORWARD;
@@ -139,14 +139,14 @@ void loop() {
 
   if ((switch_up == HIGH) && (state == STATE_MOVING_FORWARD))
   {
-    delay(BEND_DELAY_BENT);
+    //delay(BEND_DELAY_BENT);
     digitalWrite(PIN_FORWARD, LOW);
     digitalWrite(PIN_BACKWARD, LOW);
     state = STATE_UP;
     state_changed = true;
   }
 
-  if ((switch_up == HIGH) && (state == STATE_UP) && (command == COMMAND_BACKWARD))
+  if (/*(switch_up == HIGH) &&*/ (state == STATE_UP) && (command == COMMAND_BACKWARD))
   {
     digitalWrite(PIN_BACKWARD, HIGH);
     state = STATE_MOVING_BACKWARD;
@@ -155,7 +155,7 @@ void loop() {
 
   if ((switch_down == HIGH) && (state == STATE_MOVING_BACKWARD))
   {
-    delay(BEND_DELAY_FLAT);
+    //delay(BEND_DELAY_FLAT);
     digitalWrite(PIN_FORWARD, LOW);
     digitalWrite(PIN_BACKWARD, LOW);
     state = STATE_DOWN;
