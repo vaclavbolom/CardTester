@@ -304,7 +304,7 @@ namespace CardTesterLibrary
 
         private void ProcessPortOperatorState(string message)
         {
-            _logger.Debug($"Process PortOperatorState: {PortOperatorState} -> {message}";
+            _logger.Debug($"Process PortOperatorState: {PortOperatorState} -> {message}");
             PortOperatorState = message;
         }
 

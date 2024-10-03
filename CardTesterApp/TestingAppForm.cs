@@ -135,7 +135,7 @@ namespace CardTesterApp
         private void SetStateChangeStamp()
         {
             var nowStamp = DateTime.UtcNow;
-            _logger.Debug($"State stamp changed: {StateChangeStamp} -> {nowStamp}")
+            _logger.Debug($"State stamp changed: {StateChangeStamp} -> {nowStamp}");
             StateChangeStamp = nowStamp;
 
         }
