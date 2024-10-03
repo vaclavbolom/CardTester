@@ -147,7 +147,7 @@ namespace CardTesterLibrary
             }
             
             MeasurementHandle = handle;
-            _logger.Debug("InitializeMeasurement - end");
+            _logger.Debug($"InitializeMeasurement - end, handle: {MeasurementHandle}");
         }
 
         public Measurement MeasureCards(int measurementIndex)
