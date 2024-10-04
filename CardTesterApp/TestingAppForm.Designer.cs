@@ -185,6 +185,7 @@ namespace CardTesterApp
             tb_WorkOrderId.Name = "tb_WorkOrderId";
             tb_WorkOrderId.Size = new Size(131, 23);
             tb_WorkOrderId.TabIndex = 17;
+            tb_WorkOrderId.Leave += tb_WorkOrderId_Leave;
             // 
             // label_WorkOrderId
             // 

@@ -48,6 +48,8 @@ namespace CardTesterApp
         private DateTime StateChangeStamp { get; set; } = DateTime.UtcNow;
 
         private bool ServiceMode { get; set; } = false;
+        private string PreviousCardType { get; set; }
+        private string PreviousWorkOrderId { get; set; }
 
 
         public TestingAppForm(ISerialPortOperator serialPortOperator, ICardTester cardTester, ILogger logger, IMeasurementService measurementService, ApplicationSettings settings)
@@ -250,7 +252,7 @@ namespace CardTesterApp
         {
             CardTesterPreviousState = CardTesterState;
             CardTesterState = message;
-            StateChangeStamp = DateTime.UtcNow;            
+            StateChangeStamp = DateTime.UtcNow;
 
             if (Initialization && CardTesterState == CardTesterConstants.STATE_DOWN && CardTesterPreviousState != string.Empty)
             {
@@ -402,7 +404,7 @@ namespace CardTesterApp
 
         private async void btn_Stop_Click(object sender, EventArgs e)
         {
-            _serialPortOperator.RunCommand(CardTesterConstants.COMMAND_GET_STATE);            
+            _serialPortOperator.RunCommand(CardTesterConstants.COMMAND_GET_STATE);
             _logger.Debug($"Stop clicked, state: {CardTesterState}");
             Running = false;
             UpdateMessage("Stopped");
@@ -467,7 +469,7 @@ namespace CardTesterApp
             label_Message.Text = "Calibration....";
             SetStateChangeStamp();
             await DoReset();
-            
+
             _logger.Debug($"Calibration clicked - after reset, state: {CardTesterState}");
             await SetCalibrationMessage();
             Calibrate();
@@ -535,7 +537,13 @@ namespace CardTesterApp
 
         private void cb_CardType_SelectedIndexChanged(object sender, EventArgs e)
         {
+            var currentValue = cb_CardType.Text;
 
+            if (currentValue != PreviousCardType)
+            {
+                CalibrationStamp = DateTime.UtcNow;
+                PreviousCardType = currentValue;
+            }
         }
 
         private void label_CardType_Click(object sender, EventArgs e)
@@ -546,6 +554,18 @@ namespace CardTesterApp
         private void gb_Buttons_Enter(object sender, EventArgs e)
         {
 
+        }
+       
+
+        private void tb_WorkOrderId_Leave(object sender, EventArgs e)
+        {
+            var currentValue = tb_WorkOrderId.Text;
+
+            if (currentValue != PreviousWorkOrderId)
+            {
+                CalibrationStamp = DateTime.UtcNow;
+                PreviousWorkOrderId = currentValue;
+            }
         }
     }
 }
