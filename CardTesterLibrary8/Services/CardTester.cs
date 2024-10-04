@@ -219,7 +219,7 @@ namespace CardTesterLibrary
             }
             else
             {
-                _logger.Information($"Cannot move backward, state = {_State}");
+                _logger.Information($"MoveBackwardAsync, Cannot move backward, state = {_State}");
             }
             return;
         }
@@ -228,44 +228,61 @@ namespace CardTesterLibrary
         public async Task MoveForwardUnsafeAsync()
         {
             _logger.Debug($"MoveForwardUnsafeAsync, state: {_State}");
-            await _serialPortOperator.RunCommandAsync(CardTesterConstants.COMMAND_MOVE_FORWARD);
-            await Task.Delay(DELAY_COMMAND);
-            _logger.Debug($"MoveForwardUnsafeAsync  - after delay, state: {_State}");
-
-            if (_State != CardTesterConstants.STATE_FORWARD)
-            {
-                var msg = $"Cannot move forward. State: {_State}";
-                _logger.Error(msg);
-                throw new CardTesterException(msg);
-            }
-
-            while (StateEquals(CardTesterConstants.STATE_FORWARD))
-            {
-                await Task.Delay(DELAY_COMMAND);
-            }
+            await MoveUnsafeAsync(CardTesterConstants.COMMAND_MOVE_FORWARD, CardTesterConstants.STATE_FORWARD);
             _logger.Debug($"MoveForwardUnsafe - end, state: {_State}");
         }
 
         /// <inheritdoc />
         public async Task MoveBackwardUnsafeAsync()
         {
-            _logger.Debug($"MoveBackwardUnsafeAsync, state: {_State}");
-            await _serialPortOperator.RunCommandAsync(CardTesterConstants.COMMAND_MOVE_BACKWARD);
-            await Task.Delay(DELAY_COMMAND);
-            _logger.Debug($"MoveBackwardUnsafeAsync  - after delay, state: {_State}");
+            await MoveUnsafeAsync(CardTesterConstants.COMMAND_MOVE_BACKWARD, CardTesterConstants.STATE_BACKWARD);
+        }
 
-            if (_State != CardTesterConstants.STATE_BACKWARD)
+        public async Task MoveUnsafeAsync(string command, string movingState )
+        {
+            var desiredState = (command == CardTesterConstants.COMMAND_MOVE_BACKWARD) 
+                ? CardTesterConstants.STATE_DOWN
+                : CardTesterConstants.STATE_UP;
+
+            _logger.Debug($"MovedUnsafeAsync, state: {_State}, command: {command}, moving state: {movingState}");
+            await _serialPortOperator.RunCommandAsync(command);
+            await Task.Delay(DELAY_COMMAND);
+            _logger.Debug($"MoveUnsafeAsync  - after delay, state: {_State}");
+
+            // wait for state from controllino
+            for (int i = 0; i < 10; i++)
             {
-                var msg = $"Cannot move backward. State: {_State}";
+                if (_State == movingState)
+                    break;
+                else
+                {
+                    _logger.Debug($"MoveUnsafeASync, wait for proper state, state: {_State}");
+                    await Task.Delay(DELAY_COMMAND);
+
+                }
+            }
+
+            if (_State != movingState && _State != desiredState)
+            { 
+                var direction = (command == CardTesterConstants.COMMAND_MOVE_BACKWARD)
+                    ? "BACKWARD"
+                    : "FORWARD";
+                var msg = $"MovedUnsafeAsync, Cannot move {direction}. State: {_State}";
                 _logger.Error(msg);
                 throw new CardTesterException(msg);
             }
 
-            while (StateEquals(CardTesterConstants.STATE_BACKWARD))
+            if (_State ==  desiredState)
+            {
+                var msg = $"Moving state skipped, moving state: {movingState}, state: {_State}";
+                _logger.Warning(msg);
+            }
+
+            while (StateEquals(movingState))
             {
                 await Task.Delay(0);
             }
-            _logger.Debug($"MoveBackwardUnsafe - end, state: {_State}");
+            _logger.Debug($"MoveUnsafe - end, state: {_State}");
         }
         
 
