@@ -153,7 +153,6 @@ namespace CardTesterApp
                 Task.Run(() => _cardTester.StopAsync());
                 UpdateMessage("Stopped - measurement timeout");
                 _logger.Error("Measurement timeout");
-                //SetWidgetsState();
             }
         }
 
@@ -327,7 +326,6 @@ namespace CardTesterApp
             _logger.Debug($"DoReset started, state: {CardTesterState}");
 
             Running = true;
-            //SetWidgetsState();
             UpdateMessage("Returning backward - resetting");
 
             await _cardTester.ResetDownAsync();
@@ -382,7 +380,6 @@ namespace CardTesterApp
             SetStateChangeStamp();
             _logger.Debug("Run clicked");
             Running = true;
-            //SetWidgetsState();
             UpdateMessage("Running test");
             try
             {
@@ -406,7 +403,6 @@ namespace CardTesterApp
                 UpdateMessage(msg);
                 //TODO: return to basic position, read state
             }
-            //SetWidgetsState();
         }
 
         private async void btn_Stop_Click(object sender, EventArgs e)
@@ -415,7 +411,6 @@ namespace CardTesterApp
             _logger.Debug($"Stop clicked, state: {CardTesterState}");
             Running = false;
             UpdateMessage("Stopped");
-            //SetWidgetsState();
             await DoStop();
 
             while (CardTesterState != CardTesterConstants.STATE_STOPPED)
@@ -423,7 +418,6 @@ namespace CardTesterApp
                 await Task.Delay(DELAY_COMMAND);
             }
 
-            //SetWidgetsState();
             await Task.Delay(DELAY_COMMAND);
             _logger.Debug($"Stop finished, state:{CardTesterState}");
         }
@@ -435,7 +429,6 @@ namespace CardTesterApp
             SetStateChangeStamp();
             await DoReset();
             _logger.Debug($"DoRest finished, state: {CardTesterState}");
-            //SetWidgetsState();
         }
 
 
@@ -447,7 +440,6 @@ namespace CardTesterApp
             var task = _cardTester.PrepareMeasurement();
             task.Wait(100);
             _logger.Debug("after 100");
-            //SetWidgetsState();
             CardTesterPreviousState = CardTesterState;
             _logger.Debug($"Form load, state: {CardTesterState}");
         }
@@ -484,7 +476,6 @@ namespace CardTesterApp
             _logger.Debug($"Calibration clicked - after calibration, state: {CardTesterState}");
 
             label_Message.Text = "Prepared";
-            //SetWidgetsState();
         }
 
         private async Task SetCalibrationMessage()
