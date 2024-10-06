@@ -104,3 +104,16 @@ Description of parameters:
 - CsvDelimiter: delimiter used for csv output
 - CardReaderDll: path to the DLL operating the card reader, can be absolute or relative to application folder
 - DefaultCardIds: default card ids for individual card slots
+
+## Measurement protocol
+Output of each test is stored into a CSV file. The file is stored in a directory according to the path set in application.
+
+![protocol](img/protocol.png)
+
+Test parameters and test description are stored at the top of the file. The test results are structured into the rows with the following columns:
+- **timestamp**: timestamp of measurement
+- **index**: index of measurement
+- **position**: card state (BENT/FLAT)
+- **<card1 ID> result**: test result of card 1
+- **<Card1 ID> note**: note to the measurement of car 1
+- ... results and notes for the remaining cards
