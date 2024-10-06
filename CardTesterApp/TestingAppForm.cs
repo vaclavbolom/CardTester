@@ -158,11 +158,10 @@ namespace CardTesterApp
         }
 
         private void CheckCalibration()
-        {
-            var currentStamp = DateTime.Now;
+        {            
             var calibrationLabel = string.Empty;
-            var CalibrationValid = (CalibrationStamp > currentStamp);
-            if (!CalibrationValid)
+            bool isCalibrationValid = IsCalibrationValid();
+            if (!isCalibrationValid)
             {
                 if (CalibrationStamp != DateTime.MinValue)
                     _logger.Warning("Calibration invalid");
@@ -177,8 +176,15 @@ namespace CardTesterApp
             if (!label_Calibration.Equals(calibrationLabel))
             {
                 label_Calibration.Text = calibrationLabel;
-                label_Calibration.ForeColor = CalibrationValid ? Color.Green : Color.Red;
+                label_Calibration.ForeColor = isCalibrationValid ? Color.Green : Color.Red;
             }
+        }
+
+        private bool IsCalibrationValid()
+        {
+            var currentStamp = DateTime.Now;
+
+            return (CalibrationStamp > currentStamp);
         }
 
         private void Calibrate()
@@ -289,6 +295,7 @@ namespace CardTesterApp
             //RUN
             bool runState = _serialPortOperator.IsDeviceConnected
                 && !Running
+                && IsCalibrationValid()
                 && CardTesterState == CardTesterConstants.STATE_DOWN;
             btn_Run.Enabled = runState;
 
@@ -494,12 +501,7 @@ namespace CardTesterApp
             Running = true;
 
             await _cardTester.ResetUpAsync();
-
-            while (CardTesterState != CardTesterConstants.STATE_UP)
-            {
-                await Task.Delay(1);
-            }
-
+           
             Running = false;
             _logger.Debug($"Bend click - after reset, state: {CardTesterState}");
         }
@@ -512,10 +514,6 @@ namespace CardTesterApp
 
             await _cardTester.ResetDownAsync();
 
-            while (CardTesterState != CardTesterConstants.STATE_DOWN)
-            {
-                await Task.Delay(1);
-            }
             Running = false;
             _logger.Debug($"Unbend click - after reset, state: {CardTesterState}");
         }
