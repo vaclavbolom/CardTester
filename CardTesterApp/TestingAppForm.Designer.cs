@@ -289,18 +289,18 @@ namespace CardTesterApp
             label_DelayBend.AutoSize = true;
             label_DelayBend.Location = new Point(14, 97);
             label_DelayBend.Name = "label_DelayBend";
-            label_DelayBend.Size = new Size(120, 15);
+            label_DelayBend.Size = new Size(117, 15);
             label_DelayBend.TabIndex = 2;
-            label_DelayBend.Text = "Wait in bend position";
+            label_DelayBend.Text = "Wait in bent position";
             // 
             // label_DelayBasic
             // 
             label_DelayBasic.AutoSize = true;
             label_DelayBasic.Location = new Point(14, 62);
             label_DelayBasic.Name = "label_DelayBasic";
-            label_DelayBasic.Size = new Size(120, 15);
+            label_DelayBasic.Size = new Size(110, 15);
             label_DelayBasic.TabIndex = 1;
-            label_DelayBasic.Text = "Wait in basic position";
+            label_DelayBasic.Text = "Wait in flat position";
             // 
             // label_NumberOfCycles
             // 
