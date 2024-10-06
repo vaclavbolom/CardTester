@@ -86,8 +86,8 @@ namespace CardTesterLibrary
             _logger.Debug($"Reset, command: {command}, expected state: {possibleState}");
             var movingState = command switch
             {
-                CardTesterConstants.COMMAND_RESET => CardTesterConstants.STATE_FORWARD,
-                CardTesterConstants.COMMAND_RESET_UP => CardTesterConstants.STATE_BACKWARD,
+                CardTesterConstants.COMMAND_RESET => CardTesterConstants.STATE_BACKWARD,
+                CardTesterConstants.COMMAND_RESET_UP => CardTesterConstants.STATE_FORWARD,
                 _ => throw new CardTesterException($"Cannot reset with command {command}")
             };
 
@@ -247,20 +247,7 @@ namespace CardTesterLibrary
             _logger.Debug($"MovedUnsafeAsync, state: {_State}, command: {command}, moving state: {movingState}");
             await _serialPortOperator.RunCommandAsync(command);
             await Task.Delay(DELAY_COMMAND);
-            _logger.Debug($"MoveUnsafeAsync  - after delay, state: {_State}");
-
-            // wait for state from controllino
-            for (int i = 0; i < 10; i++)
-            {
-                if (_State == movingState)
-                    break;
-                else
-                {
-                    _logger.Debug($"MoveUnsafeASync, wait for proper state, state: {_State}");
-                    await Task.Delay(DELAY_COMMAND);
-
-                }
-            }
+            _logger.Debug($"MoveUnsafeAsync  - after delay, state: {_State}");          
 
             if (_State != movingState && _State != desiredState)
             { 
@@ -280,7 +267,7 @@ namespace CardTesterLibrary
 
             while (StateEquals(movingState))
             {
-                await Task.Delay(0);
+                await Task.Delay(1);
             }
             _logger.Debug($"MoveUnsafe - end, state: {_State}");
         }
