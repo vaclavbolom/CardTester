@@ -260,9 +260,11 @@ namespace CardTesterApp
             tb_DelayBend.Location = new Point(204, 92);
             tb_DelayBend.Margin = new Padding(3, 2, 3, 2);
             tb_DelayBend.Maximum = new decimal(new int[] { 10, 0, 0, 0 });
+            tb_DelayBend.Minimum = new decimal(new int[] { 1, 0, 0, 65536 });
             tb_DelayBend.Name = "tb_DelayBend";
             tb_DelayBend.Size = new Size(85, 23);
             tb_DelayBend.TabIndex = 9;
+            tb_DelayBend.Value = new decimal(new int[] { 1, 0, 0, 65536 });
             // 
             // tb_DelayBasic
             // 
@@ -271,9 +273,11 @@ namespace CardTesterApp
             tb_DelayBasic.Location = new Point(204, 61);
             tb_DelayBasic.Margin = new Padding(3, 2, 3, 2);
             tb_DelayBasic.Maximum = new decimal(new int[] { 10, 0, 0, 0 });
+            tb_DelayBasic.Minimum = new decimal(new int[] { 1, 0, 0, 65536 });
             tb_DelayBasic.Name = "tb_DelayBasic";
             tb_DelayBasic.Size = new Size(85, 23);
             tb_DelayBasic.TabIndex = 8;
+            tb_DelayBasic.Value = new decimal(new int[] { 1, 0, 0, 65536 });
             // 
             // tb_NubmerOfCycles
             // 
