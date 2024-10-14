@@ -26,6 +26,7 @@ namespace CardTesterLibrary
 
         private ProcessDataDelegate? _ProcessDataMethod;
         private SerialPort? _serialPort;
+        private bool IsPortInformationRecorded { get; set; } = false;
 
         public bool IsDeviceConnected { 
             get
@@ -141,9 +142,12 @@ namespace CardTesterLibrary
                         var message = await serialPort.ReadAsync(3);
 
                         _PreviousState = _State;
-                        _State = System.Text.Encoding.UTF8.GetString(message);
+                        var decodedMessage = Encoding.UTF8.GetString(message);
+                        _State = decodedMessage.Length > 0 
+                            ? decodedMessage.Substring(0, 1)
+                            : CardTesterConstants.STATE_UNKNOWN;
                         _State = _State.Trim();
-                        _logger.Debug($"State changed: {_PreviousState} -> {_State}, message: {message}");
+                        _logger.Debug($"State changed: {_PreviousState} -> {_State}, message: {decodedMessage}");
                         if (_ProcessDataMethod != null)
                             Task.Run(() => _ProcessDataMethod(_State));
                     }                    
@@ -162,7 +166,8 @@ namespace CardTesterLibrary
                 if (serialPort.IsOpen)
                 {
                     try
-                    {                        
+                    {            
+                        IsPortInformationRecorded = false;
                         if (_Command != string.Empty)
                         {
                             _logger.Debug($"WriteToSerialPort: {_Command}, previous command: {_PreviousCommand}");
@@ -180,7 +185,11 @@ namespace CardTesterLibrary
                 }
                 else
                 {
-                    _logger.Warning("Port is NOT opened.");
+                    if (!IsPortInformationRecorded)
+                    {
+                        _logger.Warning("Port is NOT opened.");
+                        IsPortInformationRecorded = true;
+                    }
                 }
             }
 
