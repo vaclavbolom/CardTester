@@ -23,6 +23,7 @@ namespace CardTesterApp
 
         private bool Running { get; set; }
         private bool Initialization { get; set; } = false;
+        private bool IsInvalidCalibrationRecorded { get; set; } = false;
 
         private int NumberOfCycles
         {
@@ -162,15 +163,19 @@ namespace CardTesterApp
             bool isCalibrationValid = IsCalibrationValid();
             if (!isCalibrationValid)
             {
-                if (CalibrationStamp != DateTime.MinValue)
-                    _logger.Warning("Calibration invalid");
                 calibrationLabel = (CalibrationStamp.Equals(DateTime.MinValue))
                     ? AppConstants.CALIBRATION_NOT_SET
                     : AppConstants.CALIBRATION_EXPIRED;
+                if (!IsInvalidCalibrationRecorded)
+                {
+                    _logger.Warning("Calibration invalid");
+                    IsInvalidCalibrationRecorded = true;
+                }
             }
             else
             {
                 calibrationLabel = AppConstants.CALIBRATION_OK;
+                IsInvalidCalibrationRecorded = false;
             }
             if (!label_Calibration.Equals(calibrationLabel))
             {
