@@ -2,25 +2,25 @@
 
 namespace CardTesterApp
 {
-	partial class TestingAppForm
-	{
-		/// <summary>
-		///  Required designer variable.
-		/// </summary>
-		private System.ComponentModel.IContainer components = null;
+    partial class TestingAppForm
+    {
+        /// <summary>
+        ///  Required designer variable.
+        /// </summary>
+        private System.ComponentModel.IContainer components = null;
 
-		/// <summary>
-		///  Clean up any resources being used.
-		/// </summary>
-		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-		protected override void Dispose(bool disposing)
-		{
-			if (disposing && (components != null))
-			{
-				components.Dispose();
-			}
-			base.Dispose(disposing);
-		}
+        /// <summary>
+        ///  Clean up any resources being used.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
 
         #region Windows Form Designer generated code
 
@@ -491,21 +491,21 @@ namespace CardTesterApp
         #endregion
 
         private GroupBox gb_Parameters;
-		private Label label_DelayBend;
-		private Label label_DelayBasic;
-		private Label label_NumberOfCycles;
-		private NumericUpDown tb_NubmerOfCycles;
-		private NumericUpDown tb_DelayBend;
-		private NumericUpDown tb_DelayBasic;
-		private GroupBox gb_Test;
-		private GroupBox gb_Buttons;
-		private Button btn_Stop;
-		private Button btn_Run;
-		private Button btn_Reset;
-		private Label lablel_CycleLabel;
-		private Label label_Cycle;
-		private Label label_StateLabel;
-		private Label label_State;
+        private Label label_DelayBend;
+        private Label label_DelayBasic;
+        private Label label_NumberOfCycles;
+        private NumericUpDown tb_NubmerOfCycles;
+        private NumericUpDown tb_DelayBend;
+        private NumericUpDown tb_DelayBasic;
+        private GroupBox gb_Test;
+        private GroupBox gb_Buttons;
+        private Button btn_Stop;
+        private Button btn_Run;
+        private Button btn_Reset;
+        private Label lablel_CycleLabel;
+        private Label label_Cycle;
+        private Label label_StateLabel;
+        private Label label_State;
         private TextBox text_ProtocolPath;
         private Label label_ResultPath;
         private TextBox textbox_Description;
