@@ -1,3 +1,6 @@
+#include <SPI.h>
+#include <Controllino.h>
+
 //Code for Controllino, same as card_tester.ino, pin numbers set with Controllino constants
 #include <Controllino.h>
 

@@ -25,6 +25,8 @@ namespace CardTesterApp
         private bool Initialization { get; set; } = false;
         private bool IsInvalidCalibrationRecorded { get; set; } = false;
 
+        private bool IsDisconnectedRecorded { get; set; } = false;
+
         private int NumberOfCycles
         {
             get => (int)tb_NubmerOfCycles.Value;
@@ -240,12 +242,16 @@ namespace CardTesterApp
                 label_State.Text = labelMessage;
                 _logger.Debug($"Message changed, state:{CardTesterState}, message:{labelMessage}");
             }
-            if (!_serialPortOperator.IsDeviceConnected)
+            if (!_serialPortOperator.IsDeviceConnected && !IsDisconnectedRecorded)
             {
+                IsDisconnectedRecorded = true;
                 var msg = "Device disconnected";
                 _logger.Warning(msg);
                 UpdateMessage(msg);
-
+            }
+            else
+            {
+                IsDisconnectedRecorded = true;
             }
         }
 
