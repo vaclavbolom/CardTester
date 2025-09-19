@@ -74,6 +74,22 @@ namespace CardTesterLibrary
             _measurements = new List<Measurement>();
         }
 
+        public List<int> GetResult()
+        {
+            var result = CardIds
+                .Select((id, index) =>
+                {
+                    var result = _measurements
+                        .Count(x => x.CardResults[index].ToCodingResult().Equals(CodingResult.CODING_RESULT_OK));
+                    return result;
+                })
+                .ToList();
+                
+                
+
+            return result;
+        }
+
         private string WriteMeasurement(Measurement x)
         {
             var N = x.CardResults.Count;
