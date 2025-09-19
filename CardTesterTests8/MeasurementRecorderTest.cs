@@ -30,6 +30,7 @@ namespace CardTesterTests
         {
             var cardIds = new List<int> { 1, 2, 3, 4 };
             var recorder = new MeasurementRecorder(_logger, cardIds);
+            var dllPath  = Path.Combine(Directory.GetCurrentDirectory(), _dllName);
             var measurementService = new CardMeasurementService(_logger, _dllName, 4);
 
             measurementService.InitializeMeasurement("nice measurement", "work order id 1", cardIds);
@@ -42,6 +43,8 @@ namespace CardTesterTests
             }
             
             Assert.NotNull(recorder);
+
+            var measurementResult = recorder.GetResult();
         }
     }
 }
