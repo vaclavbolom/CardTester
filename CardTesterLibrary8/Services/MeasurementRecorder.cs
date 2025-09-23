@@ -74,9 +74,9 @@ namespace CardTesterLibrary
             _measurements = new List<Measurement>();
         }
 
-        public List<int> GetResult()
+        public MeasurementResult GetResult()
         {
-            var result = CardIds
+            var resultOk = CardIds
                 .Select((id, index) =>
                 {
                     var result = _measurements
@@ -84,10 +84,41 @@ namespace CardTesterLibrary
                     return result;
                 })
                 .ToList();
-                
-                
 
-            return result;
+            var resultFlatOk = CardIds
+                .Select((id, index) =>
+                {
+                    var result = _measurements
+                        .Count(x => (x.CardResults[index].ToCodingResult().Equals(CodingResult.CODING_RESULT_OK) && x.Position == "FLAT"));
+                    return result;
+                })
+                .ToList();
+
+            var resultBentOk = CardIds
+                .Select((id, index) =>
+                {
+                    var result = _measurements
+                        .Count(x => (x.CardResults[index].ToCodingResult().Equals(CodingResult.CODING_RESULT_OK) && x.Position == "BENT"));
+                    return result;
+                })
+                .ToList();
+
+            var measurementsFlat = _measurements.Count(x => x.Position == "FLAT");
+            var measuremetsBent = _measurements.Count(x => x.Position == "BENT");
+
+            var measurementResults = new MeasurementResult(
+                _measurements.Count,
+                measurementsFlat,
+                measuremetsBent,
+                resultOk,
+                resultFlatOk,
+                resultBentOk,
+                CardIds
+                );         
+
+
+
+            return measurementResults;
         }
 
         private string WriteMeasurement(Measurement x)
