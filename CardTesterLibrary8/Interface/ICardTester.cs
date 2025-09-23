@@ -23,7 +23,7 @@ namespace CardTesterLibrary
         /// <param name="workOrderId"></param>
         /// <param name="cardIds"></param>
         /// <returns></returns>
-        public Task RunTestAsync(int numberOfCycles, int delayUp, int delayDown, string outputPath, string description, string workOrderId, string jobName, List<int> cardIds);
+        public Task<MeasurementResult> RunTestAsync(int numberOfCycles, int delayUp, int delayDown, string outputPath, string description, string workOrderId, string jobName, List<int> cardIds);
 
         /// <summary>
         /// Moves piston to lower position in case it is stopped. (unbend)

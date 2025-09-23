@@ -106,8 +106,9 @@ namespace CardTesterLibrary
 
 
         /// <inheritdoc />
-        public async Task RunTestAsync(int numberOfCycles, int delayUp, int delayDown, string outputPath, string description, string workOrderId, string jobName, List<int> cardIds)
+        public async Task<MeasurementResult> RunTestAsync(int numberOfCycles, int delayUp, int delayDown, string outputPath, string description, string workOrderId, string jobName, List<int> cardIds)
         {
+            var result = MeasurementResult.Empty();
             if (StateEquals(CardTesterConstants.STATE_DOWN))
             {
                 _measurementRecorder.StartMeasurement(cardIds);
@@ -125,13 +126,18 @@ namespace CardTesterLibrary
                     await RunMeasurementCycleAsync(delayUp, delayDown, TestCycleIndex);
                 }
                 if (!testInterrupted)
+                {
                     _measurementRecorder.SaveProtocol(outputPath, description, workOrderId, jobName);
+                    result = _measurementRecorder.GetResult();
+                }
+
             }
             else
             {
                 _logger.Information($"Cannot start measurement, state = {_State}");
             }
 
+            return result;
         }
 
 
