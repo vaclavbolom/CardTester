@@ -45,6 +45,7 @@ namespace CardTesterTests
             Assert.NotNull(recorder);
 
             var measurementResult = recorder.GetResult();
+            Assert.NotNull(measurementResult);
         }
     }
 }
