@@ -344,8 +344,32 @@ namespace CardTesterApp
                 (int)tb_Card3.Value,
                 (int)tb_Card4.Value
                 ]);
-            await _cardTester.RunTestAsync(NumberOfCycles, delayBendInMilliseconds, delayBasicInMilliseconds, outputDirectory, description, workOrderId, jobName, cardIds);
+            var result = await _cardTester.RunTestAsync(NumberOfCycles, delayBendInMilliseconds, delayBasicInMilliseconds, outputDirectory, description, workOrderId, jobName, cardIds);
             await Task.Delay(DELAY_COMMAND);
+
+            if (result != MeasurementResult.Empty())
+            {
+                var labels = new List<Label> { label_result1, label_result2, label_result3, label_result4 };
+                var N = result.NumberOfCycles;
+                for (int i = 0; i < result.CardIds.Count; i++)
+                {
+                    var label = labels[i];
+                    if (result.Result[i])
+                    {
+                        label.Text = "PASSED";
+                        label.ForeColor = Color.Green;
+                        label.Visible = true;
+                    }
+                    else
+                    {
+                        label.Text = $"FAILED: {N - result.TestsOk[i]}/{N}";
+                        label.ForeColor = Color.Red;
+                        label.Visible = true;
+                    }
+                }
+            }
+
+            
         }
 
         private async Task DoStop()
@@ -362,6 +386,7 @@ namespace CardTesterApp
 
         private async void btn_Run_Click(object sender, EventArgs e)
         {
+            ResetResults();
             SetStateChangeStamp();
             _logger.Debug("Run clicked");
             Running = true;
@@ -378,7 +403,10 @@ namespace CardTesterApp
 
                 Running = false;
                 if (CardTesterState != CardTesterConstants.STATE_STOPPED && CardTesterState != CardTesterConstants.STATE_DOOR_OPEN)
+                {
                     UpdateMessage("Test finished");
+                    //TODO: display test reults
+                }
             }
             catch (CardTesterException ex)
             {
@@ -453,7 +481,7 @@ namespace CardTesterApp
         {
             SetStateChangeStamp();
             await DoReset();
-            
+
             Calibrate();
 
             //SetWidgetsState();
@@ -494,6 +522,14 @@ namespace CardTesterApp
             }
         }
 
+        private void ResetResults()
+        {
+            label_result1.Visible = false;
+            label_result2.Visible = false;
+            label_result3.Visible = false;
+            label_result4.Visible = false;
+        }
+
         private void cb_CardType_SelectedIndexChanged(object sender, EventArgs e)
         {
 
@@ -505,6 +541,11 @@ namespace CardTesterApp
         }
 
         private void gb_Buttons_Enter(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label_result4_Click(object sender, EventArgs e)
         {
 
         }

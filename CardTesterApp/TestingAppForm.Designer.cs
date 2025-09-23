@@ -67,6 +67,10 @@ namespace CardTesterApp
             btn_Stop = new Button();
             btn_Run = new Button();
             btn_Reset = new Button();
+            label_result1 = new Label();
+            label_result2 = new Label();
+            label_result3 = new Label();
+            label_result4 = new Label();
             gb_Parameters.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)tb_Card4).BeginInit();
             ((System.ComponentModel.ISupportInitialize)tb_Card3).BeginInit();
@@ -80,6 +84,10 @@ namespace CardTesterApp
             // 
             // gb_Parameters
             // 
+            gb_Parameters.Controls.Add(label_result4);
+            gb_Parameters.Controls.Add(label_result3);
+            gb_Parameters.Controls.Add(label_result2);
+            gb_Parameters.Controls.Add(label_result1);
             gb_Parameters.Controls.Add(label_Card4);
             gb_Parameters.Controls.Add(label_Card3);
             gb_Parameters.Controls.Add(label_Card2);
@@ -454,6 +462,47 @@ namespace CardTesterApp
             btn_Reset.UseVisualStyleBackColor = true;
             btn_Reset.Click += btn_Reset_Click;
             // 
+            // label_result1
+            // 
+            label_result1.AutoSize = true;
+            label_result1.Location = new Point(14, 169);
+            label_result1.Name = "label_result1";
+            label_result1.Size = new Size(45, 15);
+            label_result1.TabIndex = 28;
+            label_result1.Text = "result 1";
+            label_result1.Visible = false;
+            // 
+            // label_result2
+            // 
+            label_result2.AutoSize = true;
+            label_result2.Location = new Point(193, 169);
+            label_result2.Name = "label_result2";
+            label_result2.Size = new Size(45, 15);
+            label_result2.TabIndex = 29;
+            label_result2.Text = "result 2";
+            label_result2.Visible = false;
+            // 
+            // label_result3
+            // 
+            label_result3.AutoSize = true;
+            label_result3.Location = new Point(371, 169);
+            label_result3.Name = "label_result3";
+            label_result3.Size = new Size(45, 15);
+            label_result3.TabIndex = 30;
+            label_result3.Text = "resutl 3";
+            label_result3.Visible = false;
+            // 
+            // label_result4
+            // 
+            label_result4.AutoSize = true;
+            label_result4.Location = new Point(544, 169);
+            label_result4.Name = "label_result4";
+            label_result4.Size = new Size(45, 15);
+            label_result4.TabIndex = 31;
+            label_result4.Text = "result 4";
+            label_result4.Visible = false;
+            label_result4.Click += label_result4_Click;
+            // 
             // TestingAppForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -527,5 +576,9 @@ namespace CardTesterApp
         private NumericUpDown tb_Card3;
         private NumericUpDown tb_Card2;
         private NumericUpDown tb_Card1;
+        private Label label_result4;
+        private Label label_result3;
+        private Label label_result2;
+        private Label label_result1;
     }
 }
