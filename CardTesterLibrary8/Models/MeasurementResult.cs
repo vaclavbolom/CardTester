@@ -38,5 +38,10 @@ namespace CardTesterLibrary
                                                           testsFlatOk[index] == numberOfFlatCycles &&
                                                           testsBentOk[index] == numberOfBentCycles).ToList();
         }
+
+        public static MeasurementResult Empty()
+        {
+            return new MeasurementResult(0, 0, 0, [], [], [], []);
+        }
     }
 }
