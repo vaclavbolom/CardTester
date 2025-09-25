@@ -31,6 +31,10 @@ namespace CardTesterApp
         private void InitializeComponent()
         {
             gb_Parameters = new GroupBox();
+            label_result4 = new Label();
+            label_result3 = new Label();
+            label_result2 = new Label();
+            label_result1 = new Label();
             label_Card4 = new Label();
             label_Card3 = new Label();
             label_Card2 = new Label();
@@ -67,10 +71,6 @@ namespace CardTesterApp
             btn_Stop = new Button();
             btn_Run = new Button();
             btn_Reset = new Button();
-            label_result1 = new Label();
-            label_result2 = new Label();
-            label_result3 = new Label();
-            label_result4 = new Label();
             gb_Parameters.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)tb_Card4).BeginInit();
             ((System.ComponentModel.ISupportInitialize)tb_Card3).BeginInit();
@@ -119,6 +119,47 @@ namespace CardTesterApp
             gb_Parameters.TabStop = false;
             gb_Parameters.Text = "Test parameters";
             // 
+            // label_result4
+            // 
+            label_result4.AutoSize = true;
+            label_result4.Location = new Point(544, 169);
+            label_result4.Name = "label_result4";
+            label_result4.Size = new Size(45, 15);
+            label_result4.TabIndex = 31;
+            label_result4.Text = "result 4";
+            label_result4.Visible = false;
+            label_result4.Click += label_result4_Click;
+            // 
+            // label_result3
+            // 
+            label_result3.AutoSize = true;
+            label_result3.Location = new Point(371, 169);
+            label_result3.Name = "label_result3";
+            label_result3.Size = new Size(45, 15);
+            label_result3.TabIndex = 30;
+            label_result3.Text = "resutl 3";
+            label_result3.Visible = false;
+            // 
+            // label_result2
+            // 
+            label_result2.AutoSize = true;
+            label_result2.Location = new Point(193, 169);
+            label_result2.Name = "label_result2";
+            label_result2.Size = new Size(45, 15);
+            label_result2.TabIndex = 29;
+            label_result2.Text = "result 2";
+            label_result2.Visible = false;
+            // 
+            // label_result1
+            // 
+            label_result1.AutoSize = true;
+            label_result1.Location = new Point(14, 169);
+            label_result1.Name = "label_result1";
+            label_result1.Size = new Size(45, 15);
+            label_result1.TabIndex = 28;
+            label_result1.Text = "result 1";
+            label_result1.Visible = false;
+            // 
             // label_Card4
             // 
             label_Card4.AutoSize = true;
@@ -162,6 +203,7 @@ namespace CardTesterApp
             tb_Card4.Name = "tb_Card4";
             tb_Card4.Size = new Size(120, 23);
             tb_Card4.TabIndex = 23;
+            tb_Card4.ValueChanged += tb_Card4_ValueChanged;
             // 
             // tb_Card3
             // 
@@ -170,6 +212,7 @@ namespace CardTesterApp
             tb_Card3.Name = "tb_Card3";
             tb_Card3.Size = new Size(120, 23);
             tb_Card3.TabIndex = 22;
+            tb_Card3.ValueChanged += tb_Card3_ValueChanged;
             // 
             // tb_Card2
             // 
@@ -178,6 +221,7 @@ namespace CardTesterApp
             tb_Card2.Name = "tb_Card2";
             tb_Card2.Size = new Size(120, 23);
             tb_Card2.TabIndex = 21;
+            tb_Card2.ValueChanged += tb_Card2_ValueChanged;
             // 
             // tb_Card1
             // 
@@ -186,6 +230,7 @@ namespace CardTesterApp
             tb_Card1.Name = "tb_Card1";
             tb_Card1.Size = new Size(120, 23);
             tb_Card1.TabIndex = 20;
+            tb_Card1.ValueChanged += tb_Card1_ValueChanged;
             // 
             // tb_WorkOrderId
             // 
@@ -193,6 +238,7 @@ namespace CardTesterApp
             tb_WorkOrderId.Name = "tb_WorkOrderId";
             tb_WorkOrderId.Size = new Size(131, 23);
             tb_WorkOrderId.TabIndex = 17;
+            tb_WorkOrderId.TextChanged += tb_WorkOrderId_TextChanged;
             tb_WorkOrderId.Leave += tb_WorkOrderId_Leave;
             // 
             // label_WorkOrderId
@@ -223,6 +269,7 @@ namespace CardTesterApp
             cb_CardType.Size = new Size(133, 23);
             cb_CardType.TabIndex = 14;
             cb_CardType.SelectedIndexChanged += cb_CardType_SelectedIndexChanged;
+            cb_CardType.TextChanged += cb_CardType_TextChanged;
             // 
             // textbox_Description
             // 
@@ -466,47 +513,6 @@ namespace CardTesterApp
             btn_Reset.Text = "Release";
             btn_Reset.UseVisualStyleBackColor = true;
             btn_Reset.Click += btn_Reset_Click;
-            // 
-            // label_result1
-            // 
-            label_result1.AutoSize = true;
-            label_result1.Location = new Point(14, 169);
-            label_result1.Name = "label_result1";
-            label_result1.Size = new Size(45, 15);
-            label_result1.TabIndex = 28;
-            label_result1.Text = "result 1";
-            label_result1.Visible = false;
-            // 
-            // label_result2
-            // 
-            label_result2.AutoSize = true;
-            label_result2.Location = new Point(193, 169);
-            label_result2.Name = "label_result2";
-            label_result2.Size = new Size(45, 15);
-            label_result2.TabIndex = 29;
-            label_result2.Text = "result 2";
-            label_result2.Visible = false;
-            // 
-            // label_result3
-            // 
-            label_result3.AutoSize = true;
-            label_result3.Location = new Point(371, 169);
-            label_result3.Name = "label_result3";
-            label_result3.Size = new Size(45, 15);
-            label_result3.TabIndex = 30;
-            label_result3.Text = "resutl 3";
-            label_result3.Visible = false;
-            // 
-            // label_result4
-            // 
-            label_result4.AutoSize = true;
-            label_result4.Location = new Point(544, 169);
-            label_result4.Name = "label_result4";
-            label_result4.Size = new Size(45, 15);
-            label_result4.TabIndex = 31;
-            label_result4.Text = "result 4";
-            label_result4.Visible = false;
-            label_result4.Click += label_result4_Click;
             // 
             // TestingAppForm
             // 

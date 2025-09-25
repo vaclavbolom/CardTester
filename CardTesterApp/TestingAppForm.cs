@@ -160,7 +160,7 @@ namespace CardTesterApp
         }
 
         private void CheckCalibration()
-        {            
+        {
             var calibrationLabel = string.Empty;
             bool isCalibrationValid = IsCalibrationValid();
             if (!isCalibrationValid)
@@ -369,7 +369,7 @@ namespace CardTesterApp
                 (int)tb_Card4.Value
                 ]);
             _logger.Debug($"DoTest, state: {CardTesterState}");
-            await _cardTester.RunTestAsync(NumberOfCycles, delayBendInMilliseconds, delayBasicInMilliseconds, outputDirectory, description, workOrderId, jobName, cardIds);
+            var result = await _cardTester.RunTestAsync(NumberOfCycles, delayBendInMilliseconds, delayBasicInMilliseconds, outputDirectory, description, workOrderId, jobName, cardIds);
             await Task.Delay(DELAY_COMMAND);
 
             if (result != MeasurementResult.Empty())
@@ -396,8 +396,7 @@ namespace CardTesterApp
             _logger.Debug($"DoTest - end, state: {CardTesterState}");
         }
 
-            
-        }
+
 
         private async Task DoStop()
         {
@@ -504,6 +503,7 @@ namespace CardTesterApp
 
         private async void btn_Calibration_Click(object sender, EventArgs e)
         {
+            ResetResults();
             _logger.Debug($"Calibration clicked, state: {CardTesterState}");
             label_Message.Text = "Calibration....";
             SetStateChangeStamp();
@@ -532,7 +532,7 @@ namespace CardTesterApp
             Running = true;
 
             await _cardTester.ResetUpAsync();
-           
+
             Running = false;
             _logger.Debug($"Bend click - after reset, state: {CardTesterState}");
         }
@@ -592,7 +592,7 @@ namespace CardTesterApp
         {
 
         }
-       
+
 
         private void tb_WorkOrderId_Leave(object sender, EventArgs e)
         {
@@ -608,6 +608,36 @@ namespace CardTesterApp
         private void label_result4_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void tb_Card1_ValueChanged(object sender, EventArgs e)
+        {
+            ResetResults();
+        }
+
+        private void tb_Card2_ValueChanged(object sender, EventArgs e)
+        {
+            ResetResults();
+        }
+
+        private void tb_Card3_ValueChanged(object sender, EventArgs e)
+        {
+            ResetResults();
+        }
+
+        private void tb_Card4_ValueChanged(object sender, EventArgs e)
+        {
+            ResetResults();
+        }
+
+        private void tb_WorkOrderId_TextChanged(object sender, EventArgs e)
+        {
+            ResetResults();
+        }
+
+        private void cb_CardType_TextChanged(object sender, EventArgs e)
+        {
+            ResetResults();
         }
     }
 }
