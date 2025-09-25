@@ -193,6 +193,7 @@ namespace CardTesterApp
             tb_WorkOrderId.Name = "tb_WorkOrderId";
             tb_WorkOrderId.Size = new Size(131, 23);
             tb_WorkOrderId.TabIndex = 17;
+            tb_WorkOrderId.Leave += tb_WorkOrderId_Leave;
             // 
             // label_WorkOrderId
             // 
@@ -267,9 +268,11 @@ namespace CardTesterApp
             tb_DelayBend.Location = new Point(204, 92);
             tb_DelayBend.Margin = new Padding(3, 2, 3, 2);
             tb_DelayBend.Maximum = new decimal(new int[] { 10, 0, 0, 0 });
+            tb_DelayBend.Minimum = new decimal(new int[] { 1, 0, 0, 65536 });
             tb_DelayBend.Name = "tb_DelayBend";
             tb_DelayBend.Size = new Size(85, 23);
             tb_DelayBend.TabIndex = 9;
+            tb_DelayBend.Value = new decimal(new int[] { 1, 0, 0, 65536 });
             // 
             // tb_DelayBasic
             // 
@@ -278,9 +281,11 @@ namespace CardTesterApp
             tb_DelayBasic.Location = new Point(204, 61);
             tb_DelayBasic.Margin = new Padding(3, 2, 3, 2);
             tb_DelayBasic.Maximum = new decimal(new int[] { 10, 0, 0, 0 });
+            tb_DelayBasic.Minimum = new decimal(new int[] { 1, 0, 0, 65536 });
             tb_DelayBasic.Name = "tb_DelayBasic";
             tb_DelayBasic.Size = new Size(85, 23);
             tb_DelayBasic.TabIndex = 8;
+            tb_DelayBasic.Value = new decimal(new int[] { 1, 0, 0, 65536 });
             // 
             // tb_NubmerOfCycles
             // 
@@ -296,18 +301,18 @@ namespace CardTesterApp
             label_DelayBend.AutoSize = true;
             label_DelayBend.Location = new Point(14, 97);
             label_DelayBend.Name = "label_DelayBend";
-            label_DelayBend.Size = new Size(120, 15);
+            label_DelayBend.Size = new Size(117, 15);
             label_DelayBend.TabIndex = 2;
-            label_DelayBend.Text = "Wait in bend position";
+            label_DelayBend.Text = "Wait in bent position";
             // 
             // label_DelayBasic
             // 
             label_DelayBasic.AutoSize = true;
             label_DelayBasic.Location = new Point(14, 62);
             label_DelayBasic.Name = "label_DelayBasic";
-            label_DelayBasic.Size = new Size(120, 15);
+            label_DelayBasic.Size = new Size(110, 15);
             label_DelayBasic.TabIndex = 1;
-            label_DelayBasic.Text = "Wait in basic position";
+            label_DelayBasic.Text = "Wait in flat position";
             // 
             // label_NumberOfCycles
             // 

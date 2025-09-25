@@ -23,6 +23,9 @@ namespace CardTesterApp
 
         private bool Running { get; set; }
         private bool Initialization { get; set; } = false;
+        private bool IsInvalidCalibrationRecorded { get; set; } = false;
+
+        private bool IsDisconnectedRecorded { get; set; } = false;
 
         private int NumberOfCycles
         {
@@ -48,6 +51,8 @@ namespace CardTesterApp
         private DateTime StateChangeStamp { get; set; } = DateTime.UtcNow;
 
         private bool ServiceMode { get; set; } = false;
+        private string PreviousCardType { get; set; }
+        private string PreviousWorkOrderId { get; set; }
 
 
         public TestingAppForm(ISerialPortOperator serialPortOperator, ICardTester cardTester, ILogger logger, IMeasurementService measurementService, ApplicationSettings settings)
@@ -134,7 +139,10 @@ namespace CardTesterApp
 
         private void SetStateChangeStamp()
         {
-            StateChangeStamp = DateTime.UtcNow;
+            var nowStamp = DateTime.UtcNow;
+            _logger.Debug($"State stamp changed: {StateChangeStamp} -> {nowStamp}");
+            StateChangeStamp = nowStamp;
+
         }
 
         private void CheckMeasurementTimeout()
@@ -148,30 +156,41 @@ namespace CardTesterApp
                 Task.Run(() => _cardTester.StopAsync());
                 UpdateMessage("Stopped - measurement timeout");
                 _logger.Error("Measurement timeout");
-                //SetWidgetsState();
             }
         }
 
         private void CheckCalibration()
-        {
-            var currentStamp = DateTime.Now;
+        {            
             var calibrationLabel = string.Empty;
-            var CalibrationValid = (CalibrationStamp > currentStamp);
-            if (!CalibrationValid)
+            bool isCalibrationValid = IsCalibrationValid();
+            if (!isCalibrationValid)
             {
                 calibrationLabel = (CalibrationStamp.Equals(DateTime.MinValue))
                     ? AppConstants.CALIBRATION_NOT_SET
                     : AppConstants.CALIBRATION_EXPIRED;
+                if (!IsInvalidCalibrationRecorded)
+                {
+                    _logger.Warning("Calibration invalid");
+                    IsInvalidCalibrationRecorded = true;
+                }
             }
             else
             {
                 calibrationLabel = AppConstants.CALIBRATION_OK;
+                IsInvalidCalibrationRecorded = false;
             }
             if (!label_Calibration.Equals(calibrationLabel))
             {
                 label_Calibration.Text = calibrationLabel;
-                label_Calibration.ForeColor = CalibrationValid ? Color.Green : Color.Red;
+                label_Calibration.ForeColor = isCalibrationValid ? Color.Green : Color.Red;
             }
+        }
+
+        private bool IsCalibrationValid()
+        {
+            var currentStamp = DateTime.Now;
+
+            return (CalibrationStamp > currentStamp);
         }
 
         private void Calibrate()
@@ -223,12 +242,16 @@ namespace CardTesterApp
                 label_State.Text = labelMessage;
                 _logger.Debug($"Message changed, state:{CardTesterState}, message:{labelMessage}");
             }
-            if (!_serialPortOperator.IsDeviceConnected)
+            if (!_serialPortOperator.IsDeviceConnected && !IsDisconnectedRecorded)
             {
+                IsDisconnectedRecorded = true;
                 var msg = "Device disconnected";
                 _logger.Warning(msg);
                 UpdateMessage(msg);
-
+            }
+            else
+            {
+                IsDisconnectedRecorded = true;
             }
         }
 
@@ -252,7 +275,7 @@ namespace CardTesterApp
                 Running = false;
             }
 
-            _logger.Debug($"Card Tester App state changed to {message}");
+            _logger.Debug($"Card Tester App state changedL {CardTesterPreviousState} -> {message}");
         }
 
         private void SetWidgetsState()
@@ -282,6 +305,7 @@ namespace CardTesterApp
             //RUN
             bool runState = _serialPortOperator.IsDeviceConnected
                 && !Running
+                && IsCalibrationValid()
                 && CardTesterState == CardTesterConstants.STATE_DOWN;
             btn_Run.Enabled = runState;
 
@@ -310,10 +334,9 @@ namespace CardTesterApp
 
         private async Task DoReset()
         {
-            _logger.Debug("DoReset started");
+            _logger.Debug($"DoReset started, state: {CardTesterState}");
 
             Running = true;
-            //SetWidgetsState();
             UpdateMessage("Returning backward - resetting");
 
             await _cardTester.ResetDownAsync();
@@ -325,7 +348,8 @@ namespace CardTesterApp
             }
 
             Running = false;
-            UpdateMessage("Prepared");
+            if (CardTesterState == CardTesterConstants.STATE_DOWN)
+                UpdateMessage("Prepared");
 
             _logger.Debug("DoReset finished");
         }
@@ -344,7 +368,8 @@ namespace CardTesterApp
                 (int)tb_Card3.Value,
                 (int)tb_Card4.Value
                 ]);
-            var result = await _cardTester.RunTestAsync(NumberOfCycles, delayBendInMilliseconds, delayBasicInMilliseconds, outputDirectory, description, workOrderId, jobName, cardIds);
+            _logger.Debug($"DoTest, state: {CardTesterState}");
+            await _cardTester.RunTestAsync(NumberOfCycles, delayBendInMilliseconds, delayBasicInMilliseconds, outputDirectory, description, workOrderId, jobName, cardIds);
             await Task.Delay(DELAY_COMMAND);
 
             if (result != MeasurementResult.Empty())
@@ -368,18 +393,20 @@ namespace CardTesterApp
                     }
                 }
             }
+            _logger.Debug($"DoTest - end, state: {CardTesterState}");
+        }
 
             
         }
 
         private async Task DoStop()
         {
-            _logger.Debug("DoStop started");
+            _logger.Debug($"DoStop started, state: {CardTesterState}");
 
             await _cardTester.StopAsync();
             await Task.Delay(DELAY_COMMAND);
 
-            _logger.Debug("DoStop finished");
+            _logger.Debug($"DoStop finished, state: {CardTesterState}");
         }
 
 
@@ -390,7 +417,6 @@ namespace CardTesterApp
             SetStateChangeStamp();
             _logger.Debug("Run clicked");
             Running = true;
-            //SetWidgetsState();
             UpdateMessage("Running test");
             try
             {
@@ -400,6 +426,7 @@ namespace CardTesterApp
                 {
                     await Task.Delay(DELAY_COMMAND);
                 }
+                _logger.Debug($"Run clicked, after test, state: {CardTesterState} ---!!!---");
 
                 Running = false;
                 if (CardTesterState != CardTesterConstants.STATE_STOPPED && CardTesterState != CardTesterConstants.STATE_DOOR_OPEN)
@@ -416,16 +443,14 @@ namespace CardTesterApp
                 UpdateMessage(msg);
                 //TODO: return to basic position, read state
             }
-            //SetWidgetsState();
         }
 
         private async void btn_Stop_Click(object sender, EventArgs e)
         {
             _serialPortOperator.RunCommand(CardTesterConstants.COMMAND_GET_STATE);
-            _logger.Debug("Stop clicked");
+            _logger.Debug($"Stop clicked, state: {CardTesterState}");
             Running = false;
             UpdateMessage("Stopped");
-            //SetWidgetsState();
             await DoStop();
 
             while (CardTesterState != CardTesterConstants.STATE_STOPPED)
@@ -433,17 +458,17 @@ namespace CardTesterApp
                 await Task.Delay(DELAY_COMMAND);
             }
 
-            //SetWidgetsState();
             await Task.Delay(DELAY_COMMAND);
             _logger.Debug($"Stop finished, state:{CardTesterState}");
         }
 
         private async void btn_Reset_Click(object sender, EventArgs e)
         {
+            _logger.Debug($"Reset click, state: {CardTesterState}");
             _serialPortOperator.RunCommand(CardTesterConstants.COMMAND_GET_STATE);
             SetStateChangeStamp();
             await DoReset();
-            //SetWidgetsState();
+            _logger.Debug($"DoRest finished, state: {CardTesterState}");
         }
 
 
@@ -455,8 +480,8 @@ namespace CardTesterApp
             var task = _cardTester.PrepareMeasurement();
             task.Wait(100);
             _logger.Debug("after 100");
-            //SetWidgetsState();
             CardTesterPreviousState = CardTesterState;
+            _logger.Debug($"Form load, state: {CardTesterState}");
         }
 
         private void text_ProtocolPath_TextChanged(object sender, EventArgs e)
@@ -479,32 +504,49 @@ namespace CardTesterApp
 
         private async void btn_Calibration_Click(object sender, EventArgs e)
         {
+            _logger.Debug($"Calibration clicked, state: {CardTesterState}");
+            label_Message.Text = "Calibration....";
             SetStateChangeStamp();
             await DoReset();
 
+            _logger.Debug($"Calibration clicked - after reset, state: {CardTesterState}");
+            await SetCalibrationMessage();
             Calibrate();
 
-            //SetWidgetsState();
+            _logger.Debug($"Calibration clicked - after calibration, state: {CardTesterState}");
+
+            label_Message.Text = "Prepared";
+        }
+
+        private async Task SetCalibrationMessage()
+        {
+            label_Message.Text = "Calibration....";
+            await Task.Delay(10);
+
         }
 
         private async void btn_Bend_Click(object sender, EventArgs e)
         {
+            _logger.Debug($"Bend click, state: {CardTesterState}");
             SetStateChangeStamp();
             Running = true;
 
             await _cardTester.ResetUpAsync();
-
+           
             Running = false;
+            _logger.Debug($"Bend click - after reset, state: {CardTesterState}");
         }
 
         private async void btn_Unbend_Click(object sender, EventArgs e)
         {
+            _logger.Debug($"Unend click, state: {CardTesterState}");
             SetStateChangeStamp();
             Running = true;
 
             await _cardTester.ResetDownAsync();
 
             Running = false;
+            _logger.Debug($"Unbend click - after reset, state: {CardTesterState}");
         }
 
         private void TestingAppForm_KeyDown(object sender, KeyEventArgs e)
@@ -532,7 +574,13 @@ namespace CardTesterApp
 
         private void cb_CardType_SelectedIndexChanged(object sender, EventArgs e)
         {
+            var currentValue = cb_CardType.Text;
 
+            if (currentValue != PreviousCardType)
+            {
+                CalibrationStamp = DateTime.UtcNow;
+                PreviousCardType = currentValue;
+            }
         }
 
         private void label_CardType_Click(object sender, EventArgs e)
@@ -543,6 +591,18 @@ namespace CardTesterApp
         private void gb_Buttons_Enter(object sender, EventArgs e)
         {
 
+        }
+       
+
+        private void tb_WorkOrderId_Leave(object sender, EventArgs e)
+        {
+            var currentValue = tb_WorkOrderId.Text;
+
+            if (currentValue != PreviousWorkOrderId)
+            {
+                CalibrationStamp = DateTime.UtcNow;
+                PreviousWorkOrderId = currentValue;
+            }
         }
 
         private void label_result4_Click(object sender, EventArgs e)

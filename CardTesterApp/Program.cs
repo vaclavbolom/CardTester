@@ -22,7 +22,13 @@ namespace CardTesterApp
             if (Path.Exists(configuration.LogDirectory))
                 logFile = Path.Combine(configuration.LogDirectory, logFile);
             Log.Logger = new LoggerConfiguration()
-              .WriteTo.File(logFile, LogEventLevel.Debug)
+              .WriteTo.File(
+				logFile, 
+				LogEventLevel.Debug,
+				fileSizeLimitBytes: 10000000,
+				rollOnFileSizeLimit: true,
+				retainedFileCountLimit: 10
+				)
               .MinimumLevel.Debug()
               .CreateLogger();
             var logger = Log.Logger;
