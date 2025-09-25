@@ -57,7 +57,7 @@ void loop() {
   int switch_down = digitalRead(PIN_DOWN);
   int switch_closed = !digitalRead(PIN_CLOSED);
 
-  if (DEBUG){      
+  if (DEBUG_ALL){      
       Serial.println("---- LOOP ----");
       Serial.print("switch closed: ");
       Serial.println(switch_closed);
