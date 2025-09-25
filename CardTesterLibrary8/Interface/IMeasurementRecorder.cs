@@ -31,6 +31,12 @@ namespace CardTesterLibrary
         /// </summary>
         /// <param name="cardIds"></param>
         void StartMeasurement(List<int> cardIds);
+
+        /// <summary>
+        /// Returns summary of test
+        /// </summary>
+        /// <returns></returns>
+        MeasurementResult GetResult();
        
     }
 }

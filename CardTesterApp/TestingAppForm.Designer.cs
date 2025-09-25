@@ -31,6 +31,10 @@ namespace CardTesterApp
         private void InitializeComponent()
         {
             gb_Parameters = new GroupBox();
+            label_result4 = new Label();
+            label_result3 = new Label();
+            label_result2 = new Label();
+            label_result1 = new Label();
             label_Card4 = new Label();
             label_Card3 = new Label();
             label_Card2 = new Label();
@@ -80,6 +84,10 @@ namespace CardTesterApp
             // 
             // gb_Parameters
             // 
+            gb_Parameters.Controls.Add(label_result4);
+            gb_Parameters.Controls.Add(label_result3);
+            gb_Parameters.Controls.Add(label_result2);
+            gb_Parameters.Controls.Add(label_result1);
             gb_Parameters.Controls.Add(label_Card4);
             gb_Parameters.Controls.Add(label_Card3);
             gb_Parameters.Controls.Add(label_Card2);
@@ -110,6 +118,47 @@ namespace CardTesterApp
             gb_Parameters.TabIndex = 0;
             gb_Parameters.TabStop = false;
             gb_Parameters.Text = "Test parameters";
+            // 
+            // label_result4
+            // 
+            label_result4.AutoSize = true;
+            label_result4.Location = new Point(544, 169);
+            label_result4.Name = "label_result4";
+            label_result4.Size = new Size(45, 15);
+            label_result4.TabIndex = 31;
+            label_result4.Text = "result 4";
+            label_result4.Visible = false;
+            label_result4.Click += label_result4_Click;
+            // 
+            // label_result3
+            // 
+            label_result3.AutoSize = true;
+            label_result3.Location = new Point(371, 169);
+            label_result3.Name = "label_result3";
+            label_result3.Size = new Size(45, 15);
+            label_result3.TabIndex = 30;
+            label_result3.Text = "resutl 3";
+            label_result3.Visible = false;
+            // 
+            // label_result2
+            // 
+            label_result2.AutoSize = true;
+            label_result2.Location = new Point(193, 169);
+            label_result2.Name = "label_result2";
+            label_result2.Size = new Size(45, 15);
+            label_result2.TabIndex = 29;
+            label_result2.Text = "result 2";
+            label_result2.Visible = false;
+            // 
+            // label_result1
+            // 
+            label_result1.AutoSize = true;
+            label_result1.Location = new Point(14, 169);
+            label_result1.Name = "label_result1";
+            label_result1.Size = new Size(45, 15);
+            label_result1.TabIndex = 28;
+            label_result1.Text = "result 1";
+            label_result1.Visible = false;
             // 
             // label_Card4
             // 
@@ -154,6 +203,7 @@ namespace CardTesterApp
             tb_Card4.Name = "tb_Card4";
             tb_Card4.Size = new Size(120, 23);
             tb_Card4.TabIndex = 23;
+            tb_Card4.ValueChanged += tb_Card4_ValueChanged;
             // 
             // tb_Card3
             // 
@@ -162,6 +212,7 @@ namespace CardTesterApp
             tb_Card3.Name = "tb_Card3";
             tb_Card3.Size = new Size(120, 23);
             tb_Card3.TabIndex = 22;
+            tb_Card3.ValueChanged += tb_Card3_ValueChanged;
             // 
             // tb_Card2
             // 
@@ -170,6 +221,7 @@ namespace CardTesterApp
             tb_Card2.Name = "tb_Card2";
             tb_Card2.Size = new Size(120, 23);
             tb_Card2.TabIndex = 21;
+            tb_Card2.ValueChanged += tb_Card2_ValueChanged;
             // 
             // tb_Card1
             // 
@@ -178,6 +230,7 @@ namespace CardTesterApp
             tb_Card1.Name = "tb_Card1";
             tb_Card1.Size = new Size(120, 23);
             tb_Card1.TabIndex = 20;
+            tb_Card1.ValueChanged += tb_Card1_ValueChanged;
             // 
             // tb_WorkOrderId
             // 
@@ -185,6 +238,8 @@ namespace CardTesterApp
             tb_WorkOrderId.Name = "tb_WorkOrderId";
             tb_WorkOrderId.Size = new Size(131, 23);
             tb_WorkOrderId.TabIndex = 17;
+            tb_WorkOrderId.TextChanged += tb_WorkOrderId_TextChanged;
+            tb_WorkOrderId.Leave += tb_WorkOrderId_Leave;
             // 
             // label_WorkOrderId
             // 
@@ -214,6 +269,7 @@ namespace CardTesterApp
             cb_CardType.Size = new Size(133, 23);
             cb_CardType.TabIndex = 14;
             cb_CardType.SelectedIndexChanged += cb_CardType_SelectedIndexChanged;
+            cb_CardType.TextChanged += cb_CardType_TextChanged;
             // 
             // textbox_Description
             // 
@@ -259,9 +315,11 @@ namespace CardTesterApp
             tb_DelayBend.Location = new Point(204, 92);
             tb_DelayBend.Margin = new Padding(3, 2, 3, 2);
             tb_DelayBend.Maximum = new decimal(new int[] { 10, 0, 0, 0 });
+            tb_DelayBend.Minimum = new decimal(new int[] { 1, 0, 0, 65536 });
             tb_DelayBend.Name = "tb_DelayBend";
             tb_DelayBend.Size = new Size(85, 23);
             tb_DelayBend.TabIndex = 9;
+            tb_DelayBend.Value = new decimal(new int[] { 1, 0, 0, 65536 });
             // 
             // tb_DelayBasic
             // 
@@ -270,9 +328,11 @@ namespace CardTesterApp
             tb_DelayBasic.Location = new Point(204, 61);
             tb_DelayBasic.Margin = new Padding(3, 2, 3, 2);
             tb_DelayBasic.Maximum = new decimal(new int[] { 10, 0, 0, 0 });
+            tb_DelayBasic.Minimum = new decimal(new int[] { 1, 0, 0, 65536 });
             tb_DelayBasic.Name = "tb_DelayBasic";
             tb_DelayBasic.Size = new Size(85, 23);
             tb_DelayBasic.TabIndex = 8;
+            tb_DelayBasic.Value = new decimal(new int[] { 1, 0, 0, 65536 });
             // 
             // tb_NubmerOfCycles
             // 
@@ -288,18 +348,18 @@ namespace CardTesterApp
             label_DelayBend.AutoSize = true;
             label_DelayBend.Location = new Point(14, 97);
             label_DelayBend.Name = "label_DelayBend";
-            label_DelayBend.Size = new Size(120, 15);
+            label_DelayBend.Size = new Size(117, 15);
             label_DelayBend.TabIndex = 2;
-            label_DelayBend.Text = "Wait in bend position";
+            label_DelayBend.Text = "Wait in bent position";
             // 
             // label_DelayBasic
             // 
             label_DelayBasic.AutoSize = true;
             label_DelayBasic.Location = new Point(14, 62);
             label_DelayBasic.Name = "label_DelayBasic";
-            label_DelayBasic.Size = new Size(120, 15);
+            label_DelayBasic.Size = new Size(110, 15);
             label_DelayBasic.TabIndex = 1;
-            label_DelayBasic.Text = "Wait in basic position";
+            label_DelayBasic.Text = "Wait in flat position";
             // 
             // label_NumberOfCycles
             // 
@@ -527,5 +587,9 @@ namespace CardTesterApp
         private NumericUpDown tb_Card3;
         private NumericUpDown tb_Card2;
         private NumericUpDown tb_Card1;
+        private Label label_result4;
+        private Label label_result3;
+        private Label label_result2;
+        private Label label_result1;
     }
 }
