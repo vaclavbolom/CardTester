@@ -112,7 +112,7 @@ namespace CardTesterLibrary
             {
                 _measurementRecorder.StartMeasurement(cardIds);
                 var testInterrupted = false;
-                var testResult = _measurementService.MeasureCards(0);
+                var testResult = await _measurementService.MeasureCardsAsync(0);
                 testResult.Position = POSITION_BASIC;
                 _measurementRecorder.AddMeasurement(testResult);
 
@@ -164,12 +164,12 @@ namespace CardTesterLibrary
             var measurementIndex = (testCycleIndex -  1) * 2 + 1;
             await MoveForwardAsync();
             await Task.Delay(delayUp);
-            var measurementResult = _measurementService.MeasureCards(measurementIndex);
+            var measurementResult = await _measurementService.MeasureCardsAsync(measurementIndex);
             measurementResult.Position = POSITION_BENT;
             _measurementRecorder.AddMeasurement(measurementResult);
             await MoveBackwardAsync();
             await Task.Delay(delayDown);
-            measurementResult = _measurementService.MeasureCards(measurementIndex + 1);
+            measurementResult = await _measurementService.MeasureCardsAsync(measurementIndex + 1);
             measurementResult.Position = POSITION_BASIC;
             _measurementRecorder.AddMeasurement(measurementResult);
         }

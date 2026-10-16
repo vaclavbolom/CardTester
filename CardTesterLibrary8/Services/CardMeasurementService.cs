@@ -150,13 +150,9 @@ namespace CardTesterLibrary
             _logger.Debug("InitializeMeasurement - end");
         }
 
-        public Measurement MeasureCards(int measurementIndex)
+        public async Task<Measurement> MeasureCardsAsync(int measurementIndex)
         {
             _logger.Debug("Meassure cards");
-            var result = CodingResult.CODING_RESULT_UNINITIALIZED;
-            var errorSize = 1024;
-            var error = new byte[1024];
-            var handle = 0;
             var position = Convert.ToBoolean(measurementIndex % 2) ? "FLAT" : "BENT";
 
             var measurementResult = new Measurement(_numberOfCards) 
@@ -166,21 +162,38 @@ namespace CardTesterLibrary
                 Position = position
             };
 
-            for (int i = 0; i < _numberOfCards; i++)
+            var cardResults = await Task.WhenAll(
+                CardIds.Select((cardId, index) => RunCardAsync(index, cardId, measurementIndex)));
+
+            for (int i = 0; i < cardResults.Length; i++)
             {
+                measurementResult.CardResults[i] = cardResults[i].Result;
+                measurementResult.CardNotes[i] = cardResults[i].Message;
+            }
+
+            _logger.Debug("Meassure cards - end");
+            return measurementResult;
+        }
+
+        private Task<(string Result, string Message)> RunCardAsync(int index, int cardId, int measurementIndex)
+        {
+            return Task.Run(() =>
+            {
+                var result = CodingResult.CODING_RESULT_UNINITIALIZED;
+                var errorSize = 1024;
+                var error = new byte[1024];
+                var handle = 0;
                 var message = string.Empty;
+
                 try
                 {
-                    _logger.Debug($"CardRun, i={i}, card ID={CardIds[i]}");
-                    CardRun(ref handle, i + 1, CardIds[i], measurementIndex, ref result, error, ref errorSize);
+                    _logger.Debug($"CardRun, i={index}, card ID={cardId}");
+                    CardRun(ref handle, index + 1, cardId, measurementIndex, ref result, error, ref errorSize);
 
                     if (errorSize > 0)
                     {
-                        var clearMessage = error.Skip(0).Take(errorSize).ToArray();
-                        if (clearMessage != null)
-                        {
-                            message = System.Text.Encoding.UTF8.GetString(clearMessage);
-                        }
+                        var clearMessage = error.Take(errorSize).ToArray();
+                        message = Encoding.UTF8.GetString(clearMessage);
                     }
                 }
                 catch (Exception e)
@@ -190,13 +203,10 @@ namespace CardTesterLibrary
                     result = CodingResult.CODING_RESULT_SYSTEM_ERROR;
                     message = "Failed to run CardRun";
                 }
-                _logger.Debug($"CardRun results: {result}, message: {message}");
-                measurementResult.CardResults[i] = result.ToString();
-                measurementResult.CardNotes[i] = message;               
-            }
 
-            _logger.Debug("Meassure cards - end");
-            return measurementResult;
+                _logger.Debug($"CardRun results: {result}, message: {message}");
+                return (result.ToString(), message);
+            });
         }
     }
 }

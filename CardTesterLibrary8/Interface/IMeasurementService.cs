@@ -16,7 +16,7 @@ namespace CardTesterLibrary
         /// </summary>
         /// <param name="measurementIndex"></param>
         /// <returns></returns>
-        public Measurement MeasureCards(int measurementIndex);
+        public Task<Measurement> MeasureCardsAsync(int measurementIndex);
 
         /// <summary>
         /// Initializes measurement

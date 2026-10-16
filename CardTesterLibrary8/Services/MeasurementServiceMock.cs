@@ -35,7 +35,7 @@ namespace CardTesterLibrary
             CardIds = cardIds;
         }
 
-        public Measurement MeasureCards(int measurementIndex)
+        public Task<Measurement> MeasureCardsAsync(int measurementIndex)
         {
             var position = Convert.ToBoolean(measurementIndex % 2) ? "FLAT" : "BENT";
             var N = CardIds.Count;
@@ -54,7 +54,7 @@ namespace CardTesterLibrary
             }                
 
             _logger.Debug("Cards measured");
-            return result;
+            return Task.FromResult(result);
         }
     }
 }
