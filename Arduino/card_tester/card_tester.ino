@@ -1,24 +1,8 @@
 // code for Arduino
+// #include "pins_controllino.h"
+#include "pins_arduino.h"
+#include "tester_constants.h"
 
-const int PIN_UP = 5;
-const int PIN_DOWN = 6;
-const int PIN_FORWARD = 2;
-const int PIN_BACKWARD = 4;
-const int PIN_CLOSED = 7;
-const char COMMAND_FORWARD = '1';
-const char COMMAND_BACKWARD = '2';
-const char COMMAND_STOP = '0';
-const char COMMAND_RESET = '3';
-const char COMMAND_RESET_UP = '5';
-const char COMMAND_GET_STATE = '4';
-const char COMMAND_EMPTY = ' ';
-const char STATE_UP = 'u';
-const char STATE_DOWN = 'd';
-const char STATE_MOVING_FORWARD = 'f';
-const char STATE_MOVING_BACKWARD = 'b';
-const char STATE_STOPPED = 's';
-const char STATE_DOOR_OPEN = 'o';
-const char STATE_UNKNOWN = 'x';
 const bool DEBUG = false;
 const bool DEBUG_ALL = false;
 const int DELAY = 1;

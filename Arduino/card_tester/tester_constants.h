@@ -1,0 +1,14 @@
+const char COMMAND_FORWARD = '1';
+const char COMMAND_BACKWARD = '2';
+const char COMMAND_STOP = '0';
+const char COMMAND_RESET = '3';
+const char COMMAND_RESET_UP = '5';
+const char COMMAND_GET_STATE = '4';
+const char COMMAND_EMPTY = ' ';
+const char STATE_UP = 'u';
+const char STATE_DOWN = 'd';
+const char STATE_MOVING_FORWARD = 'f';
+const char STATE_MOVING_BACKWARD = 'b';
+const char STATE_STOPPED = 's';
+const char STATE_DOOR_OPEN = 'o';
+const char STATE_UNKNOWN = 'x';
